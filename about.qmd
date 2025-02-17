@@ -1,9 +1,33 @@
 ---
-title: "About"
+format: revealjs
 ---
 
-About this site
+::::::: {style="font-size: 70%;"}
+## about the author.
 
-```{r}
-1 + 1
-```
+:::::: {style="text-align: center;"}
+::::: columns
+::: {.column width="40%"}
+![](images/_GVP4736-edit.jpg)
+:::
+
+::: {.column width="60%"}
+Hello there! Welcome to my portfolio! :)
+
+I'm <span style="color:blue;"> Joshua TING<span style="color:black;">
+
+A Master of IT in Business (Analytics) student with Singapore Management University
+
+Before pursuing my Master's degree, I worked as a healthcare professional in a restructured hospital. Prior to that, I obtained a Bachelor of Science in Nursing from the Singapore Institute of Technology under the university Scholars' Programme.
+
+Connect with Me:
+
+[![](images/apple.png){fig-align="center" width="50"}](mailto:%20joshua.ting.2023@mitb.smu.edu.sg) [![](images/linkedin-logo.png){width="50"}](https://www.linkedin.com/in/joshuaisaiahting/) [![](images/github-sign.png){fig-align="center" width="50"}](https://github.com/isaiahting/)
+
+Back to Home:
+
+[![](images/home.png){width="50"}](https://joshisaiah.netlify.app///)
+:::
+:::::
+::::::
+:::::::
