@@ -2,18 +2,32 @@ project:
   type: website
 
 website:
-  title: "capstone"
+  title: "Accessibility of Eldercare Services in Singapore"
   navbar:
     left:
+      - text: "Content"
+        menu:
+          - text: "Introduction"
+            
+      - text: "Methodology"
+        menu:
+          - text: "Methods"
+            
+      - text: "Results"
+        menu: 
+          - text: "Discussion"
+
+    right:
       - href: index.qmd
         text: Home
       - about.qmd
 
 format:
   html:
-    theme: cosmo
+    theme: yeti
     css: styles.css
     toc: true
 
 editor: visual
+
 
