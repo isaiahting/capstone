@@ -18,7 +18,7 @@ I'm <span style="color:blue;"> Joshua TING<span style="color:black;">
 
 A Master of IT in Business (Analytics) student with Singapore Management University
 
-Before pursuing my Master's degree, I worked as a healthcare professional in a restructured hospital. Prior to that, I obtained a Bachelor of Science in Nursing from the Singapore Institute of Technology under the university Scholars' Programme.
+Before pursuing my Master's degree, I worked as a healthcare professional in a restructured hospital. Prior to that, I obtained a Bachelor of Science in Nursing from the Singapore Institute of Technology through their university Scholars' Programme.
 
 Connect with Me:
 
@@ -26,7 +26,7 @@ Connect with Me:
 
 Back to Home:
 
-[![](images/home.png){width="50"}](https://joshisaiah.netlify.app///)
+[![](images/home.png){width="50"}](https://joshuaisaiahgeospatial.netlify.app//)
 :::
 :::::
 ::::::
