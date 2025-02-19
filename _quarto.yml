@@ -17,6 +17,9 @@ website:
         menu: 
           - text: "Discussion"
 
+      - text: "Poster"
+        href: nothing.html
+
     right:
       - href: index.qmd
         text: Home
@@ -24,9 +27,13 @@ website:
 
 format:
   html:
-    theme: yeti
+    grid:
+      margin-width: 250px
+    theme:
+      - theme.scss
     css: styles.css
     toc: true
+    toc_float: true
 
 editor: visual
 

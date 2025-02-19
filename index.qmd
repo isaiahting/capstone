@@ -11,6 +11,8 @@ listing:
 
 This website is crafted in Partial Fulfillment of the Requirements for the Capstone Project Module in the Master in IT in Business (MITB) Programme at the Singapore Management University under the esteemed guidance of A/Prof KAM Tin Seong.
 
-**Motivation in Undertaking Geospatial Analytics**
+**Motivation in Undertaking Capstone**
 
-Inspired by the pioneering work of John Snow in epidemiology, whose spatial mapping of cholera outbreaks in the 1850s revolutionized disease tracking, I aim to apply these principles to contemporary challenges, using spatial data to analyze patterns, uncover insights, and contribute to more informed decision-making in fields like public health and beyond, especially with the rise of Mpox.
+Inspired by the pioneering work of John Snow in epidemiology, whose spatial mapping of cholera outbreaks in the 1850s revolutionized disease tracking, I aim to apply geospatial principles to contemporary challenges, using spatial data to analyze patterns, uncover insights, and contribute to more informed decision-making in fields like public health and beyond, especially with the rise of infectious diseases. 
+
+

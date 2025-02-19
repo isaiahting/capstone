@@ -1,9 +1,6 @@
 ---
-format: revealjs
+title: "about author."
 ---
-
-::::::: {style="font-size: 70%;"}
-## about the author.
 
 :::::: {style="text-align: center;"}
 ::::: columns
@@ -23,11 +20,6 @@ Before pursuing my Master's degree, I worked as a healthcare professional in a r
 Connect with Me:
 
 [![](images/apple.png){fig-align="center" width="50"}](mailto:%20joshua.ting.2023@mitb.smu.edu.sg) [![](images/linkedin-logo.png){width="50"}](https://www.linkedin.com/in/joshuaisaiahting/) [![](images/github-sign.png){fig-align="center" width="50"}](https://github.com/isaiahting/)
-
-Back to Home:
-
-[![](images/home.png){width="50"}](https://joshuaisaiahgeospatial.netlify.app//)
 :::
 :::::
 ::::::
-:::::::
