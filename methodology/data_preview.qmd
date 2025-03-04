@@ -1,0 +1,415 @@
+---
+title: "Data Preview"
+date: "21st Feb, 2025"
+date-modified: "last-modified"
+format:
+  html:
+    code-fold: true
+    code-summary: "Code Chunk"
+    number-sections: true
+execute: 
+  eval: false #r will run through all codes
+  echo: true #r will display all code chunk
+  warning: false #for mark down
+  freeze: true #r will not render all existing  html files
+  message: false #avoid printing warning message
+editor: source
+---
+
+# Overview
+
+In this section, the methodology will be explained thereafter Exploratory Data Analysis will be done.
+
+# Packages
+
+::: panel-tabset
+## The following packages are required for this section:
+
+| Package | Description |
+|-------------------------------------|-----------------------------------|
+| [**sf**](https://r-spatial.github.io/sf/) | For importing, managing, and handling geospatial data |
+| [**sfdep**](https://sfdep.josiahparry.com/) | Used to compute spatial weights, global and local spatial autocorrelation statistics |
+| [**tmap**](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) | For thematic mapping |
+| [**tidyverse**](https://www.tidyverse.org/) | For non-spatial data wrangling |
+| [**knitr**](https://cran.r-project.org/web/packages/knitr/index.html) | For dynamic report generation |
+| [**patchwork**](https://patchwork.data-imaginist.com/) | For plot manipulation |
+| [**leaflet**](https://rstudio.github.io/leaflet/) | For interactive maps |
+| [**scales**](https://scales.r-lib.org/) | For scaling graphs |
+
+## Code
+
+The code chunk below, using `p_load` function of the [**pacman**](https://cran.r-project.org/web/packages/pacman/pacman.pdf) package, ensures that packages required are installed and loaded in R.
+
+```{r}
+pacman::p_load(tidyverse, readr, sf, httr,
+               jsonlite, rvest, dplyr, units,
+               lubridate, tmap, ggplot2,dplyr, tidyr)
+
+# -   Creates a package list containing the necessary R packages
+# -   Checks if the R packages in the package list have been installed
+# -   If not installed, will install the missing packages & launch into R environment.
+```
+:::
+
+# Data Preparation
+
+## Data Acquisition
+
+3 main spectrum of data will be required for this research, namely the Population Data, Master Plan 2019 Subzone boundary and Care Centres.
+
+![Figure x: Data Overview](/methodology/data/images/data_overview.png)
+
+### WebScraping of Care Centres
+
+Due to the lack of a centralised data of all care centres, web scarping is warranted in obtaining the information of the care centres. The geographical locations of the Care Centres alongside the centre names such as Active Ageing Centre, Day Care, Community Rehabilitation Centre, Centre-based Nursing were extracted using a web scraping tool, Web Scraper, available in Chrome web store as Seen in Figure x. As there is no centralised file that consist of the centre names and their locations, the location of each centre has to be manually extracted from the [Care Services](https://www.aic.sg/care-services/) webpage of the Agency of Integrated Care as seen in Figure x.
+
+#### Step 0: Download Web Scraper from Chrome web store
+
+Web Scraper is used as it is free, works reasonably well and available in both Chrome and Firefox web store. In the below steps, Chrome will be the default web browser used.
+
+![*Figure x: Web Scraper*](/methodology/data/images/step0.png)
+
+#### Step 1: Navigate to Developer Tools in Chrome Web Browser
+
+After downloading the extension from Chrome Web Store, press onto the menu bar at the right of the browser and locate Developer Tools while onto the website you would like to scrape information from.
+
+![*Figure x: Web Scraper*](/methodology/data/images/step1.png)
+
+#### Step 2: Interface for Webscraper
+
+After clicking onto Developer Tools, click onto the Web Scraper in the menu bar (in black). Following which the below interface will appear.
+
+[![](/methodology/data/images/step2.png){width="499"}](Figure%20x:%20Locate%20Developer%20Tools)
+
+#### Step 3: Create New Sitemap
+
+Click onto "create new sitemap", thereafter "Create Sitemap". Sitemap Name will be the overarching term used for these information; in this instance, it will be AAC. The Start URL will be the HTML link that you would like the information to be scraped from.
+
+![Figure x:](/methodology/data/images/step3.png){fig-align="center"}
+
+#### Step 4: Add New Selector
+
+After creating a new sitemap, the following interface will appear. Click onto the "Add new selector" to select the information to scrape.
+
+![Figure x:](/methodology/data/images/step4.png){fig-align="center"}
+
+#### Step 5: Selecting Whole Box
+
+Firstly, the id will be the column name. For Type, select Element Attribute from the drop down selection. Thereafter, press on Select under Selector and select two boxes of each centre as seen in the figure below (the remaining boxes will be highlighted through its intelligent function) and press onto Done Selecting in the green box.
+
+![Figure x:](/methodology/data/images/step5.png){fig-align="center"}
+
+#### Step 6: Sitemap Interface
+
+After adding a new selector, the sitemap page will appear the selector that you've inputted.
+
+![Figure x: Step 6 - Create New Sitemap](/methodology/data/images/step6.png){fig-align="center"}
+
+#### Step 7: Selecting Name of Care Centre
+
+Firstly, the id will be name (with reference to the name of care centre), serving as the column name. Text will be chosen under Type thereafter press Select under Selector and highlight the first 2 names of the care centres (The remaining care centres will be highlighted through its intelligent function) and press onto Done selecting in the green box. Multiple box will be selected as we would like to scrap multiple names and root parent selector will be root and press onto Save Selector.
+
+![Figure x: Step 7 - Selecting Name of Care Centre](/methodology/data/images/step7.png){fig-align="center"}
+
+#### Step 8: Create New Sitemap
+
+A popup window will be prompted and Group selectors was selected.
+
+![Figure x: Step 8 - Create New Sitemap](/methodology/data/images/step8.png){fig-align="center"}
+
+#### Step 9: Selecting Address of Care Centre
+
+Similar to Step 7, the id will be address. Text will be chosen under Type thereafter press Select under Selector and highlight the first 2 addresses of the care centres (Remaining addresses will be highlighted through its intelligent function) and press onto Done selecting in the green box. Multiple box will be selected as we would like to scrap multiple addresses and parent selector will be wrapper_for_main_name (as we grouped selectors in step 8) and press onto Save Selector.
+
+![Figure x: Step 9 - Selecting Address of Care Centre](/methodology/data/images/step9.png){fig-align="center"}
+
+#### Step 10: Data Preview
+
+Prior to data scraping, the data is previewed in ensuring each name of the care centre is correctly tagged to the address using the main website to verify.
+
+![Figure x: Step 10 - Data Preview](/methodology/data/images/step10.png){fig-align="center"}
+
+#### Step 11: Commence Scraping
+
+Head over to sitemap aac and click onto Scrape. A new browser will appear indicating that it is in process of scraping. It will be closed automatically once the process has ended.
+
+![Figure x: Step 11 - Commence Scraping](/methodology/data/images/step11.png){fig-align="center"}
+
+#### Step 11: Export Data
+
+Export data is selected upon clicking sitemap aac. 2 file options are offered: csv and xlsx. The former was chosen as CSV files are simple and portable which doesn't complicate data processing. Thereafter the data will be downloaded.
+
+![Figure x:](/methodology/data/images/step12.png){fig-align="center"}
+
+#### Step 11: View CSV File
+
+In ensuring the web scraping successful and accurate, the csv. file is opened and viewed.
+
+![Figure x: Step 11 - View CSV File](/methodology/data/images/step13.png){fig-align="center"}
+
+The above steps were repeated for each care centre.
+
+## Importing Data
+
+### Importing Geospatial Data
+
+#### Singapore's Master Plan 2019 Subzone Boundary
+
+```{r}
+mpsz = st_read(dsn = "data/subzone/masterplansubzone/",
+               layer = "MP14_SUBZONE_NO_SEA_PL")
+```
+
+```{r}
+mppa <- st_read("data/planningarea/MasterPlan2019PlanningAreaBoundaryNoSea.kml")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(resale2023, "data/rds/aspatial/resale2023.rds")
+write_rds(mpsz, "data/rds/geopatial/mpsz.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+resale2023 = read_rds("data/rds/aspatial/resale2023.rds")
+mpsz = read_rds("data/rds/geopatial/mpsz.rds")
+```
+
+#### Care Centres
+
+```{r}
+aac <- read_csv("data/carecentre/activeageingcentre.csv") %>%
+```
+
+```{r}
+nursing <- read_csv("data/carecentre/centrebasednursing.csv")
+```
+
+```{r}
+rehab <- read_csv("data/carecentre/communityrehabcentre.csv")
+```
+
+```{r}
+counselling <- read_csv("data/carecentre/counselling.csv")
+```
+
+```{r}
+daycare <- read_csv("data/carecentre/daycare.csv")
+```
+
+```{r}
+hospice <- read_csv("data/carecentre/dayhospice.csv")
+```
+
+```{r}
+dementia <- read_csv("data/carecentre/dementia.csv")
+```
+
+```{r}
+maintenance <- read_csv("data/carecentre/maintenancedaycare.csv")
+```
+
+```{r}
+nhrespite <- read_csv("data/carecentre/nhrespite.csv")
+```
+
+```{r}
+nursinghome <- read_csv("data/carecentre/nursinghome.csv")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(resale2023, "data/rds/aspatial/resale2023.rds")
+write_rds(mpsz, "data/rds/geopatial/mpsz.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+resale2023 = read_rds("data/rds/aspatial/resale2023.rds")
+mpsz = read_rds("data/rds/geopatial/mpsz.rds")
+```
+
+### Importing Aspatial Data
+
+```{r}
+popdata2020 <- read_csv("data/popdata/respopagesex2024.csv")
+```
+
+```{r}
+popdata2020 <- read_csv("data/popdata/respopagesex2023.csv")
+```
+
+```{r}
+popdata2020 <- read_csv("data/popdata/respopagesex2022.csv")
+```
+
+```{r}
+popdata2020 <- read_csv("data/popdata/respopagesex2021.csv")
+```
+
+```{r}
+popdata2020 <- read_csv("data/popdata/respopagesex2011to2020.csv")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(resale2023, "data/rds/aspatial/resale2023.rds")
+write_rds(mpsz, "data/rds/geopatial/mpsz.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+resale2023 = read_rds("data/rds/aspatial/resale2023.rds")
+mpsz = read_rds("data/rds/geopatial/mpsz.rds")
+```
+
+### Cursory View
+
+```{r}
+glimpse("")
+```
+
+### Checking for Missing Values
+
+```{r}
+
+```
+
+### Duplicate Check
+
+The code chunk below identifies all rows in the dataframe that have an exact duplicate (i.e., another row with the same values in all columns) using *group_by_all()*.
+
+```{r}
+duplicate <- cbn %>% 
+  group_by_all() %>% 
+  filter(n()>1) %>% 
+  ungroup()
+  
+duplicate
+```
+
+The results returned 0 duplicated records.
+
+## Data Manipulation
+
+### Seperating postal code from address
+
+```{r}
+library(tidyverse)
+library(stringr)
+
+# Active Ageing Centre
+aac <- read_csv("data/carecentre/activeageingcentre.csv")
+aac <- mutate(aac, 
+  postal_code = str_extract(address, "[0-9]{6}$"),
+  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
+)
+
+# Centre Based Nursing
+nursing <- read_csv("data/carecentre/centrebasednursing.csv")
+nursing <- mutate(nursing,
+  postal_code = str_extract(address, "[0-9]{6}$"),
+  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
+)
+
+# Community Rehab Centre
+rehab <- read_csv("data/carecentre/communityrehabcentre.csv")
+rehab <- mutate(rehab,
+  postal_code = str_extract(address, "[0-9]{6}$"),
+  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
+)
+
+# Counselling
+counselling <- read_csv("data/carecentre/counselling.csv")
+counselling <- mutate(counselling,
+  postal_code = str_extract(address, "[0-9]{6}$"),
+  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
+)
+
+# Daycare
+daycare <- read_csv("data/carecentre/daycare.csv")
+daycare <- mutate(daycare,
+  postal_code = str_extract(address, "[0-9]{6}$"),
+  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
+)
+
+# Day Hospice
+hospice <- read_csv("data/carecentre/dayhospice.csv")
+hospice <- mutate(hospice,
+  postal_code = str_extract(address, "[0-9]{6}$"),
+  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
+)
+
+# Dementia
+dementia <- read_csv("data/carecentre/dementia.csv")
+dementia <- mutate(dementia,
+  postal_code = str_extract(address, "[0-9]{6}$"),
+  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
+)
+
+# Maintenance Daycare
+maintenance <- read_csv("data/carecentre/maintenancedaycare.csv")
+maintenance <- mutate(maintenance,
+  postal_code = str_extract(address, "[0-9]{6}$"),
+  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
+)
+
+# NH Respite
+nhrespite <- read_csv("data/carecentre/nhrespite.csv")
+nhrespite <- mutate(nhrespite,
+  postal_code = str_extract(address, "[0-9]{6}$"),
+  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
+)
+
+# Nursing Home
+nursinghome <- read_csv("data/carecentre/nursinghome.csv")
+nursinghome <- mutate(nursinghome,
+  postal_code = str_extract(address, "[0-9]{6}$"),
+  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
+)
+
+```
+
+### Labelling each dataset appropriately
+
+```{r}
+aac <- aac %>%
+  mutate(label = "aac")
+```
+
+### Apend all Care Centres into one dataset
+
+```{r}
+cc_data <- bind_rows(
+  aac, 
+  nursing, 
+  rehab, 
+  counselling, 
+  daycare, 
+  hospice, 
+  dementia, 
+  maintenance, 
+  nhrespite, 
+  nursinghome
+)
+
+# Optional: view the combined dataset structure
+str(all_data)
+```
+
+each data has set adddress column with data like this 10 Tampines Street 62, 528519. i want to extra the last 6 digits from the right and make it to another column named "postal_code". do it for every dateset and row. give me the r code
+
+# Exploratory Data Analysis
+
+# References
+
+Tan, K. (2023). Take-home Exercise 1: Geospatial Analytics for Public Good. Retrieved from <https://isss624-kytjy.netlify.app/take-home_ex/take-home_ex1/the1#background>
+
+Urban Redevelopment Authority. (2023). Master Plan 2019 Planning Area Boundary (No Sea) (2024) \[Dataset\]. data.gov.sg. Retrieved February 23, 2025 from https://data.gov.sg/datasets/d_6c6d7361dd826d97b91bac914ca6b2ac/view
