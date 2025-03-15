@@ -4,7 +4,7 @@ date: "21st Feb, 2025"
 date-modified: "last-modified"
 format:
   html:
-    code-fold: true
+    code-fold: false
     code-summary: "Code Chunk"
     number-sections: true
 execute: 
@@ -20,44 +20,11 @@ editor: source
 
 In this section, the methodology will be explained thereafter Exploratory Data Analysis will be done.
 
-# Packages
-
-::: panel-tabset
-## The following packages are required for this section:
-
-| Package | Description |
-|-------------------------------------|-----------------------------------|
-| [**sf**](https://r-spatial.github.io/sf/) | For importing, managing, and handling geospatial data |
-| [**sfdep**](https://sfdep.josiahparry.com/) | Used to compute spatial weights, global and local spatial autocorrelation statistics |
-| [**tmap**](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) | For thematic mapping |
-| [**tidyverse**](https://www.tidyverse.org/) | For non-spatial data wrangling |
-| [**knitr**](https://cran.r-project.org/web/packages/knitr/index.html) | For dynamic report generation |
-| [**patchwork**](https://patchwork.data-imaginist.com/) | For plot manipulation |
-| [**leaflet**](https://rstudio.github.io/leaflet/) | For interactive maps |
-| [**scales**](https://scales.r-lib.org/) | For scaling graphs |
-
-## Code
-
-The code chunk below, using `p_load` function of the [**pacman**](https://cran.r-project.org/web/packages/pacman/pacman.pdf) package, ensures that packages required are installed and loaded in R.
-
-```{r}
-pacman::p_load(tidyverse, readr, sf, httr,
-               jsonlite, rvest, dplyr, units,
-               lubridate, tmap, ggplot2,dplyr, tidyr)
-
-# -   Creates a package list containing the necessary R packages
-# -   Checks if the R packages in the package list have been installed
-# -   If not installed, will install the missing packages & launch into R environment.
-```
-:::
-
-# Data Preparation
-
-## Data Acquisition
+# Data Acquisition
 
 3 main spectrum of data will be required for this research, namely the Population Data, Master Plan 2019 Subzone boundary and Care Centres.
 
-![Figure x: Data Overview](/methodology/data/images/data_overview.png)
+![Figure x: Data Overview](/methodology/data/images/data_overview.png){fig-align="center"}
 
 ### WebScraping of Care Centres
 
@@ -147,49 +114,70 @@ In ensuring the web scraping successful and accurate, the csv. file is opened an
 
 ![Figure x: Step 11 - View CSV File](/methodology/data/images/step13.png){fig-align="center"}
 
-The above steps were repeated for each care centre.
+The above steps were repeated for each care centre. All of the Care Centre data was extracted on 7th February 2025.
 
-## Importing Data
+## Packages
 
-### Importing Geospatial Data
+::: panel-tabset
+The following packages are required for this section:
 
-#### Singapore's Master Plan 2019 Subzone Boundary
+| Package | Description |
+|-------------------------------------|-----------------------------------|
+| [**sf**](https://r-spatial.github.io/sf/) | For importing, managing, and handling geospatial data |
+| [**sfdep**](https://sfdep.josiahparry.com/) | Used to compute spatial weights, global and local spatial autocorrelation statistics |
+| [**tmap**](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) | For thematic mapping |
+| [**tidyverse**](https://www.tidyverse.org/) | For non-spatial data wrangling that includes dplyr, tibble, ggplot2, readr, tidyr, stringr, forcats, lubridate and purr |
+| [**knitr**](https://cran.r-project.org/web/packages/knitr/index.html) | For dynamic report generation |
+| [**patchwork**](https://patchwork.data-imaginist.com/) | For plot manipulation |
+| [**leaflet**](https://rstudio.github.io/leaflet/) | For interactive maps |
+| [**scales**](https://scales.r-lib.org/) | For scaling graphs |
+
+## Code
+
+The code chunk below, using `p_load` function of the [**pacman**](https://cran.r-project.org/web/packages/pacman/pacman.pdf) package, ensures that packages required are installed and loaded in R.
 
 ```{r}
-mpsz = st_read(dsn = "data/subzone/masterplansubzone/",
+pacman::p_load(tidyverse, sf, httr,
+               jsonlite, rvest, dplyr, units,
+               lubridate, tmap)
+
+# -   Creates a package list containing the necessary R packages
+# -   Checks if the R packages in the package list have been installed
+# -   If not installed, will install the missing packages & launch into R environment.
+```
+:::
+
+## Geospatial Data
+
+### Importing Singapore's Master Plan 2019 Subzone Boundary
+
+```{r}
+mpsz = st_read(dsn = "data/subzone/",
                layer = "MP14_SUBZONE_NO_SEA_PL")
 ```
 
 ```{r}
+#| echo: false
+#| eval: false
 mppa <- st_read("data/planningarea/MasterPlan2019PlanningAreaBoundaryNoSea.kml")
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
-write_rds(resale2023, "data/rds/aspatial/resale2023.rds")
 write_rds(mpsz, "data/rds/geopatial/mpsz.rds")
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
-resale2023 = read_rds("data/rds/aspatial/resale2023.rds")
 mpsz = read_rds("data/rds/geopatial/mpsz.rds")
 ```
 
-#### Care Centres
+## Care Centre
 
 ```{r}
-aac <- read_csv("data/carecentre/activeageingcentre.csv") %>%
-```
-
-```{r}
-nursing <- read_csv("data/carecentre/centrebasednursing.csv")
-```
-
-```{r}
-rehab <- read_csv("data/carecentre/communityrehabcentre.csv")
+aac <- read_csv("data/carecentre/activeageingcentre.csv")
 ```
 
 ```{r}
@@ -201,11 +189,11 @@ daycare <- read_csv("data/carecentre/daycare.csv")
 ```
 
 ```{r}
-hospice <- read_csv("data/carecentre/dayhospice.csv")
+dementia <- read_csv("data/carecentre/dementiadaycare.csv")
 ```
 
 ```{r}
-dementia <- read_csv("data/carecentre/dementia.csv")
+hospice <- read_csv("data/carecentre/dayhospice.csv")
 ```
 
 ```{r}
@@ -217,196 +205,943 @@ nhrespite <- read_csv("data/carecentre/nhrespite.csv")
 ```
 
 ```{r}
-nursinghome <- read_csv("data/carecentre/nursinghome.csv")
+nursing <- read_csv("data/carecentre/centrebasednursing.csv")
+```
+
+```{r}
+rehab <- read_csv("data/carecentre/communityrehabcentre.csv")
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
-write_rds(resale2023, "data/rds/aspatial/resale2023.rds")
-write_rds(mpsz, "data/rds/geopatial/mpsz.rds")
+write_rds(aac, "data/rds/carecentre/original/aac.rds")
+write_rds(counselling, "data/rds/carecentre/original/counselling.rds")
+write_rds(daycare, "data/rds/carecentre/original/daycare.rds")
+write_rds(dementia, "data/rds/carecentre/original/dementia.rds")
+write_rds(hospice, "data/rds/carecentre/original/hospice.rds")
+write_rds(maintenance, "data/rds/carecentre/original/maintenance.rds")
+write_rds(nhrespite, "data/rds/carecentre/original/nhrespite.rds")
+write_rds(nursing, "data/rds/carecentre/original/nursing.rds")
+write_rds(rehab, "data/rds/carecentre/original/rehab.rds")
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
-resale2023 = read_rds("data/rds/aspatial/resale2023.rds")
-mpsz = read_rds("data/rds/geopatial/mpsz.rds")
-```
 
-### Importing Aspatial Data
-
-```{r}
-popdata2020 <- read_csv("data/popdata/respopagesex2024.csv")
-```
-
-```{r}
-popdata2020 <- read_csv("data/popdata/respopagesex2023.csv")
-```
-
-```{r}
-popdata2020 <- read_csv("data/popdata/respopagesex2022.csv")
-```
-
-```{r}
-popdata2020 <- read_csv("data/popdata/respopagesex2021.csv")
-```
-
-```{r}
-popdata2020 <- read_csv("data/popdata/respopagesex2011to2020.csv")
-```
-
-```{r}
-#| echo: false
-#| eval: false
-write_rds(resale2023, "data/rds/aspatial/resale2023.rds")
-write_rds(mpsz, "data/rds/geopatial/mpsz.rds")
-```
-
-```{r}
-#| echo: false
-#| eval: false
-resale2023 = read_rds("data/rds/aspatial/resale2023.rds")
-mpsz = read_rds("data/rds/geopatial/mpsz.rds")
+aac = read_rds("data/rds/carecentre/original/aac.rds")
+counselling = read_rds("data/rds/carecentre/original/counselling.rds")
+daycare = read_rds("data/rds/carecentre/original/daycare.rds")
+dementia = read_rds("data/rds/carecentre/original/dementia.rds")
+hospice = read_rds("data/rds/carecentre/original/hospice.rds")
+maintenance = read_rds("data/rds/carecentre/original/maintenance.rds")
+nhrespite = read_rds("data/rds/carecentre/original/nhrespite.rds")
+nursing = read_rds("data/rds/carecentre/original/nursing.rds")
+rehab = read_rds("data/rds/carecentre/original/rehab.rds")
 ```
 
 ### Cursory View
 
+Using the glimpse() function, we are able to see that various rows in each data set while sharing the same number of columns. Columns "web-scraper-order" and "web-scraper-start-url" are redundant, thus, will be removed. Additionally, the address includes the postal code and it will seperated from the main street name and block number to facilitate the geospatial mapping thereafter.
+
 ```{r}
-glimpse("")
+glimpse(popdata20)
+```
+
+### Deleting Unwanted Codes
+
+The following R code is used to remove the columns "web-scraper-order" and "web-scraper-start-url" from multiple datasets: The select() function from the dplyr package is used to select or remove columns from a data frame.
+
+```{r}
+aac <- aac %>% select(-"web-scraper-order", -"web-scraper-start-url")
+counselling <- counselling %>% select(-"web-scraper-order", -"web-scraper-start-url")
+daycare <- daycare %>% select(-"web-scraper-order", -"web-scraper-start-url")
+dementia <- dementia %>% select(-"web-scraper-order", -"web-scraper-start-url")
+hospice <- hospice %>% select(-"web-scraper-order", -"web-scraper-start-url")
+maintenance <- maintenance %>% select(-"web-scraper-order", -"web-scraper-start-url")
+nhrespite <- nhrespite %>% select(-"web-scraper-order", -"web-scraper-start-url")
+nursing <- nursing %>% select(-"web-scraper-order", -"web-scraper-start-url")
+rehab <- rehab %>% select(-"web-scraper-order", -"web-scraper-start-url")
+```
+
+After removing the two columns, each data set has two columns, namely name and address only.
+
+```{r}
+glimpse(aac)
 ```
 
 ### Checking for Missing Values
 
+To check for missing or null values in the name and address columns of each dataset, the code uses the summarise() function from the dplyr package. The summarise() function computes summary statistics for the specified columns, which in this case are name and address. The across() function is used to apply the sum(is.na(.)) operation to both columns simultaneously, counting the number of missing (NA) values in each column.
+
+The is.na() function checks whether each value in the name and address columns is missing or null, returning TRUE for missing values and FALSE for non-missing values. The sum() function then counts the number of TRUE values, which corresponds to the number of missing values in each column. This process is applied to each dataset (aac, counselling, daycare, dementia, hospice, maintenance, nhrespite, nursing, and rehab). In conclusion it is able to identify the number of missing values in the name and address columns across all datasets, which helps assess the completeness of the data and highlights any issues that may require cleaning or imputation before further analysis. It returns 0 missing values.
+
 ```{r}
+# Checking for missing or null values in 'name' and 'address' columns
+aac_missing <- aac %>% summarise(across(c(name, address), ~sum(is.na(.))))
+counselling_missing <- counselling %>% summarise(across(c(name, address), ~sum(is.na(.))))
+daycare_missing <- daycare %>% summarise(across(c(name, address), ~sum(is.na(.))))
+dementia_missing <- dementia %>% summarise(across(c(name, address), ~sum(is.na(.))))
+hospice_missing <- hospice %>% summarise(across(c(name, address), ~sum(is.na(.))))
+maintenance_missing <- maintenance %>% summarise(across(c(name, address), ~sum(is.na(.))))
+nhrespite_missing <- nhrespite %>% summarise(across(c(name, address), ~sum(is.na(.))))
+nursing_missing <- nursing %>% summarise(across(c(name, address), ~sum(is.na(.))))
+rehab_missing <- rehab %>% summarise(across(c(name, address), ~sum(is.na(.))))
 
 ```
 
 ### Duplicate Check
 
-The code chunk below identifies all rows in the dataframe that have an exact duplicate (i.e., another row with the same values in all columns) using *group_by_all()*.
+The code provided checks for duplicate rows in each dataset (aac, counselling, daycare, dementia, hospice, maintenance, nhrespite, nursing, and rehab) by grouping the dataset by all columns using group_by_all(). It then filters out the rows that have duplicate combinations of values across all columns using filter(n() \> 1). The n() function counts the number of occurrences for each combination of values, and filter(n() \> 1) keeps only the rows that appear more than once (i.e., duplicates).
+
+For each dataset, the nrow() function is used to check if there are any rows returned after filtering for duplicates. If there are duplicates (i.e., the number of rows is greater than zero), the dataset with the duplicate rows is returned. However, if no duplicates are found (i.e., nrow() equals zero), the code returns 0 to indicate that there are no duplicates in that dataset.
+
+Thus, the code either returns the rows with duplicate values or 0 if no duplicates are present, providing an indication of whether duplicate entries exist in each dataset.
 
 ```{r}
-duplicate <- cbn %>% 
+# Check for duplicates in 'aac'
+aac_duplicate <- aac %>% 
   group_by_all() %>% 
-  filter(n()>1) %>% 
+  filter(n() > 1) %>% 
   ungroup()
-  
-duplicate
+
+# Check for duplicates in 'counselling'
+counselling_duplicate <- counselling %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+
+# Check for duplicates in 'daycare'
+daycare_duplicate <- daycare %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+
+# Check for duplicates in 'dementia'
+dementia_duplicate <- dementia %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+
+# Check for duplicates in 'hospice'
+hospice_duplicate <- hospice %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+
+# Check for duplicates in 'maintenance'
+maintenance_duplicate <- maintenance %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+
+# Check for duplicates in 'nhrespite'
+nhrespite_duplicate <- nhrespite %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+
+# Check for duplicates in 'nursing'
+nursing_duplicate <- nursing %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+
+# Check for duplicates in 'rehab'
+rehab_duplicate <- rehab %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+
 ```
 
-The results returned 0 duplicated records.
-
-## Data Manipulation
+## Data Manipulation (CC)
 
 ### Seperating postal code from address
 
+The code uses the mutate() function to extract the postal code (last 6 digits) from the address column of the individual dataset and store it in a new column called postal_code. The postal code is then removed from the address column.
+
 ```{r}
-library(tidyverse)
-library(stringr)
-
 # Active Ageing Centre
-aac <- read_csv("data/carecentre/activeageingcentre.csv")
-aac <- mutate(aac, 
-  postal_code = str_extract(address, "[0-9]{6}$"),
-  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
-)
+aac <-mutate(aac,
+    postal_code = str_extract(address, "[0-9]{6}$"),  # Extract postal code
+    address = str_remove(address, "[,]?\\s*[0-9]{6}$")  # Remove postal code from address
+  )
+```
 
-# Centre Based Nursing
-nursing <- read_csv("data/carecentre/centrebasednursing.csv")
-nursing <- mutate(nursing,
-  postal_code = str_extract(address, "[0-9]{6}$"),
-  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
-)
-
-# Community Rehab Centre
-rehab <- read_csv("data/carecentre/communityrehabcentre.csv")
-rehab <- mutate(rehab,
-  postal_code = str_extract(address, "[0-9]{6}$"),
-  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
-)
-
+```{r}
 # Counselling
-counselling <- read_csv("data/carecentre/counselling.csv")
 counselling <- mutate(counselling,
   postal_code = str_extract(address, "[0-9]{6}$"),
   address = str_remove(address, "[,]?\\s*[0-9]{6}$")
 )
+```
 
+```{r}
 # Daycare
-daycare <- read_csv("data/carecentre/daycare.csv")
 daycare <- mutate(daycare,
   postal_code = str_extract(address, "[0-9]{6}$"),
   address = str_remove(address, "[,]?\\s*[0-9]{6}$")
 )
+```
 
-# Day Hospice
-hospice <- read_csv("data/carecentre/dayhospice.csv")
-hospice <- mutate(hospice,
-  postal_code = str_extract(address, "[0-9]{6}$"),
-  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
-)
-
+```{r}
 # Dementia
-dementia <- read_csv("data/carecentre/dementia.csv")
 dementia <- mutate(dementia,
   postal_code = str_extract(address, "[0-9]{6}$"),
   address = str_remove(address, "[,]?\\s*[0-9]{6}$")
 )
+```
 
+```{r}
+# Day Hospice
+hospice <- mutate(hospice,
+  postal_code = str_extract(address, "[0-9]{6}$"),
+  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
+)
+```
+
+```{r}
 # Maintenance Daycare
-maintenance <- read_csv("data/carecentre/maintenancedaycare.csv")
 maintenance <- mutate(maintenance,
   postal_code = str_extract(address, "[0-9]{6}$"),
   address = str_remove(address, "[,]?\\s*[0-9]{6}$")
 )
+```
 
+```{r}
 # NH Respite
-nhrespite <- read_csv("data/carecentre/nhrespite.csv")
 nhrespite <- mutate(nhrespite,
   postal_code = str_extract(address, "[0-9]{6}$"),
   address = str_remove(address, "[,]?\\s*[0-9]{6}$")
 )
+```
 
-# Nursing Home
-nursinghome <- read_csv("data/carecentre/nursinghome.csv")
-nursinghome <- mutate(nursinghome,
+```{r}
+# Centre Based Nursing
+nursing <- mutate(nursing,
   postal_code = str_extract(address, "[0-9]{6}$"),
   address = str_remove(address, "[,]?\\s*[0-9]{6}$")
 )
+```
 
+```{r}
+# Community Rehab Centre
+rehab <- mutate(rehab,
+  postal_code = str_extract(address, "[0-9]{6}$"),
+  address = str_remove(address, "[,]?\\s*[0-9]{6}$")
+)
+```
+
+```{r}
+# Checking for missing or null values in 'name' and 'address' columns
+aac_missing <- aac %>% summarise(across(c(name, address, postal_code), ~sum(is.na(.))))
+counselling_missing <- counselling %>% summarise(across(c(name, address, postal_code), ~sum(is.na(.))))
+daycare_missing <- daycare %>% summarise(across(c(name, address, postal_code), ~sum(is.na(.))))
+dementia_missing <- dementia %>% summarise(across(c(name, address, postal_code), ~sum(is.na(.))))
+hospice_missing <- hospice %>% summarise(across(c(name, address, postal_code),~sum(is.na(.))))
+maintenance_missing <- maintenance %>% summarise(across(c(name, address, postal_code), ~sum(is.na(.))))
+nhrespite_missing <- nhrespite %>% summarise(across(c(name, address, postal_code), ~sum(is.na(.))))
+nursing_missing <- nursing %>% summarise(across(c(name, address, postal_code), ~sum(is.na(.))))
+rehab_missing <- rehab %>% summarise(across(c(name, address, postal_code), ~sum(is.na(.))))
 ```
 
 ### Labelling each dataset appropriately
+
+The below code chunk adds a column and naming it as "label" in relation to the name of the dataset. This is done so we are able to combine the dataset together and identify
 
 ```{r}
 aac <- aac %>%
   mutate(label = "aac")
 ```
 
-### Apend all Care Centres into one dataset
+```{r}
+counselling <- counselling %>%
+  mutate(label = "counselling")
+```
+
+```{r}
+daycare <- daycare %>%
+  mutate(label = "daycare")
+```
+
+```{r}
+dementia <- dementia %>%
+  mutate(label = "dementia")
+```
+
+```{r}
+hospice <- hospice %>%
+  mutate(label = "hospice")
+```
+
+```{r}
+maintenance <- maintenance %>%
+  mutate(label = "maintenance")
+```
+
+```{r}
+nhrespite <- nhrespite %>%
+  mutate(label = "nhrespite")
+```
+
+```{r}
+nursing <- nursing %>%
+  mutate(label = "nursing")
+```
+
+```{r}
+rehab <- rehab %>%
+  mutate(label = "rehab")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(aac, "data/rds/carecentre/refined/aac.rds")
+write_rds(counselling, "data/rds/carecentre/refined/counselling.rds")
+write_rds(daycare, "data/rds/carecentre/refined/daycare.rds")
+write_rds(dementia, "data/rds/carecentre/refined/dementia.rds")
+write_rds(hospice, "data/rds/carecentre/refined/hospice.rds")
+write_rds(maintenance, "data/rds/carecentre/refined/maintenance.rds")
+write_rds(nhrespite, "data/rds/carecentre/refined/nhrespite.rds")
+write_rds(nursing, "data/rds/carecentre/refined/nursing.rds")
+write_rds(rehab, "data/rds/carecentre/refined/rehab.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+
+aac = read_rds("data/rds/carecentre/refined/aac.rds")
+counselling = read_rds("data/rds/carecentre/refined/counselling.rds")
+daycare = read_rds("data/rds/carecentre/refined/daycare.rds")
+dementia = read_rds("data/rds/carecentre/refined/dementia.rds")
+hospice = read_rds("data/rds/carecentre/refined/hospice.rds")
+maintenance = read_rds("data/rds/carecentre/refined/maintenance.rds")
+nhrespite = read_rds("data/rds/carecentre/refined/nhrespite.rds")
+nursing = read_rds("data/rds/carecentre/refined/nursing.rds")
+rehab = read_rds("data/rds/carecentre/refined/rehab.rds")
+```
+
+### Append all Care Centres into one dataset
+
+The code combines multiple datasets (aac, counselling, daycare, dementia, hospice, maintenance, nhrespite, nursing, and rehab) into a single dataset named c_data using the bind_rows() function. This function appends the rows of each dataset, stacking them vertically, to create one consolidated dataset. The resulting c_data will contain all the rows from the individual datasets, assuming they have the same column structure.
 
 ```{r}
 cc_data <- bind_rows(
   aac, 
-  nursing, 
-  rehab, 
-  counselling, 
-  daycare, 
-  hospice, 
-  dementia, 
-  maintenance, 
-  nhrespite, 
-  nursinghome
+  counselling,
+  daycare,
+  dementia,
+  hospice,
+  maintenance,
+  nhrespite,
+  nursing,
+  rehab,
 )
-
-# Optional: view the combined dataset structure
-str(all_data)
 ```
 
-each data has set adddress column with data like this 10 Tampines Street 62, 528519. i want to extra the last 6 digits from the right and make it to another column named "postal_code". do it for every dateset and row. give me the r code
+```{r}
+#| echo: false
+#| eval: false
+write_rds(cc_data, "data/rds/carecentre/refined/cc_data.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+cc_data = read_rds("data/rds/carecentre/refined/cc_data.rds")
+```
+
+Initialization of Labels and Data Copy
+
+The first part of the code initializes a vector called labels, which contains the names of all possible categories or services present in the dataset, such as "aac" (Active Ageing Centre), "dementia," "maintenance," and others. This vector serves as a reference for the unique labels that will be processed. Additionally, a copy of the original dataset cc_data is created and stored in cc_data_t. This ensures that the original dataset remains unchanged while transformations are performed on the copy.
+
+```{r}
+labels <- c("aac", "counselling", "daycare", "dementia", "hospice", "maintenance", "nhrespite", "nursing", "rehab")
+
+cc_data_t <- cc_data
+```
+
+Transformation of the Dataset
+
+The second part of the code transforms the dataset by creating new columns for each unique label found in the label column. This is achieved by first extracting the unique values from the label column using the unique() function and storing them in unique_labels. A for loop is then used to iterate over each unique label. For each label, a new column is added to the dataset cc_data_t with the same name as the label. The ifelse() function is used to populate these new columns: if the value in the label column matches the current label in the loop, "yes" is assigned to the new column; otherwise, "no" is assigned. This process effectively converts the categorical label column into multiple binary columns, where "yes" indicates the presence of the label and "no" indicates its absence. After running the code, the dataset cc_data_t will include additional columns corresponding to each unique label. For example, a row with the label "aac" will have "yes" in the aac column and "no" in all other label columns. Similarly, a row with the label "dementia" will have "yes" in the dementia column and "no" in the others. This transformation makes it easier to analyze or model the data, as categorical information is now represented in a binary format.
+
+```{r}
+
+unique_labels <- unique(cc_data_t$label)
+for (label in unique_labels) {
+  cc_data_t[[label]] <- ifelse(cc_data_t$label == label, "yes", "no")
+}
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(cc_data_t, "data/rds/carecentre/refined/cc_data_t.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+cc_data_t = read_rds("data/rds/carecentre/refined/cc_data_t.rds")
+```
+
+Grouping by postal_code: The group_by(postal_code) function groups the dataset by the postal_code column. This ensures that all rows with the same postal_code are treated as a single group for further operations.
+
+Retaining name and address: The summarise() function is used to retain the name and address columns. For each group (i.e., rows with the same postal_code), the first(name) and first(address) functions are used to keep the first occurrence of these columns. This ensures that the name and address values are preserved in the final output.
+
+Summarizing Label Columns:The across(aac:rehab, \~ ifelse(any(. == "yes"), "yes", "no")) part iterates over each label column (from aac to rehab). For each group, it checks if any row within the group has a "yes" for that label. If at least one "yes" is found, the combined row will have "yes" in that column; otherwise, it will have "no".
+
+Output:The result is a new dataset (cc_data_combined) where rows with the same postal_code are combined into a single row. The name and address columns are retained, and the label columns are summarized to reflect whether any row in the group had a "yes".
+
+```{r}
+cc_data_t <- cc_data_t %>%
+  group_by(postal_code) %>%
+  summarise(
+    name = first(name),  # Retain the first occurrence of 'name'
+    address = first(address),  # Retain the first occurrence of 'address'
+    across(aac:rehab, ~ ifelse(any(. == "yes"), "yes", "no"))
+  )
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(cc_data_t, "data/rds/carecentre/refined/cc_data_t.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+cc_data_t = read_rds("data/rds/carecentre/refined/cc_data_t.rds")
+```
+
+### Adding coordinates to care centre
+
+```{r}
+add_list <- sort(unique(cc_data_t$postal_code)) #parse a list as API cannot read df
+#unique reduces records to pass to portal
+#sort is used to easier to find geo codes
+```
+
+```{r}
+get_coords <- function(add_list){
+
+  # Create a data frame to store all retrieved coordinates
+  postal_coords <- data.frame()
+    
+  for (i in add_list){
+    r <- GET('https://www.onemap.gov.sg/api/common/elastic/search?',
+           query=list(searchVal=i,
+                     returnGeom='Y',
+                     getAddrDetails='Y'))
+    data <- fromJSON(rawToChar(r$content))
+    found <- data$found
+    res <- data$results
+    
+    # Create a new data frame for each address
+    new_row <- data.frame()
+    
+    # If single result, append 
+    if (found == 1){
+      postal <- res$POSTAL 
+      lat <- res$LATITUDE
+      lng <- res$LONGITUDE
+      new_row <- data.frame(address = i, 
+                           postal_code = postal, 
+                           latitude_wgs84 = lat,  # renamed to clarify coordinate system
+                           longitude_wgs84 = lng) # renamed to clarify coordinate system
+    }
+    
+    # If multiple results, drop NIL and append top 1
+    else if (found > 1){
+      # Remove those with NIL as postal
+      res_sub <- res[res$POSTAL != "NIL", ]
+      
+      # Set as NA first if no Postal
+      if (nrow(res_sub) == 0) {
+          new_row <- data.frame(address = i, 
+                               postal = NA, 
+                               latitude_wgs84 = NA, 
+                               longitude_wgs84 = NA)
+      }
+      else{
+        top1 <- head(res_sub, n = 1)
+        postal <- top1$POSTAL 
+        lat <- top1$LATITUDE
+        lng <- top1$LONGITUDE
+        new_row <- data.frame(address = i, 
+                             postal = postal, 
+                             latitude_wgs84 = lat, 
+                             longitude_wgs84 = lng)
+      }
+    }
+    else {
+      new_row <- data.frame(address = i, 
+                           postal = NA, 
+                           latitude_wgs84 = NA, 
+                           longitude_wgs84 = NA)
+    }
+    
+    # Add the row
+    postal_coords <- rbind(postal_coords, new_row)
+  }
+  
+  # Convert to sf object with WGS84 coordinates (EPSG:4326)
+  # Filter out rows with NA coordinates first
+  valid_coords <- postal_coords[!is.na(postal_coords$latitude_wgs84) & 
+                              !is.na(postal_coords$longitude_wgs84), ]
+  
+  if(nrow(valid_coords) > 0) {
+    coords_sf <- st_as_sf(valid_coords, 
+                         coords = c("longitude_wgs84", "latitude_wgs84"),
+                         crs = 4326)
+    
+    # Transform to SVY21 (EPSG:3414)
+    coords_svy21 <- st_transform(coords_sf, 3414)
+    
+    # Extract coordinates
+    coords_matrix <- st_coordinates(coords_svy21)
+    
+    # Add SVY21 coordinates back to the original dataframe with desired column names
+    valid_coords$longitude <- coords_matrix[, 1]  # SVY21 X coordinate as longitude
+    valid_coords$latitude <- coords_matrix[, 2]   # SVY21 Y coordinate as latitude
+    
+    # Merge back with rows that had NA coordinates
+    result <- merge(postal_coords, valid_coords[c("address", "longitude", "latitude")], 
+                   by = "address", all.x = TRUE)
+  } else {
+    # If no valid coordinates, add empty SVY21 columns
+    result <- postal_coords
+    result$longitude <- NA  # SVY21 coordinates
+    result$latitude <- NA   # SVY21 coordinates
+  }
+  
+  return(result)
+}
+```
+
+```{r}
+get_coords <- function(add_list) {
+
+  # Create a data frame to store all retrieved coordinates
+  postal_coords <- data.frame()
+  
+  for (i in add_list) {
+    r <- GET('https://www.onemap.gov.sg/api/common/elastic/search?',
+             query = list(searchVal = i,
+                          returnGeom = 'Y',
+                          getAddrDetails = 'Y'))
+    data <- fromJSON(rawToChar(r$content))
+    found <- data$found
+    res <- data$results
+    
+    # Create a new data frame for each postal code
+    new_row <- data.frame()
+    
+    # If single result, append 
+    if (found == 1) {
+      postal <- res$POSTAL
+      lat <- res$LATITUDE
+      lng <- res$LONGITUDE
+      new_row <- data.frame(postal_code = i,  # Use postal_code instead of address
+                            latitude_wgs84 = lat,
+                            longitude_wgs84 = lng)
+    }
+    
+    # If multiple results, drop NIL and append top 1
+    else if (found > 1) {
+      # Remove those with NIL as postal
+      res_sub <- res[res$POSTAL != "NIL", ]
+      
+      # Set as NA first if no Postal
+      if (nrow(res_sub) == 0) {
+        new_row <- data.frame(postal_code = i,  # Use postal_code instead of address
+                              latitude_wgs84 = NA,
+                              longitude_wgs84 = NA)
+      } else {
+        top1 <- head(res_sub, n = 1)
+        postal <- top1$POSTAL
+        lat <- top1$LATITUDE
+        lng <- top1$LONGITUDE
+        new_row <- data.frame(postal_code = i,  # Use postal_code instead of address
+                              latitude_wgs84 = lat,
+                              longitude_wgs84 = lng)
+      }
+    } else {
+      new_row <- data.frame(postal_code = i,  # Use postal_code instead of address
+                            latitude_wgs84 = NA,
+                            longitude_wgs84 = NA)
+    }
+    
+    # Add the row
+    postal_coords <- rbind(postal_coords, new_row)
+  }
+  
+  # Convert to sf object with WGS84 coordinates (EPSG:4326)
+  # Filter out rows with NA coordinates first
+  valid_coords <- postal_coords[!is.na(postal_coords$latitude_wgs84) & 
+                                 !is.na(postal_coords$longitude_wgs84), ]
+  
+  if (nrow(valid_coords) > 0) {
+    coords_sf <- st_as_sf(valid_coords, 
+                          coords = c("longitude_wgs84", "latitude_wgs84"),
+                          crs = 4326)
+    
+    # Transform to SVY21 (EPSG:3414)
+    coords_svy21 <- st_transform(coords_sf, 3414)
+    
+    # Extract coordinates
+    coords_matrix <- st_coordinates(coords_svy21)
+    
+    # Add SVY21 coordinates back to the original dataframe with desired column names
+    valid_coords$longitude <- coords_matrix[, 1]  # SVY21 X coordinate as longitude
+    valid_coords$latitude <- coords_matrix[, 2]   # SVY21 Y coordinate as latitude
+    
+    # Merge back with rows that had NA coordinates
+    result <- merge(postal_coords, valid_coords[c("postal_code", "longitude", "latitude")], 
+                    by = "postal_code", all.x = TRUE)
+  } else {
+    # If no valid coordinates, add empty SVY21 columns
+    result <- postal_coords
+    result$longitude <- NA  # SVY21 coordinates
+    result$latitude <- NA   # SVY21 coordinates
+  }
+  
+  # Remove the address column (if it exists) and ensure postal_code is the column name
+  result <- result %>% select(-address, postal_code, latitude_wgs84, longitude_wgs84, longitude, latitude)
+  
+  return(result)
+}
+```
+
+```{r}
+get_coords <- function(postal_codes) {
+  # Create a data frame to store all retrieved coordinates
+  postal_coords <- data.frame()
+  
+  # Loop through each postal code
+  for (postal_code in postal_codes) {
+    # Send API request to OneMap
+    r <- GET('https://www.onemap.gov.sg/api/common/elastic/search?',
+             query = list(searchVal = postal_code,
+                          returnGeom = 'Y',
+                          getAddrDetails = 'Y'))
+    
+    # Parse the API response
+    data <- fromJSON(rawToChar(r$content))
+    found <- data$found
+    res <- data$results
+    
+    # Initialize variables for coordinates
+    lat_wgs84 <- NA
+    lng_wgs84 <- NA
+    lat_svy21 <- NA
+    lng_svy21 <- NA
+    
+    # If results are found
+    if (found > 0) {
+      # Filter out results with NIL postal codes
+      res_sub <- res[res$POSTAL != "NIL", ]
+      
+      # If valid results exist
+      if (nrow(res_sub) > 0) {
+        # Take the first valid result
+        top1 <- head(res_sub, n = 1)
+        lat_wgs84 <- top1$LATITUDE
+        lng_wgs84 <- top1$LONGITUDE
+        
+        # Convert WGS84 (EPSG:4326) to SVY21 (EPSG:3414)
+        coords_wgs84 <- st_as_sf(data.frame(lng = lng_wgs84, lat = lat_wgs84),
+                                 coords = c("lng", "lat"), crs = 4326)
+        coords_svy21 <- st_transform(coords_wgs84, 3414)
+        coords_matrix <- st_coordinates(coords_svy21)
+        
+        # Extract SVY21 coordinates
+        lng_svy21 <- coords_matrix[, 1]
+        lat_svy21 <- coords_matrix[, 2]
+      }
+    }
+    
+    # Create a new row with postal code and coordinates
+    new_row <- data.frame(postal_code = postal_code,
+                          latitude_wgs84 = lat_wgs84,
+                          longitude_wgs84 = lng_wgs84,
+                          latitude_svy21 = lat_svy21,
+                          longitude_svy21 = lng_svy21)
+    
+    # Add the row to the data frame
+    postal_coords <- rbind(postal_coords, new_row)
+  }
+  
+  # Return the final data frame
+  return(postal_coords)
+}
+```
+
+```{r}
+coords <- get_coords(add_list)
+```
+
+The longtitude and latitude is then combined into geometry and the crs has been set to EPSG = 3414.
+
+```{r}
+coords_sf <- coords %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = 3414, remove = FALSE) %>%
+  select(address, postal, longitude, latitude, latitude_wgs84, longitude_wgs84)
+```
+
+```{r}
+cc_data_final <- cc_data_t %>% 
+  left_join(coords_sf, by = 'postal_code)
+```
+
+## Population Data
+
+### Importing Data
+
+[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2024](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2024.ashx)
+
+```{r}
+popdata24 <- read_csv("data/popdata/respopagesex2024.csv")
+```
+
+[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2023](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2023.ashx)
+
+```{r}
+popdata23 <- read_csv("data/popdata/respopagesex2023.csv")
+```
+
+[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2022](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2022.ashx) 
+
+```{r}
+popdata22 <- read_csv("data/popdata/respopagesex2022.csv")
+```
+
+::: callout-warning
+## PARSING ERROR\*
+
+```         
+Warning: One or more parsing issues, call `problems()` on your data frame for details, e.g.:
+  dat <- vroom(...)
+  problems(dat)Rows: 60424 Columns: 6── Column specification
+```
+:::
+
+[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2021](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2021.ashx)
+
+```{r}
+popdata21 <- read_csv("data/popdata/respopagesex2021.csv")
+```
+
+[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2011-2020](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2011to2020.ashx)
+
+```{r}
+popdata20 <- read_csv("data/popdata/respopagesex2011to2020.csv")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(popdata24, "data/rds/popdata/original/popdata24.rds")
+write_rds(popdata23, "data/rds/popdata/original/popdata23.rds")
+write_rds(popdata22, "data/rds/popdata/original/popdata22.rds")
+write_rds(popdata21, "data/rds/popdata/original/popdata21.rds")
+write_rds(popdata20, "data/rds/popdata/original/popdata20.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+popdata24 = read_rds("data/rds/popdata/original/popdata24.rds")
+popdata23 = read_rds("data/rds/popdata/original/popdata23.rds")
+popdata22 = read_rds("data/rds/popdata/original/popdata22.rds")
+popdata21 = read_rds("data/rds/popdata/original/popdata21.rds")
+popdata20 = read_rds("data/rds/popdata/original/popdata20.rds")
+```
+
+```{r}
+glimpse(popdata20)
+```
+
+### Changing Columns to lowercase
+
+**`names(popdata20)`**: This part of the code retrieves the current column names of the dataset `popdata20`. The `names()` function in R is used to get or set the names of an object, such as the column names of a data frame.
+
+**`tolower(names(popdata20))`**: The `tolower()` function is applied to the column names retrieved in the previous step. This function converts all characters in the names to lowercase. For example, if a column name is `"PA"`, it will become `"pa"`.
+
+**`names(popdata20) <- ...`**: This part assigns the new lowercase column names back to the dataset `popdata20`. The `<-` operator is used to update the column names of the dataset with the lowercase versions.
+
+```{r}
+# Assuming your dataset is already loaded as popdata20
+names(popdata20) <- tolower(names(popdata20))
+names(popdata21) <- tolower(names(popdata21))
+names(popdata22) <- tolower(names(popdata22))
+names(popdata23) <- tolower(names(popdata23))
+names(popdata24) <- tolower(names(popdata24))
+```
+
+### Checking for Missing Values
+
+To check for missing or null values in the name and address columns of each dataset, the code uses the summarise() function from the dplyr package. The summarise() function computes summary statistics for the specified columns, which in this case are name and address. The across() function is used to apply the sum(is.na(.)) operation to both columns simultaneously, counting the number of missing (NA) values in each column.
+
+The is.na() function checks whether each value in the name and address columns is missing or null, returning TRUE for missing values and FALSE for non-missing values. The sum() function then counts the number of TRUE values, which corresponds to the number of missing values in each column. This process is applied to each dataset (aac, counselling, daycare, dementia, hospice, maintenance, nhrespite, nursing, and rehab). In conclusion it is able to identify the number of missing values in the name and address columns across all datasets, which helps assess the completeness of the data and highlights any issues that may require cleaning or imputation before further analysis. It returns 0 missing values.
+
+Results: We noticed that there are 30 missing values popdata22 specifically under the column pop.
+
+```{r}
+popdata20_missing <- popdata20 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
+print(popdata20_missing)
+
+popdata21_missing <- popdata21 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
+print(popdata21_missing)
+
+popdata22_missing <- popdata22 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
+print(popdata22_missing)
+
+popdata23_missing <- popdata23 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
+print(popdata23_missing)
+
+popdata24_missing <- popdata24 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
+print(popdata24_missing)
+
+
+```
+
+### Issue with POPDATA22
+
+Using the below code, we are able to see clearly the rows that are affected and in the pop column, it appears as NA. The csv file (respopagesex2022.csv) was opened using excel and each row returned in the below output was then cross checked in excel. There were numbers with comma appeared in excel. This may be because read_csv() function expects a numeric value (double) in one of the columns, but instead, it found a string (the values in the column are likely formatted with commas, such as "1,020"). This is why the parser is raising an issue earlier on.
+
+```{r}
+na_rows <- popdata22[is.na(popdata22$pop), ]
+print(na_rows)
+```
+
+Using problems(), it shows details about any rows or columns that caused problems during the import. The results are a reaffirmation of the explanation above.
+
+```{r}
+problems(popdata22)
+```
+
+Referencing from [Stackoverflow](https://stackoverflow.com/questions/1523126/how-to-read-data-when-some-numbers-contain-commas-as-thousand-separator), the first line of the code is necessary as it defines a new class called `"num.with.commas"`. This class is intended to handle numeric values that are stored as strings with commas (e.g., `"1,000"`). Thereafter, the second line of the code defines a method to convert a `character` type to the custom `"num.with.commas"` class.
+
+-   The `gsub(",", "", from)` function removes commas from the string (e.g., `"1,000"` becomes `"1000"`)
+
+-   The `as.numeric()` function then converts the cleaned string into a numeric value (e.g., `"1000"` becomes `1000`)
+
+This ensures that numbers with commas are properly converted to numeric values during data import.
+
+```{r}
+setClass("num.with.commas")
+setAs("character", "num.with.commas", 
+        function(from) as.numeric(gsub(",", "", from) ) )
+```
+
+The file is then re-imported again and column types were specified.
+
+```{r}
+# Read the CSV file and specify column types
+popdata22 <- read_csv("data/popdata/respopagesex2022.csv", 
+                      col_types = cols(
+                        PA = col_character(),
+                        SZ = col_character(),
+                        Age = col_character(),
+                        Sex = col_character(),
+                        Pop = col_character(),
+                        Time = col_integer()  # Adjust if necessary
+                      ))
+```
+
+```{r}
+problems(popdata22)
+```
+
+```{r}
+names(popdata22) <- tolower(names(popdata22))
+popdata22_missing <- popdata22 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
+print(popdata22_missing)
+```
+
+### Duplicate Check
+
+The code provided checks for duplicate rows in each dataset by grouping the dataset by all columns using group_by_all(). It then filters out the rows that have duplicate combinations of values across all columns using filter(n() \> 1). The n() function counts the number of occurrences for each combination of values, and filter(n() \> 1) keeps only the rows that appear more than once (i.e., duplicates).
+
+For each dataset, the nrow() function is used to check if there are any rows returned after filtering for duplicates. If there are duplicates (i.e., the number of rows is greater than zero), the dataset with the duplicate rows is returned. However, if no duplicates are found (i.e., nrow() equals zero), the code returns 0 to indicate that there are no duplicates in that dataset.
+
+Thus, the code either returns the rows with duplicate values or 0 if no duplicates are present, providing an indication of whether duplicate entries exist in each dataset.
+
+```{r}
+# Check for duplicates in 'aac'
+popdata20_duplicate <- popdata20 %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+show(popdata20_duplicate)
+
+
+# Check for duplicates in 'counselling'
+popdata21_duplicate <- popdata21 %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+show(popdata21_duplicate)
+
+# Check for duplicates in 'daycare'
+popdata22_duplicate <- popdata22 %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+show(popdata22_duplicate)
+
+# Check for duplicates in 'dementia'
+popdata23_duplicate <- popdata23 %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+show(popdata23_duplicate)
+
+# Check for duplicates in 'hospice'
+popdata24_duplicate <- popdata24 %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+show(popdata24_duplicate)
+
+```
+
+## Changing to Integer
+
+```{r}
+# Modify the 'age' column in popdata21 dataset
+popdata24 <- popdata24 %>%
+  mutate(age = ifelse(age == "90_and_over", 90, age))
+
+```
+
+```{r}
+popdata24$Age <- as.integer(popdata24$Age)
+```
+
+## Calculating Population for Each Age Level
+
+```{r}
+popdata24 <- popdata24 %>%
+  filter(age >= 65) %>% # Filter for age >= 65
+  group_by(age) %>%      # Group by age
+  summarise(total_pop = sum(pop)) # Summarize the total population for each age group
+
+# View the resulting dataset
+print(popdata24)
+```
 
 # Exploratory Data Analysis
+
+```{r}
+plot(mpsz)
+```
 
 # References
 
