@@ -1112,17 +1112,61 @@ show(popdata24_duplicate)
 
 ```
 
-## Changing to Integer
-
 ```{r}
-# Modify the 'age' column in popdata21 dataset
-popdata24 <- popdata24 %>%
-  mutate(age = ifelse(age == "90_and_over", 90, age))
-
+#| echo: false
+#| eval: false
+write_rds(popdata24, "data/rds/popdata/refined/popdata24cleaned.rds")
+write_rds(popdata23, "data/rds/popdata/refined/popdata23cleaned.rds")
+write_rds(popdata22, "data/rds/popdata/refined/popdata22cleaned.rds")
+write_rds(popdata21, "data/rds/popdata/refined/popdata21cleaned.rds")
+write_rds(popdata20, "data/rds/popdata/refined/popdata20cleaned.rds")
 ```
 
 ```{r}
-popdata24$Age <- as.integer(popdata24$Age)
+#| echo: false
+#| eval: false
+popdata24 = read_rds("data/rds/popdata/refined/popdata24cleaned.rds")
+popdata23 = read_rds("data/rds/popdata/refined/popdata23cleaned.rds")
+popdata22 = read_rds("data/rds/popdata/refined/popdata22cleaned.rds")
+popdata21 = read_rds("data/rds/popdata/refined/popdata21cleaned.rds")
+popdata20 = read_rds("data/rds/popdata/refined/popdata20cleaned.rds")
+```
+
+## Changing 90_and_over to 90
+
+```{r}
+glimpse(popdata22)
+```
+
+```{r}
+popdata24$age <- gsub("90_and_Over", "90", popdata24$age)
+popdata23$age <- gsub("90_and_Over", "90", popdata23$age)
+popdata22$age <- gsub("90_and_Over", "90", popdata22$age)
+popdata21$age <- gsub("90_and_Over", "90", popdata21$age)
+popdata20$age <- gsub("90_and_Over", "90", popdata20$age)
+```
+
+## Changing to Integer
+
+```{r}
+popdata24$age <- as.integer(popdata24$age)
+str(popdata24$age)
+
+popdata23$age <- as.integer(popdata23$age)
+str(popdata23$age)
+
+popdata22$age <- as.integer(popdata22$age)
+str(popdata22$age)
+
+popdata21$age <- as.integer(popdata21$age)
+str(popdata21$age)
+
+popdata20$age <- as.integer(popdata20$age)
+str(popdata20$age)
+```
+
+```{r}
+table(popdata21$age, useNA = "ifany")
 ```
 
 ## Calculating Population for Each Age Level
@@ -1135,6 +1179,16 @@ popdata24 <- popdata24 %>%
 
 # View the resulting dataset
 print(popdata24)
+```
+
+## Combining Datasets
+
+```{r}
+# Combine popdata23 and popdata24 row-wise
+combined_data <- bind_rows(popdata23, popdata24)
+
+# View the combined dataset
+head(combined_data)
 ```
 
 # Exploratory Data Analysis

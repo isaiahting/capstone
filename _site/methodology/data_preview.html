@@ -207,8 +207,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#issue-with-popdata22" id="toc-issue-with-popdata22" class="nav-link" data-scroll-target="#issue-with-popdata22"><span class="header-section-number">2.5.4</span> Issue with POPDATA22</a></li>
   <li><a href="#duplicate-check-1" id="toc-duplicate-check-1" class="nav-link" data-scroll-target="#duplicate-check-1"><span class="header-section-number">2.5.5</span> Duplicate Check</a></li>
   </ul></li>
-  <li><a href="#changing-to-integer" id="toc-changing-to-integer" class="nav-link" data-scroll-target="#changing-to-integer"><span class="header-section-number">2.6</span> Changing to Integer</a></li>
-  <li><a href="#calculating-population-for-each-age-level" id="toc-calculating-population-for-each-age-level" class="nav-link" data-scroll-target="#calculating-population-for-each-age-level"><span class="header-section-number">2.7</span> Calculating Population for Each Age Level</a></li>
+  <li><a href="#changing-90_and_over-to-90" id="toc-changing-90_and_over-to-90" class="nav-link" data-scroll-target="#changing-90_and_over-to-90"><span class="header-section-number">2.6</span> Changing 90_and_over to 90</a></li>
+  <li><a href="#changing-to-integer" id="toc-changing-to-integer" class="nav-link" data-scroll-target="#changing-to-integer"><span class="header-section-number">2.7</span> Changing to Integer</a></li>
+  <li><a href="#calculating-population-for-each-age-level" id="toc-calculating-population-for-each-age-level" class="nav-link" data-scroll-target="#calculating-population-for-each-age-level"><span class="header-section-number">2.8</span> Calculating Population for Each Age Level</a></li>
+  <li><a href="#combining-datasets" id="toc-combining-datasets" class="nav-link" data-scroll-target="#combining-datasets"><span class="header-section-number">2.9</span> Combining Datasets</a></li>
   </ul></li>
   <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis"><span class="header-section-number">3</span> Exploratory Data Analysis</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">4</span> References</a></li>
@@ -238,7 +240,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">March 16, 2025</p>
+      <p class="date-modified">March 17, 2025</p>
     </div>
   </div>
     
@@ -1173,34 +1175,68 @@ PARSING ERROR*
 </div>
 </section>
 </section>
-<section id="changing-to-integer" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="changing-to-integer"><span class="header-section-number">2.6</span> Changing to Integer</h2>
+<section id="changing-90_and_over-to-90" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="changing-90_and_over-to-90"><span class="header-section-number">2.6</span> Changing 90_and_over to 90</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modify the 'age' column in popdata21 dataset</span></span>
-<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>popdata24 <span class="ot">&lt;-</span> popdata24 <span class="sc">%&gt;%</span></span>
-<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age =</span> <span class="fu">ifelse</span>(age <span class="sc">==</span> <span class="st">"90_and_over"</span>, <span class="dv">90</span>, age))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(popdata22)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>popdata24<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(popdata24<span class="sc">$</span>Age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>popdata24<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"90_and_Over"</span>, <span class="st">"90"</span>, popdata24<span class="sc">$</span>age)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>popdata23<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"90_and_Over"</span>, <span class="st">"90"</span>, popdata23<span class="sc">$</span>age)</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>popdata22<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"90_and_Over"</span>, <span class="st">"90"</span>, popdata22<span class="sc">$</span>age)</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>popdata21<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"90_and_Over"</span>, <span class="st">"90"</span>, popdata21<span class="sc">$</span>age)</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>popdata20<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"90_and_Over"</span>, <span class="st">"90"</span>, popdata20<span class="sc">$</span>age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="calculating-population-for-each-age-level" class="level2" data-number="2.7">
-<h2 data-number="2.7" class="anchored" data-anchor-id="calculating-population-for-each-age-level"><span class="header-section-number">2.7</span> Calculating Population for Each Age Level</h2>
+<section id="changing-to-integer" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="changing-to-integer"><span class="header-section-number">2.7</span> Changing to Integer</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>popdata24 <span class="ot">&lt;-</span> popdata24 <span class="sc">%&gt;%</span></span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(age <span class="sc">&gt;=</span> <span class="dv">65</span>) <span class="sc">%&gt;%</span> <span class="co"># Filter for age &gt;= 65</span></span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(age) <span class="sc">%&gt;%</span>      <span class="co"># Group by age</span></span>
-<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_pop =</span> <span class="fu">sum</span>(pop)) <span class="co"># Summarize the total population for each age group</span></span>
-<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a><span class="co"># View the resulting dataset</span></span>
-<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata24)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>popdata24<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(popdata24<span class="sc">$</span>age)</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(popdata24<span class="sc">$</span>age)</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>popdata23<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(popdata23<span class="sc">$</span>age)</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(popdata23<span class="sc">$</span>age)</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>popdata22<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(popdata22<span class="sc">$</span>age)</span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(popdata22<span class="sc">$</span>age)</span>
+<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a>popdata21<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(popdata21<span class="sc">$</span>age)</span>
+<span id="cb65-11"><a href="#cb65-11" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(popdata21<span class="sc">$</span>age)</span>
+<span id="cb65-12"><a href="#cb65-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-13"><a href="#cb65-13" aria-hidden="true" tabindex="-1"></a>popdata20<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(popdata20<span class="sc">$</span>age)</span>
+<span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(popdata20<span class="sc">$</span>age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(popdata21<span class="sc">$</span>age, <span class="at">useNA =</span> <span class="st">"ifany"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="calculating-population-for-each-age-level" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="calculating-population-for-each-age-level"><span class="header-section-number">2.8</span> Calculating Population for Each Age Level</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>popdata24 <span class="ot">&lt;-</span> popdata24 <span class="sc">%&gt;%</span></span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(age <span class="sc">&gt;=</span> <span class="dv">65</span>) <span class="sc">%&gt;%</span> <span class="co"># Filter for age &gt;= 65</span></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(age) <span class="sc">%&gt;%</span>      <span class="co"># Group by age</span></span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_pop =</span> <span class="fu">sum</span>(pop)) <span class="co"># Summarize the total population for each age group</span></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a><span class="co"># View the resulting dataset</span></span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata24)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="combining-datasets" class="level2" data-number="2.9">
+<h2 data-number="2.9" class="anchored" data-anchor-id="combining-datasets"><span class="header-section-number">2.9</span> Combining Datasets</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine popdata23 and popdata24 row-wise</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(popdata23, popdata24)</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a><span class="co"># View the combined dataset</span></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(combined_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="exploratory-data-analysis" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Exploratory Data Analysis</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mpsz)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mpsz)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="references" class="level1" data-number="4">

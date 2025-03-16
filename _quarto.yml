@@ -12,6 +12,7 @@ website:
       - text: "Methodology"
         menu:
           - text: "Methods"
+            href: "methodology/data_preview.html"
             
       - text: "Results"
         menu: 

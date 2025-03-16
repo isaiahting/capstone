@@ -11,7 +11,7 @@
     "href": "index.html",
     "title": "Accessibility of Eldercare Service In Singapore: A Geospatial Analysis",
     "section": "",
-    "text": "Hello! Welcome to my Page!\nThis website is crafted in Partial Fulfillment of the Requirements for the Capstone Project Module in the Master in IT in Business (MITB) Programme at the Singapore Management University under the esteemed guidance of A/Prof KAM Tin Seong.\nMotivation in Undertaking Capstone\nInspired by the pioneering work of John Snow in epidemiology, whose spatial mapping of cholera outbreaks in the 1850s revolutionized disease tracking, I aim to apply geospatial principles to contemporary challenges, using spatial data to analyze patterns, uncover insights, and contribute to more informed decision-making in fields like public health and beyond, especially with the rise of infectious diseases.\n\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Hello! Welcome to my Page!\nThis website is crafted in Partial Fulfillment of the Requirements for the Capstone Project Module in the Master in IT in Business (MITB) Programme at the Singapore Management University under the esteemed guidance of A/Prof KAM Tin Seong.\nMotivation in Undertaking Capstone\nInspired by the pioneering work of John Snow in epidemiology, whose spatial mapping of cholera outbreaks in the 1850s revolutionized disease tracking, I aim to apply geospatial principles to contemporary challenges, using spatial data to analyze patterns, uncover insights, and contribute to more informed decision-making in fields like public health and beyond, especially with the rise of infectious diseases.\nIn this capstone project, I aimed at ascertaining the accessibility of elderly care services in Singapore.\nLooking forward to your opinions too via Linkedin.\nBest Regards,\nJoshua TING\n\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -87,14 +87,28 @@
     "objectID": "methodology/data_preview.html#changing-to-integer",
     "href": "methodology/data_preview.html#changing-to-integer",
     "title": "Data Preview",
-    "section": "2.6 Changing to Integer",
-    "text": "2.6 Changing to Integer\n\n# Modify the 'age' column in popdata21 dataset\npopdata24 &lt;- popdata24 %&gt;%\n  mutate(age = ifelse(age == \"90_and_over\", 90, age))\n\n\npopdata24$Age &lt;- as.integer(popdata24$Age)"
+    "section": "2.7 Changing to Integer",
+    "text": "2.7 Changing to Integer\n\npopdata24$age &lt;- as.integer(popdata24$age)\nstr(popdata24$age)\n\npopdata23$age &lt;- as.integer(popdata23$age)\nstr(popdata23$age)\n\npopdata22$age &lt;- as.integer(popdata22$age)\nstr(popdata22$age)\n\npopdata21$age &lt;- as.integer(popdata21$age)\nstr(popdata21$age)\n\npopdata20$age &lt;- as.integer(popdata20$age)\nstr(popdata20$age)\n\n\ntable(popdata21$age, useNA = \"ifany\")"
   },
   {
     "objectID": "methodology/data_preview.html#calculating-population-for-each-age-level",
     "href": "methodology/data_preview.html#calculating-population-for-each-age-level",
     "title": "Data Preview",
-    "section": "2.7 Calculating Population for Each Age Level",
-    "text": "2.7 Calculating Population for Each Age Level\n\npopdata24 &lt;- popdata24 %&gt;%\n  filter(age &gt;= 65) %&gt;% # Filter for age &gt;= 65\n  group_by(age) %&gt;%      # Group by age\n  summarise(total_pop = sum(pop)) # Summarize the total population for each age group\n\n# View the resulting dataset\nprint(popdata24)"
+    "section": "2.8 Calculating Population for Each Age Level",
+    "text": "2.8 Calculating Population for Each Age Level\n\npopdata24 &lt;- popdata24 %&gt;%\n  filter(age &gt;= 65) %&gt;% # Filter for age &gt;= 65\n  group_by(age) %&gt;%      # Group by age\n  summarise(total_pop = sum(pop)) # Summarize the total population for each age group\n\n# View the resulting dataset\nprint(popdata24)"
+  },
+  {
+    "objectID": "methodology/data_preview.html#changing-90_and_over-to-90",
+    "href": "methodology/data_preview.html#changing-90_and_over-to-90",
+    "title": "Data Preview",
+    "section": "2.6 Changing 90_and_over to 90",
+    "text": "2.6 Changing 90_and_over to 90\n\nglimpse(popdata22)\n\n\npopdata24$age &lt;- gsub(\"90_and_Over\", \"90\", popdata24$age)\npopdata23$age &lt;- gsub(\"90_and_Over\", \"90\", popdata23$age)\npopdata22$age &lt;- gsub(\"90_and_Over\", \"90\", popdata22$age)\npopdata21$age &lt;- gsub(\"90_and_Over\", \"90\", popdata21$age)\npopdata20$age &lt;- gsub(\"90_and_Over\", \"90\", popdata20$age)"
+  },
+  {
+    "objectID": "methodology/data_preview.html#combining-datasets",
+    "href": "methodology/data_preview.html#combining-datasets",
+    "title": "Data Preview",
+    "section": "2.9 Combining Datasets",
+    "text": "2.9 Combining Datasets\n\n# Combine popdata23 and popdata24 row-wise\ncombined_data &lt;- bind_rows(popdata23, popdata24)\n\n# View the combined dataset\nhead(combined_data)"
   }
 ]
