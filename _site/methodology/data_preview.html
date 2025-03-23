@@ -135,7 +135,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Methodology</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-methodology">    
-        <li class="dropdown-header">Methods</li>
+        <li>
+    <a class="dropdown-item" href="../methodology/data_preview.html">
+ <span class="dropdown-text">Methods</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -185,7 +188,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#importing-singapores-master-plan-2019-subzone-boundary" id="toc-importing-singapores-master-plan-2019-subzone-boundary" class="nav-link" data-scroll-target="#importing-singapores-master-plan-2019-subzone-boundary"><span class="header-section-number">2.2.1</span> Importing Singapore’s Master Plan 2019 Subzone Boundary</a></li>
   </ul></li>
-  <li><a href="#care-centre" id="toc-care-centre" class="nav-link" data-scroll-target="#care-centre"><span class="header-section-number">2.3</span> Care Centre</a>
+  <li><a href="#care-centre-extract-transform-load" id="toc-care-centre-extract-transform-load" class="nav-link" data-scroll-target="#care-centre-extract-transform-load"><span class="header-section-number">2.3</span> Care Centre (EXTRACT TRANSFORM LOAD)</a>
   <ul class="collapse">
   <li><a href="#cursory-view" id="toc-cursory-view" class="nav-link" data-scroll-target="#cursory-view"><span class="header-section-number">2.3.1</span> Cursory View</a></li>
   <li><a href="#deleting-unwanted-codes" id="toc-deleting-unwanted-codes" class="nav-link" data-scroll-target="#deleting-unwanted-codes"><span class="header-section-number">2.3.2</span> Deleting Unwanted Codes</a></li>
@@ -197,7 +200,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#seperating-postal-code-from-address" id="toc-seperating-postal-code-from-address" class="nav-link" data-scroll-target="#seperating-postal-code-from-address"><span class="header-section-number">2.4.1</span> Seperating postal code from address</a></li>
   <li><a href="#labelling-each-dataset-appropriately" id="toc-labelling-each-dataset-appropriately" class="nav-link" data-scroll-target="#labelling-each-dataset-appropriately"><span class="header-section-number">2.4.2</span> Labelling each dataset appropriately</a></li>
   <li><a href="#append-all-care-centres-into-one-dataset" id="toc-append-all-care-centres-into-one-dataset" class="nav-link" data-scroll-target="#append-all-care-centres-into-one-dataset"><span class="header-section-number">2.4.3</span> Append all Care Centres into one dataset</a></li>
-  <li><a href="#adding-coordinates-to-care-centre" id="toc-adding-coordinates-to-care-centre" class="nav-link" data-scroll-target="#adding-coordinates-to-care-centre"><span class="header-section-number">2.4.4</span> Adding coordinates to care centre</a></li>
+  <li><a href="#use-this" id="toc-use-this" class="nav-link" data-scroll-target="#use-this"><span class="header-section-number">2.4.4</span> USE THIS</a></li>
+  <li><a href="#adding-coordinates-to-care-centre" id="toc-adding-coordinates-to-care-centre" class="nav-link" data-scroll-target="#adding-coordinates-to-care-centre"><span class="header-section-number">2.4.5</span> Adding coordinates to care centre</a></li>
+  <li><a href="#try-this" id="toc-try-this" class="nav-link" data-scroll-target="#try-this"><span class="header-section-number">2.4.6</span> try this</a></li>
   </ul></li>
   <li><a href="#population-data" id="toc-population-data" class="nav-link" data-scroll-target="#population-data"><span class="header-section-number">2.5</span> Population Data</a>
   <ul class="collapse">
@@ -208,9 +213,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#duplicate-check-1" id="toc-duplicate-check-1" class="nav-link" data-scroll-target="#duplicate-check-1"><span class="header-section-number">2.5.5</span> Duplicate Check</a></li>
   </ul></li>
   <li><a href="#changing-90_and_over-to-90" id="toc-changing-90_and_over-to-90" class="nav-link" data-scroll-target="#changing-90_and_over-to-90"><span class="header-section-number">2.6</span> Changing 90_and_over to 90</a></li>
-  <li><a href="#changing-to-integer" id="toc-changing-to-integer" class="nav-link" data-scroll-target="#changing-to-integer"><span class="header-section-number">2.7</span> Changing to Integer</a></li>
-  <li><a href="#calculating-population-for-each-age-level" id="toc-calculating-population-for-each-age-level" class="nav-link" data-scroll-target="#calculating-population-for-each-age-level"><span class="header-section-number">2.8</span> Calculating Population for Each Age Level</a></li>
-  <li><a href="#combining-datasets" id="toc-combining-datasets" class="nav-link" data-scroll-target="#combining-datasets"><span class="header-section-number">2.9</span> Combining Datasets</a></li>
+  <li><a href="#calculating-population-for-each-age-level" id="toc-calculating-population-for-each-age-level" class="nav-link" data-scroll-target="#calculating-population-for-each-age-level"><span class="header-section-number">2.7</span> Calculating Population for Each Age Level</a></li>
+  <li><a href="#combining-datasets" id="toc-combining-datasets" class="nav-link" data-scroll-target="#combining-datasets"><span class="header-section-number">2.8</span> Combining Datasets</a></li>
   </ul></li>
   <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis"><span class="header-section-number">3</span> Exploratory Data Analysis</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">4</span> References</a></li>
@@ -240,7 +244,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">March 17, 2025</p>
+      <p class="date-modified">March 24, 2025</p>
     </div>
   </div>
     
@@ -260,7 +264,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>3 main spectrum of data will be required for this research, namely the Population Data, Master Plan 2019 Subzone boundary and Care Centres.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../methodology/data/images/data_overview.png" class="img-fluid figure-img"></p>
+<p><img src="../methodology/images/data_overview.png" class="img-fluid figure-img"></p>
 <figcaption>Figure x: Data Overview</figcaption>
 </figure>
 </div>
@@ -272,7 +276,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Web Scraper is used as it is free, works reasonably well and available in both Chrome and Firefox web store. In the below steps, Chrome will be the default web browser used.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../methodology/data/images/step0.png" class="img-fluid figure-img"></p>
+<p><img src="../methodology/images/step0.png" class="img-fluid figure-img"></p>
 <figcaption><em>Figure x: Web Scraper</em></figcaption>
 </figure>
 </div>
@@ -282,7 +286,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>After downloading the extension from Chrome Web Store, press onto the menu bar at the right of the browser and locate Developer Tools while onto the website you would like to scrape information from.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../methodology/data/images/step1.png" class="img-fluid figure-img"></p>
+<p><img src="../methodology/images/step1.png" class="img-fluid figure-img"></p>
 <figcaption><em>Figure x: Web Scraper</em></figcaption>
 </figure>
 </div>
@@ -290,14 +294,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-2-interface-for-webscraper" class="level4" data-number="2.0.1.3">
 <h4 data-number="2.0.1.3" class="anchored" data-anchor-id="step-2-interface-for-webscraper"><span class="header-section-number">2.0.1.3</span> Step 2: Interface for Webscraper</h4>
 <p>After clicking onto Developer Tools, click onto the Web Scraper in the menu bar (in black). Following which the below interface will appear.</p>
-<p><a href="Figure x: Locate Developer Tools"><img src="../methodology/data/images/step2.png" class="img-fluid" width="499"></a></p>
+<p><a href="Figure x: Locate Developer Tools"><img src="../methodology/images/step2.png" class="img-fluid" width="499"></a></p>
 </section>
 <section id="step-3-create-new-sitemap" class="level4" data-number="2.0.1.4">
 <h4 data-number="2.0.1.4" class="anchored" data-anchor-id="step-3-create-new-sitemap"><span class="header-section-number">2.0.1.4</span> Step 3: Create New Sitemap</h4>
 <p>Click onto “create new sitemap”, thereafter “Create Sitemap”. Sitemap Name will be the overarching term used for these information; in this instance, it will be AAC. The Start URL will be the HTML link that you would like the information to be scraped from.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../methodology/data/images/step3.png" class="img-fluid figure-img"></p>
+<p><img src="../methodology/images/step3.png" class="img-fluid figure-img"></p>
 <figcaption>Figure x:</figcaption>
 </figure>
 </div>
@@ -307,7 +311,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>After creating a new sitemap, the following interface will appear. Click onto the “Add new selector” to select the information to scrape.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../methodology/data/images/step4.png" class="img-fluid figure-img"></p>
+<p><img src="../methodology/images/step4.png" class="img-fluid figure-img"></p>
 <figcaption>Figure x:</figcaption>
 </figure>
 </div>
@@ -317,7 +321,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Firstly, the id will be the column name. For Type, select Element Attribute from the drop down selection. Thereafter, press on Select under Selector and select two boxes of each centre as seen in the figure below (the remaining boxes will be highlighted through its intelligent function) and press onto Done Selecting in the green box.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../methodology/data/images/step5.png" class="img-fluid figure-img"></p>
+<p><img src="../methodology/images/step5.png" class="img-fluid figure-img"></p>
 <figcaption>Figure x:</figcaption>
 </figure>
 </div>
@@ -327,7 +331,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>After adding a new selector, the sitemap page will appear the selector that you’ve inputted.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../methodology/data/images/step6.png" class="img-fluid figure-img"></p>
+<p><img src="../methodology/images/step6.png" class="img-fluid figure-img"></p>
 <figcaption>Figure x: Step 6 - Create New Sitemap</figcaption>
 </figure>
 </div>
@@ -337,7 +341,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Firstly, the id will be name (with reference to the name of care centre), serving as the column name. Text will be chosen under Type thereafter press Select under Selector and highlight the first 2 names of the care centres (The remaining care centres will be highlighted through its intelligent function) and press onto Done selecting in the green box. Multiple box will be selected as we would like to scrap multiple names and root parent selector will be root and press onto Save Selector.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../methodology/data/images/step7.png" class="img-fluid figure-img"></p>
+<p><img src="../methodology/images/step7.png" class="img-fluid figure-img"></p>
 <figcaption>Figure x: Step 7 - Selecting Name of Care Centre</figcaption>
 </figure>
 </div>
@@ -347,7 +351,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>A popup window will be prompted and Group selectors was selected.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../methodology/data/images/step8.png" class="img-fluid figure-img"></p>
+<p><img src="../methodology/images/step8.png" class="img-fluid figure-img"></p>
 <figcaption>Figure x: Step 8 - Create New Sitemap</figcaption>
 </figure>
 </div>
@@ -357,7 +361,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Similar to Step 7, the id will be address. Text will be chosen under Type thereafter press Select under Selector and highlight the first 2 addresses of the care centres (Remaining addresses will be highlighted through its intelligent function) and press onto Done selecting in the green box. Multiple box will be selected as we would like to scrap multiple addresses and parent selector will be wrapper_for_main_name (as we grouped selectors in step 8) and press onto Save Selector.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../methodology/data/images/step9.png" class="img-fluid figure-img"></p>
+<p><img src="../methodology/images/step9.png" class="img-fluid figure-img"></p>
 <figcaption>Figure x: Step 9 - Selecting Address of Care Centre</figcaption>
 </figure>
 </div>
@@ -367,7 +371,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Prior to data scraping, the data is previewed in ensuring each name of the care centre is correctly tagged to the address using the main website to verify.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../methodology/data/images/step10.png" class="img-fluid figure-img"></p>
+<p><img src="../methodology/images/step10.png" class="img-fluid figure-img"></p>
 <figcaption>Figure x: Step 10 - Data Preview</figcaption>
 </figure>
 </div>
@@ -377,7 +381,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Head over to sitemap aac and click onto Scrape. A new browser will appear indicating that it is in process of scraping. It will be closed automatically once the process has ended.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../methodology/data/images/step11.png" class="img-fluid figure-img"></p>
+<p><img src="../methodology/images/step11.png" class="img-fluid figure-img"></p>
 <figcaption>Figure x: Step 11 - Commence Scraping</figcaption>
 </figure>
 </div>
@@ -387,7 +391,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Export data is selected upon clicking sitemap aac. 2 file options are offered: csv and xlsx. The former was chosen as CSV files are simple and portable which doesn’t complicate data processing. Thereafter the data will be downloaded.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../methodology/data/images/step12.png" class="img-fluid figure-img"></p>
+<p><img src="../methodology/images/step12.png" class="img-fluid figure-img"></p>
 <figcaption>Figure x:</figcaption>
 </figure>
 </div>
@@ -397,7 +401,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>In ensuring the web scraping successful and accurate, the csv. file is opened and viewed.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../methodology/data/images/step13.png" class="img-fluid figure-img"></p>
+<p><img src="../methodology/images/step13.png" class="img-fluid figure-img"></p>
 <figcaption>Figure x: Step 11 - View CSV File</figcaption>
 </figure>
 </div>
@@ -434,8 +438,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 </section>
-<section id="care-centre" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="care-centre"><span class="header-section-number">2.3</span> Care Centre</h2>
+<section id="care-centre-extract-transform-load" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="care-centre-extract-transform-load"><span class="header-section-number">2.3</span> Care Centre (EXTRACT TRANSFORM LOAD)</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>aac <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/carecentre/activeageingcentre.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -705,306 +709,159 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  rehab,</span>
 <span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Initialization of Labels and Data Copy</p>
-<p>The first part of the code initializes a vector called labels, which contains the names of all possible categories or services present in the dataset, such as “aac” (Active Ageing Centre), “dementia,” “maintenance,” and others. This vector serves as a reference for the unique labels that will be processed. Additionally, a copy of the original dataset cc_data is created and stored in cc_data_t. This ensures that the original dataset remains unchanged while transformations are performed on the copy.</p>
+</section>
+<section id="use-this" class="level3" data-number="2.4.4">
+<h3 data-number="2.4.4" class="anchored" data-anchor-id="use-this"><span class="header-section-number">2.4.4</span> USE THIS</h3>
+<p>If yes is 1, no returns 0.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"aac"</span>, <span class="st">"counselling"</span>, <span class="st">"daycare"</span>, <span class="st">"dementia"</span>, <span class="st">"hospice"</span>, <span class="st">"maintenance"</span>, <span class="st">"nhrespite"</span>, <span class="st">"nursing"</span>, <span class="st">"rehab"</span>)</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>cc_data_t <span class="ot">&lt;-</span> cc_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Transformation of the Dataset</p>
-<p>The second part of the code transforms the dataset by creating new columns for each unique label found in the label column. This is achieved by first extracting the unique values from the label column using the unique() function and storing them in unique_labels. A for loop is then used to iterate over each unique label. For each label, a new column is added to the dataset cc_data_t with the same name as the label. The ifelse() function is used to populate these new columns: if the value in the label column matches the current label in the loop, “yes” is assigned to the new column; otherwise, “no” is assigned. This process effectively converts the categorical label column into multiple binary columns, where “yes” indicates the presence of the label and “no” indicates its absence. After running the code, the dataset cc_data_t will include additional columns corresponding to each unique label. For example, a row with the label “aac” will have “yes” in the aac column and “no” in all other label columns. Similarly, a row with the label “dementia” will have “yes” in the dementia column and “no” in the others. This transformation makes it easier to analyze or model the data, as categorical information is now represented in a binary format.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>unique_labels <span class="ot">&lt;-</span> <span class="fu">unique</span>(cc_data_t<span class="sc">$</span>label)</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (label <span class="cf">in</span> unique_labels) {</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  cc_data_t[[label]] <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(cc_data_t<span class="sc">$</span>label <span class="sc">==</span> label, <span class="st">"yes"</span>, <span class="st">"no"</span>)</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>pivoted_cc_data <span class="ot">&lt;-</span> cc_data <span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>address) <span class="sc">%&gt;%</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">present =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span>  <span class="co"># Create a column to indicate presence (1)</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> label,    <span class="co"># Pivot based on the 'label' column</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> present,</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_fill =</span> <span class="fu">list</span>(<span class="dv">0</span>)<span class="co"># Use the 'present' column for the values</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Grouping by postal_code: The group_by(postal_code) function groups the dataset by the postal_code column. This ensures that all rows with the same postal_code are treated as a single group for further operations.</p>
 <p>Retaining name and address: The summarise() function is used to retain the name and address columns. For each group (i.e., rows with the same postal_code), the first(name) and first(address) functions are used to keep the first occurrence of these columns. This ensures that the name and address values are preserved in the final output.</p>
 <p>Summarizing Label Columns:The across(aac:rehab, ~ ifelse(any(. == “yes”), “yes”, “no”)) part iterates over each label column (from aac to rehab). For each group, it checks if any row within the group has a “yes” for that label. If at least one “yes” is found, the combined row will have “yes” in that column; otherwise, it will have “no”.</p>
 <p>Output:The result is a new dataset (cc_data_combined) where rows with the same postal_code are combined into a single row. The name and address columns are retained, and the label columns are summarized to reflect whether any row in the group had a “yes”.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>cc_data_t <span class="ot">&lt;-</span> cc_data_t <span class="sc">%&gt;%</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(postal_code) <span class="sc">%&gt;%</span></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="fu">first</span>(name),  <span class="co"># Retain the first occurrence of 'name'</span></span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">address =</span> <span class="fu">first</span>(address),  <span class="co"># Retain the first occurrence of 'address'</span></span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(aac<span class="sc">:</span>rehab, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">any</span>(. <span class="sc">==</span> <span class="st">"yes"</span>), <span class="st">"yes"</span>, <span class="st">"no"</span>))</span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>cc_data_t <span class="ot">&lt;-</span> cc_data_t <span class="sc">%&gt;%</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(postal_code) <span class="sc">%&gt;%</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="fu">first</span>(name),  <span class="co"># Retain the first occurrence of 'name'</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">address =</span> <span class="fu">first</span>(address),  <span class="co"># Retain the first occurrence of 'address'</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(aac<span class="sc">:</span>rehab, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">any</span>(. <span class="sc">==</span> <span class="st">"yes"</span>), <span class="st">"yes"</span>, <span class="st">"no"</span>))</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="adding-coordinates-to-care-centre" class="level3" data-number="2.4.4">
-<h3 data-number="2.4.4" class="anchored" data-anchor-id="adding-coordinates-to-care-centre"><span class="header-section-number">2.4.4</span> Adding coordinates to care centre</h3>
+<section id="adding-coordinates-to-care-centre" class="level3" data-number="2.4.5">
+<h3 data-number="2.4.5" class="anchored" data-anchor-id="adding-coordinates-to-care-centre"><span class="header-section-number">2.4.5</span> Adding coordinates to care centre</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>add_list <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(cc_data_t<span class="sc">$</span>postal_code)) <span class="co">#parse a list as API cannot read df</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="co">#unique reduces records to pass to portal</span></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="co">#sort is used to easier to find geo codes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>add_list <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(pivoted_cc_data<span class="sc">$</span>postal_code)) <span class="co">#parse a list as API cannot read df</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="co">#unique reduces records to pass to portal</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co">#sort is used to easier to find geo codes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>get_coords <span class="ot">&lt;-</span> <span class="cf">function</span>(add_list){</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create a data frame to store all retrieved coordinates</span></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  postal_coords <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> add_list){</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    r <span class="ot">&lt;-</span> <span class="fu">GET</span>(<span class="st">'https://www.onemap.gov.sg/api/common/elastic/search?'</span>,</span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">query=</span><span class="fu">list</span>(<span class="at">searchVal=</span>i,</span>
-<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">returnGeom=</span><span class="st">'Y'</span>,</span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">getAddrDetails=</span><span class="st">'Y'</span>))</span>
-<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>    data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(r<span class="sc">$</span>content))</span>
-<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>    found <span class="ot">&lt;-</span> data<span class="sc">$</span>found</span>
-<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> data<span class="sc">$</span>results</span>
-<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a new data frame for each address</span></span>
-<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>    new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
-<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If single result, append </span></span>
-<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (found <span class="sc">==</span> <span class="dv">1</span>){</span>
-<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>      postal <span class="ot">&lt;-</span> res<span class="sc">$</span>POSTAL </span>
-<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>      lat <span class="ot">&lt;-</span> res<span class="sc">$</span>LATITUDE</span>
-<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>      lng <span class="ot">&lt;-</span> res<span class="sc">$</span>LONGITUDE</span>
-<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>      new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">address =</span> i, </span>
-<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a>                           <span class="at">postal_code =</span> postal, </span>
-<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>                           <span class="at">latitude_wgs84 =</span> lat,  <span class="co"># renamed to clarify coordinate system</span></span>
-<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a>                           <span class="at">longitude_wgs84 =</span> lng) <span class="co"># renamed to clarify coordinate system</span></span>
-<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb41-29"><a href="#cb41-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If multiple results, drop NIL and append top 1</span></span>
-<span id="cb41-30"><a href="#cb41-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (found <span class="sc">&gt;</span> <span class="dv">1</span>){</span>
-<span id="cb41-31"><a href="#cb41-31" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Remove those with NIL as postal</span></span>
-<span id="cb41-32"><a href="#cb41-32" aria-hidden="true" tabindex="-1"></a>      res_sub <span class="ot">&lt;-</span> res[res<span class="sc">$</span>POSTAL <span class="sc">!=</span> <span class="st">"NIL"</span>, ]</span>
-<span id="cb41-33"><a href="#cb41-33" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb41-34"><a href="#cb41-34" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Set as NA first if no Postal</span></span>
-<span id="cb41-35"><a href="#cb41-35" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">nrow</span>(res_sub) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb41-36"><a href="#cb41-36" aria-hidden="true" tabindex="-1"></a>          new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">address =</span> i, </span>
-<span id="cb41-37"><a href="#cb41-37" aria-hidden="true" tabindex="-1"></a>                               <span class="at">postal =</span> <span class="cn">NA</span>, </span>
-<span id="cb41-38"><a href="#cb41-38" aria-hidden="true" tabindex="-1"></a>                               <span class="at">latitude_wgs84 =</span> <span class="cn">NA</span>, </span>
-<span id="cb41-39"><a href="#cb41-39" aria-hidden="true" tabindex="-1"></a>                               <span class="at">longitude_wgs84 =</span> <span class="cn">NA</span>)</span>
-<span id="cb41-40"><a href="#cb41-40" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb41-41"><a href="#cb41-41" aria-hidden="true" tabindex="-1"></a>      <span class="cf">else</span>{</span>
-<span id="cb41-42"><a href="#cb41-42" aria-hidden="true" tabindex="-1"></a>        top1 <span class="ot">&lt;-</span> <span class="fu">head</span>(res_sub, <span class="at">n =</span> <span class="dv">1</span>)</span>
-<span id="cb41-43"><a href="#cb41-43" aria-hidden="true" tabindex="-1"></a>        postal <span class="ot">&lt;-</span> top1<span class="sc">$</span>POSTAL </span>
-<span id="cb41-44"><a href="#cb41-44" aria-hidden="true" tabindex="-1"></a>        lat <span class="ot">&lt;-</span> top1<span class="sc">$</span>LATITUDE</span>
-<span id="cb41-45"><a href="#cb41-45" aria-hidden="true" tabindex="-1"></a>        lng <span class="ot">&lt;-</span> top1<span class="sc">$</span>LONGITUDE</span>
-<span id="cb41-46"><a href="#cb41-46" aria-hidden="true" tabindex="-1"></a>        new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">address =</span> i, </span>
-<span id="cb41-47"><a href="#cb41-47" aria-hidden="true" tabindex="-1"></a>                             <span class="at">postal =</span> postal, </span>
-<span id="cb41-48"><a href="#cb41-48" aria-hidden="true" tabindex="-1"></a>                             <span class="at">latitude_wgs84 =</span> lat, </span>
-<span id="cb41-49"><a href="#cb41-49" aria-hidden="true" tabindex="-1"></a>                             <span class="at">longitude_wgs84 =</span> lng)</span>
-<span id="cb41-50"><a href="#cb41-50" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb41-51"><a href="#cb41-51" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb41-52"><a href="#cb41-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
-<span id="cb41-53"><a href="#cb41-53" aria-hidden="true" tabindex="-1"></a>      new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">address =</span> i, </span>
-<span id="cb41-54"><a href="#cb41-54" aria-hidden="true" tabindex="-1"></a>                           <span class="at">postal =</span> <span class="cn">NA</span>, </span>
-<span id="cb41-55"><a href="#cb41-55" aria-hidden="true" tabindex="-1"></a>                           <span class="at">latitude_wgs84 =</span> <span class="cn">NA</span>, </span>
-<span id="cb41-56"><a href="#cb41-56" aria-hidden="true" tabindex="-1"></a>                           <span class="at">longitude_wgs84 =</span> <span class="cn">NA</span>)</span>
-<span id="cb41-57"><a href="#cb41-57" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb41-58"><a href="#cb41-58" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb41-59"><a href="#cb41-59" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add the row</span></span>
-<span id="cb41-60"><a href="#cb41-60" aria-hidden="true" tabindex="-1"></a>    postal_coords <span class="ot">&lt;-</span> <span class="fu">rbind</span>(postal_coords, new_row)</span>
-<span id="cb41-61"><a href="#cb41-61" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb41-62"><a href="#cb41-62" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb41-63"><a href="#cb41-63" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert to sf object with WGS84 coordinates (EPSG:4326)</span></span>
-<span id="cb41-64"><a href="#cb41-64" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Filter out rows with NA coordinates first</span></span>
-<span id="cb41-65"><a href="#cb41-65" aria-hidden="true" tabindex="-1"></a>  valid_coords <span class="ot">&lt;-</span> postal_coords[<span class="sc">!</span><span class="fu">is.na</span>(postal_coords<span class="sc">$</span>latitude_wgs84) <span class="sc">&amp;</span> </span>
-<span id="cb41-66"><a href="#cb41-66" aria-hidden="true" tabindex="-1"></a>                              <span class="sc">!</span><span class="fu">is.na</span>(postal_coords<span class="sc">$</span>longitude_wgs84), ]</span>
-<span id="cb41-67"><a href="#cb41-67" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb41-68"><a href="#cb41-68" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">nrow</span>(valid_coords) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb41-69"><a href="#cb41-69" aria-hidden="true" tabindex="-1"></a>    coords_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(valid_coords, </span>
-<span id="cb41-70"><a href="#cb41-70" aria-hidden="true" tabindex="-1"></a>                         <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude_wgs84"</span>, <span class="st">"latitude_wgs84"</span>),</span>
-<span id="cb41-71"><a href="#cb41-71" aria-hidden="true" tabindex="-1"></a>                         <span class="at">crs =</span> <span class="dv">4326</span>)</span>
-<span id="cb41-72"><a href="#cb41-72" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb41-73"><a href="#cb41-73" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Transform to SVY21 (EPSG:3414)</span></span>
-<span id="cb41-74"><a href="#cb41-74" aria-hidden="true" tabindex="-1"></a>    coords_svy21 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(coords_sf, <span class="dv">3414</span>)</span>
-<span id="cb41-75"><a href="#cb41-75" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb41-76"><a href="#cb41-76" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract coordinates</span></span>
-<span id="cb41-77"><a href="#cb41-77" aria-hidden="true" tabindex="-1"></a>    coords_matrix <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(coords_svy21)</span>
-<span id="cb41-78"><a href="#cb41-78" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb41-79"><a href="#cb41-79" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add SVY21 coordinates back to the original dataframe with desired column names</span></span>
-<span id="cb41-80"><a href="#cb41-80" aria-hidden="true" tabindex="-1"></a>    valid_coords<span class="sc">$</span>longitude <span class="ot">&lt;-</span> coords_matrix[, <span class="dv">1</span>]  <span class="co"># SVY21 X coordinate as longitude</span></span>
-<span id="cb41-81"><a href="#cb41-81" aria-hidden="true" tabindex="-1"></a>    valid_coords<span class="sc">$</span>latitude <span class="ot">&lt;-</span> coords_matrix[, <span class="dv">2</span>]   <span class="co"># SVY21 Y coordinate as latitude</span></span>
-<span id="cb41-82"><a href="#cb41-82" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb41-83"><a href="#cb41-83" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Merge back with rows that had NA coordinates</span></span>
-<span id="cb41-84"><a href="#cb41-84" aria-hidden="true" tabindex="-1"></a>    result <span class="ot">&lt;-</span> <span class="fu">merge</span>(postal_coords, valid_coords[<span class="fu">c</span>(<span class="st">"address"</span>, <span class="st">"longitude"</span>, <span class="st">"latitude"</span>)], </span>
-<span id="cb41-85"><a href="#cb41-85" aria-hidden="true" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">"address"</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb41-86"><a href="#cb41-86" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb41-87"><a href="#cb41-87" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If no valid coordinates, add empty SVY21 columns</span></span>
-<span id="cb41-88"><a href="#cb41-88" aria-hidden="true" tabindex="-1"></a>    result <span class="ot">&lt;-</span> postal_coords</span>
-<span id="cb41-89"><a href="#cb41-89" aria-hidden="true" tabindex="-1"></a>    result<span class="sc">$</span>longitude <span class="ot">&lt;-</span> <span class="cn">NA</span>  <span class="co"># SVY21 coordinates</span></span>
-<span id="cb41-90"><a href="#cb41-90" aria-hidden="true" tabindex="-1"></a>    result<span class="sc">$</span>latitude <span class="ot">&lt;-</span> <span class="cn">NA</span>   <span class="co"># SVY21 coordinates</span></span>
-<span id="cb41-91"><a href="#cb41-91" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb41-92"><a href="#cb41-92" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb41-93"><a href="#cb41-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(result)</span>
-<span id="cb41-94"><a href="#cb41-94" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>get_coords <span class="ot">&lt;-</span> <span class="cf">function</span>(add_list){</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create a data frame to store all retrieved coordinates</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  postal_coords <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> add_list){</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    r <span class="ot">&lt;-</span> <span class="fu">GET</span>(<span class="st">'https://www.onemap.gov.sg/api/common/elastic/search?'</span>,</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">query=</span><span class="fu">list</span>(<span class="at">searchVal=</span>i,</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">returnGeom=</span><span class="st">'Y'</span>,</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">getAddrDetails=</span><span class="st">'Y'</span>))</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>    data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(r<span class="sc">$</span>content))</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>    found <span class="ot">&lt;-</span> data<span class="sc">$</span>found</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> data<span class="sc">$</span>results</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a new data frame for each address</span></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>    new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If single result, append </span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (found <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>      postal <span class="ot">&lt;-</span> res<span class="sc">$</span>POSTAL </span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>      lat <span class="ot">&lt;-</span> res<span class="sc">$</span>LATITUDE</span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>      lng <span class="ot">&lt;-</span> res<span class="sc">$</span>LONGITUDE</span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>      new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">address =</span> i, </span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>                           <span class="at">postal =</span> postal, </span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>                           <span class="at">latitude_wgs84 =</span> lat,  <span class="co"># renamed to clarify coordinate system</span></span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>                           <span class="at">longitude_wgs84 =</span> lng) <span class="co"># renamed to clarify coordinate system</span></span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If multiple results, drop NIL and append top 1</span></span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (found <span class="sc">&gt;</span> <span class="dv">1</span>){</span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Remove those with NIL as postal</span></span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a>      res_sub <span class="ot">&lt;-</span> res[res<span class="sc">$</span>POSTAL <span class="sc">!=</span> <span class="st">"NIL"</span>, ]</span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Set as NA first if no Postal</span></span>
+<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">nrow</span>(res_sub) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a>          new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">address =</span> i, </span>
+<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a>                               <span class="at">postal =</span> <span class="cn">NA</span>, </span>
+<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a>                               <span class="at">latitude_wgs84 =</span> <span class="cn">NA</span>, </span>
+<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a>                               <span class="at">longitude_wgs84 =</span> <span class="cn">NA</span>)</span>
+<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a>      <span class="cf">else</span>{</span>
+<span id="cb40-42"><a href="#cb40-42" aria-hidden="true" tabindex="-1"></a>        top1 <span class="ot">&lt;-</span> <span class="fu">head</span>(res_sub, <span class="at">n =</span> <span class="dv">1</span>)</span>
+<span id="cb40-43"><a href="#cb40-43" aria-hidden="true" tabindex="-1"></a>        postal <span class="ot">&lt;-</span> top1<span class="sc">$</span>POSTAL </span>
+<span id="cb40-44"><a href="#cb40-44" aria-hidden="true" tabindex="-1"></a>        lat <span class="ot">&lt;-</span> top1<span class="sc">$</span>LATITUDE</span>
+<span id="cb40-45"><a href="#cb40-45" aria-hidden="true" tabindex="-1"></a>        lng <span class="ot">&lt;-</span> top1<span class="sc">$</span>LONGITUDE</span>
+<span id="cb40-46"><a href="#cb40-46" aria-hidden="true" tabindex="-1"></a>        new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">address =</span> i, </span>
+<span id="cb40-47"><a href="#cb40-47" aria-hidden="true" tabindex="-1"></a>                             <span class="at">postal =</span> postal, </span>
+<span id="cb40-48"><a href="#cb40-48" aria-hidden="true" tabindex="-1"></a>                             <span class="at">latitude_wgs84 =</span> lat, </span>
+<span id="cb40-49"><a href="#cb40-49" aria-hidden="true" tabindex="-1"></a>                             <span class="at">longitude_wgs84 =</span> lng)</span>
+<span id="cb40-50"><a href="#cb40-50" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb40-51"><a href="#cb40-51" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb40-52"><a href="#cb40-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb40-53"><a href="#cb40-53" aria-hidden="true" tabindex="-1"></a>      new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">address =</span> i, </span>
+<span id="cb40-54"><a href="#cb40-54" aria-hidden="true" tabindex="-1"></a>                           <span class="at">postal =</span> <span class="cn">NA</span>, </span>
+<span id="cb40-55"><a href="#cb40-55" aria-hidden="true" tabindex="-1"></a>                           <span class="at">latitude_wgs84 =</span> <span class="cn">NA</span>, </span>
+<span id="cb40-56"><a href="#cb40-56" aria-hidden="true" tabindex="-1"></a>                           <span class="at">longitude_wgs84 =</span> <span class="cn">NA</span>)</span>
+<span id="cb40-57"><a href="#cb40-57" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb40-58"><a href="#cb40-58" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-59"><a href="#cb40-59" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add the row</span></span>
+<span id="cb40-60"><a href="#cb40-60" aria-hidden="true" tabindex="-1"></a>    postal_coords <span class="ot">&lt;-</span> <span class="fu">rbind</span>(postal_coords, new_row)</span>
+<span id="cb40-61"><a href="#cb40-61" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb40-62"><a href="#cb40-62" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-63"><a href="#cb40-63" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert to sf object with WGS84 coordinates (EPSG:4326)</span></span>
+<span id="cb40-64"><a href="#cb40-64" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Filter out rows with NA coordinates first</span></span>
+<span id="cb40-65"><a href="#cb40-65" aria-hidden="true" tabindex="-1"></a>  valid_coords <span class="ot">&lt;-</span> postal_coords[<span class="sc">!</span><span class="fu">is.na</span>(postal_coords<span class="sc">$</span>latitude_wgs84) <span class="sc">&amp;</span> </span>
+<span id="cb40-66"><a href="#cb40-66" aria-hidden="true" tabindex="-1"></a>                              <span class="sc">!</span><span class="fu">is.na</span>(postal_coords<span class="sc">$</span>longitude_wgs84), ]</span>
+<span id="cb40-67"><a href="#cb40-67" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-68"><a href="#cb40-68" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">nrow</span>(valid_coords) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb40-69"><a href="#cb40-69" aria-hidden="true" tabindex="-1"></a>    coords_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(valid_coords, </span>
+<span id="cb40-70"><a href="#cb40-70" aria-hidden="true" tabindex="-1"></a>                         <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude_wgs84"</span>, <span class="st">"latitude_wgs84"</span>),</span>
+<span id="cb40-71"><a href="#cb40-71" aria-hidden="true" tabindex="-1"></a>                         <span class="at">crs =</span> <span class="dv">4326</span>)</span>
+<span id="cb40-72"><a href="#cb40-72" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-73"><a href="#cb40-73" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Transform to SVY21 (EPSG:3414)</span></span>
+<span id="cb40-74"><a href="#cb40-74" aria-hidden="true" tabindex="-1"></a>    coords_svy21 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(coords_sf, <span class="dv">3414</span>)</span>
+<span id="cb40-75"><a href="#cb40-75" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-76"><a href="#cb40-76" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract coordinates</span></span>
+<span id="cb40-77"><a href="#cb40-77" aria-hidden="true" tabindex="-1"></a>    coords_matrix <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(coords_svy21)</span>
+<span id="cb40-78"><a href="#cb40-78" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-79"><a href="#cb40-79" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add SVY21 coordinates back to the original dataframe with desired column names</span></span>
+<span id="cb40-80"><a href="#cb40-80" aria-hidden="true" tabindex="-1"></a>    valid_coords<span class="sc">$</span>longitude <span class="ot">&lt;-</span> coords_matrix[, <span class="dv">1</span>]  <span class="co"># SVY21 X coordinate as longitude</span></span>
+<span id="cb40-81"><a href="#cb40-81" aria-hidden="true" tabindex="-1"></a>    valid_coords<span class="sc">$</span>latitude <span class="ot">&lt;-</span> coords_matrix[, <span class="dv">2</span>]   <span class="co"># SVY21 Y coordinate as latitude</span></span>
+<span id="cb40-82"><a href="#cb40-82" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-83"><a href="#cb40-83" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Merge back with rows that had NA coordinates</span></span>
+<span id="cb40-84"><a href="#cb40-84" aria-hidden="true" tabindex="-1"></a>    result <span class="ot">&lt;-</span> <span class="fu">merge</span>(postal_coords, valid_coords[<span class="fu">c</span>(<span class="st">"address"</span>, <span class="st">"longitude"</span>, <span class="st">"latitude"</span>)], </span>
+<span id="cb40-85"><a href="#cb40-85" aria-hidden="true" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">"address"</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb40-86"><a href="#cb40-86" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb40-87"><a href="#cb40-87" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If no valid coordinates, add empty SVY21 columns</span></span>
+<span id="cb40-88"><a href="#cb40-88" aria-hidden="true" tabindex="-1"></a>    result <span class="ot">&lt;-</span> postal_coords</span>
+<span id="cb40-89"><a href="#cb40-89" aria-hidden="true" tabindex="-1"></a>    result<span class="sc">$</span>longitude <span class="ot">&lt;-</span> <span class="cn">NA</span>  <span class="co"># SVY21 coordinates</span></span>
+<span id="cb40-90"><a href="#cb40-90" aria-hidden="true" tabindex="-1"></a>    result<span class="sc">$</span>latitude <span class="ot">&lt;-</span> <span class="cn">NA</span>   <span class="co"># SVY21 coordinates</span></span>
+<span id="cb40-91"><a href="#cb40-91" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb40-92"><a href="#cb40-92" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-93"><a href="#cb40-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(result)</span>
+<span id="cb40-94"><a href="#cb40-94" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>get_coords <span class="ot">&lt;-</span> <span class="cf">function</span>(add_list) {</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create a data frame to store all retrieved coordinates</span></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  postal_coords <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> add_list) {</span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    r <span class="ot">&lt;-</span> <span class="fu">GET</span>(<span class="st">'https://www.onemap.gov.sg/api/common/elastic/search?'</span>,</span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">query =</span> <span class="fu">list</span>(<span class="at">searchVal =</span> i,</span>
-<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>                          <span class="at">returnGeom =</span> <span class="st">'Y'</span>,</span>
-<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>                          <span class="at">getAddrDetails =</span> <span class="st">'Y'</span>))</span>
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>    data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(r<span class="sc">$</span>content))</span>
-<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>    found <span class="ot">&lt;-</span> data<span class="sc">$</span>found</span>
-<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> data<span class="sc">$</span>results</span>
-<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a new data frame for each postal code</span></span>
-<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>    new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
-<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If single result, append </span></span>
-<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (found <span class="sc">==</span> <span class="dv">1</span>) {</span>
-<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>      postal <span class="ot">&lt;-</span> res<span class="sc">$</span>POSTAL</span>
-<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>      lat <span class="ot">&lt;-</span> res<span class="sc">$</span>LATITUDE</span>
-<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a>      lng <span class="ot">&lt;-</span> res<span class="sc">$</span>LONGITUDE</span>
-<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a>      new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">postal_code =</span> i,  <span class="co"># Use postal_code instead of address</span></span>
-<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a>                            <span class="at">latitude_wgs84 =</span> lat,</span>
-<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a>                            <span class="at">longitude_wgs84 =</span> lng)</span>
-<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If multiple results, drop NIL and append top 1</span></span>
-<span id="cb42-29"><a href="#cb42-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (found <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
-<span id="cb42-30"><a href="#cb42-30" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Remove those with NIL as postal</span></span>
-<span id="cb42-31"><a href="#cb42-31" aria-hidden="true" tabindex="-1"></a>      res_sub <span class="ot">&lt;-</span> res[res<span class="sc">$</span>POSTAL <span class="sc">!=</span> <span class="st">"NIL"</span>, ]</span>
-<span id="cb42-32"><a href="#cb42-32" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb42-33"><a href="#cb42-33" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Set as NA first if no Postal</span></span>
-<span id="cb42-34"><a href="#cb42-34" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">nrow</span>(res_sub) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb42-35"><a href="#cb42-35" aria-hidden="true" tabindex="-1"></a>        new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">postal_code =</span> i,  <span class="co"># Use postal_code instead of address</span></span>
-<span id="cb42-36"><a href="#cb42-36" aria-hidden="true" tabindex="-1"></a>                              <span class="at">latitude_wgs84 =</span> <span class="cn">NA</span>,</span>
-<span id="cb42-37"><a href="#cb42-37" aria-hidden="true" tabindex="-1"></a>                              <span class="at">longitude_wgs84 =</span> <span class="cn">NA</span>)</span>
-<span id="cb42-38"><a href="#cb42-38" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
-<span id="cb42-39"><a href="#cb42-39" aria-hidden="true" tabindex="-1"></a>        top1 <span class="ot">&lt;-</span> <span class="fu">head</span>(res_sub, <span class="at">n =</span> <span class="dv">1</span>)</span>
-<span id="cb42-40"><a href="#cb42-40" aria-hidden="true" tabindex="-1"></a>        postal <span class="ot">&lt;-</span> top1<span class="sc">$</span>POSTAL</span>
-<span id="cb42-41"><a href="#cb42-41" aria-hidden="true" tabindex="-1"></a>        lat <span class="ot">&lt;-</span> top1<span class="sc">$</span>LATITUDE</span>
-<span id="cb42-42"><a href="#cb42-42" aria-hidden="true" tabindex="-1"></a>        lng <span class="ot">&lt;-</span> top1<span class="sc">$</span>LONGITUDE</span>
-<span id="cb42-43"><a href="#cb42-43" aria-hidden="true" tabindex="-1"></a>        new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">postal_code =</span> i,  <span class="co"># Use postal_code instead of address</span></span>
-<span id="cb42-44"><a href="#cb42-44" aria-hidden="true" tabindex="-1"></a>                              <span class="at">latitude_wgs84 =</span> lat,</span>
-<span id="cb42-45"><a href="#cb42-45" aria-hidden="true" tabindex="-1"></a>                              <span class="at">longitude_wgs84 =</span> lng)</span>
-<span id="cb42-46"><a href="#cb42-46" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb42-47"><a href="#cb42-47" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb42-48"><a href="#cb42-48" aria-hidden="true" tabindex="-1"></a>      new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">postal_code =</span> i,  <span class="co"># Use postal_code instead of address</span></span>
-<span id="cb42-49"><a href="#cb42-49" aria-hidden="true" tabindex="-1"></a>                            <span class="at">latitude_wgs84 =</span> <span class="cn">NA</span>,</span>
-<span id="cb42-50"><a href="#cb42-50" aria-hidden="true" tabindex="-1"></a>                            <span class="at">longitude_wgs84 =</span> <span class="cn">NA</span>)</span>
-<span id="cb42-51"><a href="#cb42-51" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb42-52"><a href="#cb42-52" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb42-53"><a href="#cb42-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add the row</span></span>
-<span id="cb42-54"><a href="#cb42-54" aria-hidden="true" tabindex="-1"></a>    postal_coords <span class="ot">&lt;-</span> <span class="fu">rbind</span>(postal_coords, new_row)</span>
-<span id="cb42-55"><a href="#cb42-55" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb42-56"><a href="#cb42-56" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb42-57"><a href="#cb42-57" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert to sf object with WGS84 coordinates (EPSG:4326)</span></span>
-<span id="cb42-58"><a href="#cb42-58" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Filter out rows with NA coordinates first</span></span>
-<span id="cb42-59"><a href="#cb42-59" aria-hidden="true" tabindex="-1"></a>  valid_coords <span class="ot">&lt;-</span> postal_coords[<span class="sc">!</span><span class="fu">is.na</span>(postal_coords<span class="sc">$</span>latitude_wgs84) <span class="sc">&amp;</span> </span>
-<span id="cb42-60"><a href="#cb42-60" aria-hidden="true" tabindex="-1"></a>                                 <span class="sc">!</span><span class="fu">is.na</span>(postal_coords<span class="sc">$</span>longitude_wgs84), ]</span>
-<span id="cb42-61"><a href="#cb42-61" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb42-62"><a href="#cb42-62" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">nrow</span>(valid_coords) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb42-63"><a href="#cb42-63" aria-hidden="true" tabindex="-1"></a>    coords_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(valid_coords, </span>
-<span id="cb42-64"><a href="#cb42-64" aria-hidden="true" tabindex="-1"></a>                          <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude_wgs84"</span>, <span class="st">"latitude_wgs84"</span>),</span>
-<span id="cb42-65"><a href="#cb42-65" aria-hidden="true" tabindex="-1"></a>                          <span class="at">crs =</span> <span class="dv">4326</span>)</span>
-<span id="cb42-66"><a href="#cb42-66" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb42-67"><a href="#cb42-67" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Transform to SVY21 (EPSG:3414)</span></span>
-<span id="cb42-68"><a href="#cb42-68" aria-hidden="true" tabindex="-1"></a>    coords_svy21 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(coords_sf, <span class="dv">3414</span>)</span>
-<span id="cb42-69"><a href="#cb42-69" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb42-70"><a href="#cb42-70" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract coordinates</span></span>
-<span id="cb42-71"><a href="#cb42-71" aria-hidden="true" tabindex="-1"></a>    coords_matrix <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(coords_svy21)</span>
-<span id="cb42-72"><a href="#cb42-72" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb42-73"><a href="#cb42-73" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add SVY21 coordinates back to the original dataframe with desired column names</span></span>
-<span id="cb42-74"><a href="#cb42-74" aria-hidden="true" tabindex="-1"></a>    valid_coords<span class="sc">$</span>longitude <span class="ot">&lt;-</span> coords_matrix[, <span class="dv">1</span>]  <span class="co"># SVY21 X coordinate as longitude</span></span>
-<span id="cb42-75"><a href="#cb42-75" aria-hidden="true" tabindex="-1"></a>    valid_coords<span class="sc">$</span>latitude <span class="ot">&lt;-</span> coords_matrix[, <span class="dv">2</span>]   <span class="co"># SVY21 Y coordinate as latitude</span></span>
-<span id="cb42-76"><a href="#cb42-76" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb42-77"><a href="#cb42-77" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Merge back with rows that had NA coordinates</span></span>
-<span id="cb42-78"><a href="#cb42-78" aria-hidden="true" tabindex="-1"></a>    result <span class="ot">&lt;-</span> <span class="fu">merge</span>(postal_coords, valid_coords[<span class="fu">c</span>(<span class="st">"postal_code"</span>, <span class="st">"longitude"</span>, <span class="st">"latitude"</span>)], </span>
-<span id="cb42-79"><a href="#cb42-79" aria-hidden="true" tabindex="-1"></a>                    <span class="at">by =</span> <span class="st">"postal_code"</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb42-80"><a href="#cb42-80" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb42-81"><a href="#cb42-81" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If no valid coordinates, add empty SVY21 columns</span></span>
-<span id="cb42-82"><a href="#cb42-82" aria-hidden="true" tabindex="-1"></a>    result <span class="ot">&lt;-</span> postal_coords</span>
-<span id="cb42-83"><a href="#cb42-83" aria-hidden="true" tabindex="-1"></a>    result<span class="sc">$</span>longitude <span class="ot">&lt;-</span> <span class="cn">NA</span>  <span class="co"># SVY21 coordinates</span></span>
-<span id="cb42-84"><a href="#cb42-84" aria-hidden="true" tabindex="-1"></a>    result<span class="sc">$</span>latitude <span class="ot">&lt;-</span> <span class="cn">NA</span>   <span class="co"># SVY21 coordinates</span></span>
-<span id="cb42-85"><a href="#cb42-85" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb42-86"><a href="#cb42-86" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb42-87"><a href="#cb42-87" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Remove the address column (if it exists) and ensure postal_code is the column name</span></span>
-<span id="cb42-88"><a href="#cb42-88" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> result <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>address, postal_code, latitude_wgs84, longitude_wgs84, longitude, latitude)</span>
-<span id="cb42-89"><a href="#cb42-89" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb42-90"><a href="#cb42-90" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(result)</span>
-<span id="cb42-91"><a href="#cb42-91" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>get_coords <span class="ot">&lt;-</span> <span class="cf">function</span>(postal_codes) {</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create a data frame to store all retrieved coordinates</span></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  postal_coords <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Loop through each postal code</span></span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (postal_code <span class="cf">in</span> postal_codes) {</span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Send API request to OneMap</span></span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    r <span class="ot">&lt;-</span> <span class="fu">GET</span>(<span class="st">'https://www.onemap.gov.sg/api/common/elastic/search?'</span>,</span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">query =</span> <span class="fu">list</span>(<span class="at">searchVal =</span> postal_code,</span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>                          <span class="at">returnGeom =</span> <span class="st">'Y'</span>,</span>
-<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>                          <span class="at">getAddrDetails =</span> <span class="st">'Y'</span>))</span>
-<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Parse the API response</span></span>
-<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>    data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(r<span class="sc">$</span>content))</span>
-<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>    found <span class="ot">&lt;-</span> data<span class="sc">$</span>found</span>
-<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> data<span class="sc">$</span>results</span>
-<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Initialize variables for coordinates</span></span>
-<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>    lat_wgs84 <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>    lng_wgs84 <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>    lat_svy21 <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>    lng_svy21 <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If results are found</span></span>
-<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (found <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Filter out results with NIL postal codes</span></span>
-<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a>      res_sub <span class="ot">&lt;-</span> res[res<span class="sc">$</span>POSTAL <span class="sc">!=</span> <span class="st">"NIL"</span>, ]</span>
-<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a>      <span class="co"># If valid results exist</span></span>
-<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">nrow</span>(res_sub) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Take the first valid result</span></span>
-<span id="cb43-32"><a href="#cb43-32" aria-hidden="true" tabindex="-1"></a>        top1 <span class="ot">&lt;-</span> <span class="fu">head</span>(res_sub, <span class="at">n =</span> <span class="dv">1</span>)</span>
-<span id="cb43-33"><a href="#cb43-33" aria-hidden="true" tabindex="-1"></a>        lat_wgs84 <span class="ot">&lt;-</span> top1<span class="sc">$</span>LATITUDE</span>
-<span id="cb43-34"><a href="#cb43-34" aria-hidden="true" tabindex="-1"></a>        lng_wgs84 <span class="ot">&lt;-</span> top1<span class="sc">$</span>LONGITUDE</span>
-<span id="cb43-35"><a href="#cb43-35" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb43-36"><a href="#cb43-36" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Convert WGS84 (EPSG:4326) to SVY21 (EPSG:3414)</span></span>
-<span id="cb43-37"><a href="#cb43-37" aria-hidden="true" tabindex="-1"></a>        coords_wgs84 <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(<span class="fu">data.frame</span>(<span class="at">lng =</span> lng_wgs84, <span class="at">lat =</span> lat_wgs84),</span>
-<span id="cb43-38"><a href="#cb43-38" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"lng"</span>, <span class="st">"lat"</span>), <span class="at">crs =</span> <span class="dv">4326</span>)</span>
-<span id="cb43-39"><a href="#cb43-39" aria-hidden="true" tabindex="-1"></a>        coords_svy21 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(coords_wgs84, <span class="dv">3414</span>)</span>
-<span id="cb43-40"><a href="#cb43-40" aria-hidden="true" tabindex="-1"></a>        coords_matrix <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(coords_svy21)</span>
-<span id="cb43-41"><a href="#cb43-41" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb43-42"><a href="#cb43-42" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract SVY21 coordinates</span></span>
-<span id="cb43-43"><a href="#cb43-43" aria-hidden="true" tabindex="-1"></a>        lng_svy21 <span class="ot">&lt;-</span> coords_matrix[, <span class="dv">1</span>]</span>
-<span id="cb43-44"><a href="#cb43-44" aria-hidden="true" tabindex="-1"></a>        lat_svy21 <span class="ot">&lt;-</span> coords_matrix[, <span class="dv">2</span>]</span>
-<span id="cb43-45"><a href="#cb43-45" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb43-46"><a href="#cb43-46" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb43-47"><a href="#cb43-47" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb43-48"><a href="#cb43-48" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a new row with postal code and coordinates</span></span>
-<span id="cb43-49"><a href="#cb43-49" aria-hidden="true" tabindex="-1"></a>    new_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">postal_code =</span> postal_code,</span>
-<span id="cb43-50"><a href="#cb43-50" aria-hidden="true" tabindex="-1"></a>                          <span class="at">latitude_wgs84 =</span> lat_wgs84,</span>
-<span id="cb43-51"><a href="#cb43-51" aria-hidden="true" tabindex="-1"></a>                          <span class="at">longitude_wgs84 =</span> lng_wgs84,</span>
-<span id="cb43-52"><a href="#cb43-52" aria-hidden="true" tabindex="-1"></a>                          <span class="at">latitude_svy21 =</span> lat_svy21,</span>
-<span id="cb43-53"><a href="#cb43-53" aria-hidden="true" tabindex="-1"></a>                          <span class="at">longitude_svy21 =</span> lng_svy21)</span>
-<span id="cb43-54"><a href="#cb43-54" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb43-55"><a href="#cb43-55" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add the row to the data frame</span></span>
-<span id="cb43-56"><a href="#cb43-56" aria-hidden="true" tabindex="-1"></a>    postal_coords <span class="ot">&lt;-</span> <span class="fu">rbind</span>(postal_coords, new_row)</span>
-<span id="cb43-57"><a href="#cb43-57" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb43-58"><a href="#cb43-58" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb43-59"><a href="#cb43-59" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Return the final data frame</span></span>
-<span id="cb43-60"><a href="#cb43-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(postal_coords)</span>
-<span id="cb43-61"><a href="#cb43-61" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> <span class="fu">get_coords</span>(add_list)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> <span class="fu">get_coords</span>(add_list)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The longtitude and latitude is then combined into geometry and the crs has been set to EPSG = 3414.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>coords_sf <span class="ot">&lt;-</span> coords <span class="sc">%&gt;%</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude"</span>, <span class="st">"latitude"</span>), <span class="at">crs =</span> <span class="dv">3414</span>, <span class="at">remove =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(address, postal, longitude, latitude, latitude_wgs84, longitude_wgs84)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>coords_sf <span class="ot">&lt;-</span> coords <span class="sc">%&gt;%</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude"</span>, <span class="st">"latitude"</span>), <span class="at">crs =</span> <span class="dv">3414</span>, <span class="at">remove =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(address, postal, longitude, latitude, latitude_wgs84, longitude_wgs84)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="try-this" class="level3" data-number="2.4.6">
+<h3 data-number="2.4.6" class="anchored" data-anchor-id="try-this"><span class="header-section-number">2.4.6</span> try this</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>cc_data_final <span class="ot">&lt;-</span> cc_data_t <span class="sc">%&gt;%</span> </span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(coords_sf, <span class="at">by =</span> <span class="st">'postal_code)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>cc_data_final <span class="ot">&lt;-</span> cc_data_t <span class="sc">%&gt;%</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(coords_sf, </span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">join_by</span>(<span class="at">postal_code =</span> postal)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1014,15 +871,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 data-number="2.5.1" class="anchored" data-anchor-id="importing-data"><span class="header-section-number">2.5.1</span> Importing Data</h3>
 <p><a href="https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2024.ashx">Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2024</a></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>popdata24 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/popdata/respopagesex2024.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>popdata24 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/popdata/respopagesex2024.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><a href="https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2023.ashx">Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2023</a></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>popdata23 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/popdata/respopagesex2023.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>popdata23 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/popdata/respopagesex2023.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><a href="https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2022.ashx">Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2022</a>&nbsp;</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>popdata22 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/popdata/respopagesex2022.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>popdata22 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/popdata/respopagesex2022.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1041,14 +898,39 @@ PARSING ERROR*
 </div>
 <p><a href="https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2021.ashx">Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2021</a></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>popdata21 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/popdata/respopagesex2021.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>popdata21 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/popdata/respopagesex2021.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><a href="https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2011to2020.ashx">Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2011-2020</a></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>popdata20 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/popdata/respopagesex2011to2020.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>popdata20 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/popdata/respopagesex2011to2020.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(popdata20)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(popdata20)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>popdata24 <span class="ot">&lt;-</span> popdata24 <span class="sc">%&gt;%</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Age =</span> <span class="fu">ifelse</span>(Age<span class="sc">==</span><span class="st">"90_and_over"</span>, <span class="st">"90"</span>, Age), </span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">Age =</span> <span class="fu">parse_number</span>(Age))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>popdata23 <span class="ot">&lt;-</span> popdata23 <span class="sc">%&gt;%</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Age =</span> <span class="fu">ifelse</span>(Age<span class="sc">==</span><span class="st">"90_and_over"</span>, <span class="st">"90"</span>, Age), </span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">Age =</span> <span class="fu">parse_number</span>(Age))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>popdata22 <span class="ot">&lt;-</span> popdata22 <span class="sc">%&gt;%</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Age =</span> <span class="fu">ifelse</span>(Age<span class="sc">==</span><span class="st">"90_and_over"</span>, <span class="st">"90"</span>, Age), </span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">Age =</span> <span class="fu">parse_number</span>(Age))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>popdata21 <span class="ot">&lt;-</span> popdata21 <span class="sc">%&gt;%</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Age =</span> <span class="fu">ifelse</span>(Age<span class="sc">==</span><span class="st">"90_and_over"</span>, <span class="st">"90"</span>, Age), </span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">Age =</span> <span class="fu">parse_number</span>(Age))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>popdata20 <span class="ot">&lt;-</span> popdata20 <span class="sc">%&gt;%</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Age =</span> <span class="fu">ifelse</span>(Age<span class="sc">==</span><span class="st">"90_and_over"</span>, <span class="st">"90"</span>, Age), </span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">Age =</span> <span class="fu">parse_number</span>(Age))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="changing-columns-to-lowercase" class="level3" data-number="2.5.2">
@@ -1057,12 +939,12 @@ PARSING ERROR*
 <p><strong><code>tolower(names(popdata20))</code></strong>: The <code>tolower()</code> function is applied to the column names retrieved in the previous step. This function converts all characters in the names to lowercase. For example, if a column name is <code>"PA"</code>, it will become <code>"pa"</code>.</p>
 <p><strong><code>names(popdata20) &lt;- ...</code></strong>: This part assigns the new lowercase column names back to the dataset <code>popdata20</code>. The <code>&lt;-</code> operator is used to update the column names of the dataset with the lowercase versions.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming your dataset is already loaded as popdata20</span></span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(popdata20) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(popdata20))</span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(popdata21) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(popdata21))</span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(popdata22) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(popdata22))</span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(popdata23) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(popdata23))</span>
-<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(popdata24) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(popdata24))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming your dataset is already loaded as popdata20</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(popdata20) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(popdata20))</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(popdata21) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(popdata21))</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(popdata22) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(popdata22))</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(popdata23) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(popdata23))</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(popdata24) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(popdata24))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="checking-for-missing-values-1" class="level3" data-number="2.5.3">
@@ -1071,32 +953,32 @@ PARSING ERROR*
 <p>The is.na() function checks whether each value in the name and address columns is missing or null, returning TRUE for missing values and FALSE for non-missing values. The sum() function then counts the number of TRUE values, which corresponds to the number of missing values in each column. This process is applied to each dataset (aac, counselling, daycare, dementia, hospice, maintenance, nhrespite, nursing, and rehab). In conclusion it is able to identify the number of missing values in the name and address columns across all datasets, which helps assess the completeness of the data and highlights any issues that may require cleaning or imputation before further analysis. It returns 0 missing values.</p>
 <p>Results: We noticed that there are 30 missing values popdata22 specifically under the column pop.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>popdata20_missing <span class="ot">&lt;-</span> popdata20 <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(pa,sz,age,sex,pop,time), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata20_missing)</span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>popdata21_missing <span class="ot">&lt;-</span> popdata21 <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(pa,sz,age,sex,pop,time), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span>
-<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata21_missing)</span>
-<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>popdata22_missing <span class="ot">&lt;-</span> popdata22 <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(pa,sz,age,sex,pop,time), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span>
-<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata22_missing)</span>
-<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>popdata23_missing <span class="ot">&lt;-</span> popdata23 <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(pa,sz,age,sex,pop,time), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span>
-<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata23_missing)</span>
-<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>popdata24_missing <span class="ot">&lt;-</span> popdata24 <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(pa,sz,age,sex,pop,time), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span>
-<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata24_missing)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>popdata20_missing <span class="ot">&lt;-</span> popdata20 <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(pa,sz,age,sex,pop,time), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata20_missing)</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>popdata21_missing <span class="ot">&lt;-</span> popdata21 <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(pa,sz,age,sex,pop,time), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata21_missing)</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>popdata22_missing <span class="ot">&lt;-</span> popdata22 <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(pa,sz,age,sex,pop,time), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata22_missing)</span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>popdata23_missing <span class="ot">&lt;-</span> popdata23 <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(pa,sz,age,sex,pop,time), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata23_missing)</span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>popdata24_missing <span class="ot">&lt;-</span> popdata24 <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(pa,sz,age,sex,pop,time), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata24_missing)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="issue-with-popdata22" class="level3" data-number="2.5.4">
 <h3 data-number="2.5.4" class="anchored" data-anchor-id="issue-with-popdata22"><span class="header-section-number">2.5.4</span> Issue with POPDATA22</h3>
 <p>Using the below code, we are able to see clearly the rows that are affected and in the pop column, it appears as NA. The csv file (respopagesex2022.csv) was opened using excel and each row returned in the below output was then cross checked in excel. There were numbers with comma appeared in excel. This may be because read_csv() function expects a numeric value (double) in one of the columns, but instead, it found a string (the values in the column are likely formatted with commas, such as “1,020”). This is why the parser is raising an issue earlier on.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>na_rows <span class="ot">&lt;-</span> popdata22[<span class="fu">is.na</span>(popdata22<span class="sc">$</span>pop), ]</span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(na_rows)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>na_rows <span class="ot">&lt;-</span> popdata22[<span class="fu">is.na</span>(popdata22<span class="sc">$</span>pop), ]</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(na_rows)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Using problems(), it shows details about any rows or columns that caused problems during the import. The results are a reaffirmation of the explanation above.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">problems</span>(popdata22)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">problems</span>(popdata22)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Referencing from <a href="https://stackoverflow.com/questions/1523126/how-to-read-data-when-some-numbers-contain-commas-as-thousand-separator">Stackoverflow</a>, the first line of the code is necessary as it defines a new class called <code>"num.with.commas"</code>. This class is intended to handle numeric values that are stored as strings with commas (e.g., <code>"1,000"</code>). Thereafter, the second line of the code defines a method to convert a <code>character</code> type to the custom <code>"num.with.commas"</code> class.</p>
 <ul>
@@ -1105,30 +987,30 @@ PARSING ERROR*
 </ul>
 <p>This ensures that numbers with commas are properly converted to numeric values during data import.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setClass</span>(<span class="st">"num.with.commas"</span>)</span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setAs</span>(<span class="st">"character"</span>, <span class="st">"num.with.commas"</span>, </span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(from) <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">","</span>, <span class="st">""</span>, from) ) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setClass</span>(<span class="st">"num.with.commas"</span>)</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setAs</span>(<span class="st">"character"</span>, <span class="st">"num.with.commas"</span>, </span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(from) <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">","</span>, <span class="st">""</span>, from) ) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The file is then re-imported again and column types were specified.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the CSV file and specify column types</span></span>
-<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>popdata22 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/popdata/respopagesex2022.csv"</span>, </span>
-<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">col_types =</span> <span class="fu">cols</span>(</span>
-<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">PA =</span> <span class="fu">col_character</span>(),</span>
-<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">SZ =</span> <span class="fu">col_character</span>(),</span>
-<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">Age =</span> <span class="fu">col_character</span>(),</span>
-<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">Sex =</span> <span class="fu">col_character</span>(),</span>
-<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">Pop =</span> <span class="fu">col_character</span>(),</span>
-<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">Time =</span> <span class="fu">col_integer</span>()  <span class="co"># Adjust if necessary</span></span>
-<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>                      ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the CSV file and specify column types</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>popdata22 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/popdata/respopagesex2022.csv"</span>, </span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">col_types =</span> <span class="fu">cols</span>(</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">PA =</span> <span class="fu">col_character</span>(),</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">SZ =</span> <span class="fu">col_character</span>(),</span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">Age =</span> <span class="fu">col_character</span>(),</span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">Sex =</span> <span class="fu">col_character</span>(),</span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">Pop =</span> <span class="fu">col_character</span>(),</span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">Time =</span> <span class="fu">col_integer</span>()  <span class="co"># Adjust if necessary</span></span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a>                      ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">problems</span>(popdata22)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">problems</span>(popdata22)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(popdata22) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(popdata22))</span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>popdata22_missing <span class="ot">&lt;-</span> popdata22 <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(pa,sz,age,sex,pop,time), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span>
-<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata22_missing)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(popdata22) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(popdata22))</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>popdata22_missing <span class="ot">&lt;-</span> popdata22 <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(pa,sz,age,sex,pop,time), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata22_missing)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="duplicate-check-1" class="level3" data-number="2.5.5">
@@ -1137,106 +1019,78 @@ PARSING ERROR*
 <p>For each dataset, the nrow() function is used to check if there are any rows returned after filtering for duplicates. If there are duplicates (i.e., the number of rows is greater than zero), the dataset with the duplicate rows is returned. However, if no duplicates are found (i.e., nrow() equals zero), the code returns 0 to indicate that there are no duplicates in that dataset.</p>
 <p>Thus, the code either returns the rows with duplicate values or 0 if no duplicates are present, providing an indication of whether duplicate entries exist in each dataset.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for duplicates in 'aac'</span></span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>popdata20_duplicate <span class="ot">&lt;-</span> popdata20 <span class="sc">%&gt;%</span> </span>
-<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(popdata20_duplicate)</span>
-<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for duplicates in 'counselling'</span></span>
-<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>popdata21_duplicate <span class="ot">&lt;-</span> popdata21 <span class="sc">%&gt;%</span> </span>
-<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(popdata21_duplicate)</span>
-<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for duplicates in 'daycare'</span></span>
-<span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a>popdata22_duplicate <span class="ot">&lt;-</span> popdata22 <span class="sc">%&gt;%</span> </span>
-<span id="cb62-18"><a href="#cb62-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb62-19"><a href="#cb62-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb62-20"><a href="#cb62-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb62-21"><a href="#cb62-21" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(popdata22_duplicate)</span>
-<span id="cb62-22"><a href="#cb62-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-23"><a href="#cb62-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for duplicates in 'dementia'</span></span>
-<span id="cb62-24"><a href="#cb62-24" aria-hidden="true" tabindex="-1"></a>popdata23_duplicate <span class="ot">&lt;-</span> popdata23 <span class="sc">%&gt;%</span> </span>
-<span id="cb62-25"><a href="#cb62-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb62-26"><a href="#cb62-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb62-27"><a href="#cb62-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb62-28"><a href="#cb62-28" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(popdata23_duplicate)</span>
-<span id="cb62-29"><a href="#cb62-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-30"><a href="#cb62-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for duplicates in 'hospice'</span></span>
-<span id="cb62-31"><a href="#cb62-31" aria-hidden="true" tabindex="-1"></a>popdata24_duplicate <span class="ot">&lt;-</span> popdata24 <span class="sc">%&gt;%</span> </span>
-<span id="cb62-32"><a href="#cb62-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb62-33"><a href="#cb62-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb62-34"><a href="#cb62-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb62-35"><a href="#cb62-35" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(popdata24_duplicate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for duplicates in 'aac'</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>popdata20_duplicate <span class="ot">&lt;-</span> popdata20 <span class="sc">%&gt;%</span> </span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(popdata20_duplicate)</span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for duplicates in 'counselling'</span></span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>popdata21_duplicate <span class="ot">&lt;-</span> popdata21 <span class="sc">%&gt;%</span> </span>
+<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb64-13"><a href="#cb64-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb64-14"><a href="#cb64-14" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(popdata21_duplicate)</span>
+<span id="cb64-15"><a href="#cb64-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-16"><a href="#cb64-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for duplicates in 'daycare'</span></span>
+<span id="cb64-17"><a href="#cb64-17" aria-hidden="true" tabindex="-1"></a>popdata22_duplicate <span class="ot">&lt;-</span> popdata22 <span class="sc">%&gt;%</span> </span>
+<span id="cb64-18"><a href="#cb64-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb64-19"><a href="#cb64-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb64-20"><a href="#cb64-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb64-21"><a href="#cb64-21" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(popdata22_duplicate)</span>
+<span id="cb64-22"><a href="#cb64-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-23"><a href="#cb64-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for duplicates in 'dementia'</span></span>
+<span id="cb64-24"><a href="#cb64-24" aria-hidden="true" tabindex="-1"></a>popdata23_duplicate <span class="ot">&lt;-</span> popdata23 <span class="sc">%&gt;%</span> </span>
+<span id="cb64-25"><a href="#cb64-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb64-26"><a href="#cb64-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb64-27"><a href="#cb64-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb64-28"><a href="#cb64-28" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(popdata23_duplicate)</span>
+<span id="cb64-29"><a href="#cb64-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-30"><a href="#cb64-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for duplicates in 'hospice'</span></span>
+<span id="cb64-31"><a href="#cb64-31" aria-hidden="true" tabindex="-1"></a>popdata24_duplicate <span class="ot">&lt;-</span> popdata24 <span class="sc">%&gt;%</span> </span>
+<span id="cb64-32"><a href="#cb64-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb64-33"><a href="#cb64-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb64-34"><a href="#cb64-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb64-35"><a href="#cb64-35" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(popdata24_duplicate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="changing-90_and_over-to-90" class="level2" data-number="2.6">
 <h2 data-number="2.6" class="anchored" data-anchor-id="changing-90_and_over-to-90"><span class="header-section-number">2.6</span> Changing 90_and_over to 90</h2>
+</section>
+<section id="calculating-population-for-each-age-level" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="calculating-population-for-each-age-level"><span class="header-section-number">2.7</span> Calculating Population for Each Age Level</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(popdata22)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>popdata24<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"90_and_Over"</span>, <span class="st">"90"</span>, popdata24<span class="sc">$</span>age)</span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>popdata23<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"90_and_Over"</span>, <span class="st">"90"</span>, popdata23<span class="sc">$</span>age)</span>
-<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>popdata22<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"90_and_Over"</span>, <span class="st">"90"</span>, popdata22<span class="sc">$</span>age)</span>
-<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>popdata21<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"90_and_Over"</span>, <span class="st">"90"</span>, popdata21<span class="sc">$</span>age)</span>
-<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>popdata20<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"90_and_Over"</span>, <span class="st">"90"</span>, popdata20<span class="sc">$</span>age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>popdata24 <span class="ot">&lt;-</span> popdata24 <span class="sc">%&gt;%</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(age <span class="sc">&gt;=</span> <span class="dv">65</span>) <span class="sc">%&gt;%</span> <span class="co"># Filter for age &gt;= 65</span></span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(age) <span class="sc">%&gt;%</span>      <span class="co"># Group by age</span></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_pop =</span> <span class="fu">sum</span>(pop)) <span class="co"># Summarize the total population for each age group</span></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a><span class="co"># View the resulting dataset</span></span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata24)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="changing-to-integer" class="level2" data-number="2.7">
-<h2 data-number="2.7" class="anchored" data-anchor-id="changing-to-integer"><span class="header-section-number">2.7</span> Changing to Integer</h2>
+<section id="combining-datasets" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="combining-datasets"><span class="header-section-number">2.8</span> Combining Datasets</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>popdata24<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(popdata24<span class="sc">$</span>age)</span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(popdata24<span class="sc">$</span>age)</span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>popdata23<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(popdata23<span class="sc">$</span>age)</span>
-<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(popdata23<span class="sc">$</span>age)</span>
-<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>popdata22<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(popdata22<span class="sc">$</span>age)</span>
-<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(popdata22<span class="sc">$</span>age)</span>
-<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a>popdata21<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(popdata21<span class="sc">$</span>age)</span>
-<span id="cb65-11"><a href="#cb65-11" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(popdata21<span class="sc">$</span>age)</span>
-<span id="cb65-12"><a href="#cb65-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-13"><a href="#cb65-13" aria-hidden="true" tabindex="-1"></a>popdata20<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(popdata20<span class="sc">$</span>age)</span>
-<span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(popdata20<span class="sc">$</span>age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(popdata21<span class="sc">$</span>age, <span class="at">useNA =</span> <span class="st">"ifany"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="calculating-population-for-each-age-level" class="level2" data-number="2.8">
-<h2 data-number="2.8" class="anchored" data-anchor-id="calculating-population-for-each-age-level"><span class="header-section-number">2.8</span> Calculating Population for Each Age Level</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>popdata24 <span class="ot">&lt;-</span> popdata24 <span class="sc">%&gt;%</span></span>
-<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(age <span class="sc">&gt;=</span> <span class="dv">65</span>) <span class="sc">%&gt;%</span> <span class="co"># Filter for age &gt;= 65</span></span>
-<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(age) <span class="sc">%&gt;%</span>      <span class="co"># Group by age</span></span>
-<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_pop =</span> <span class="fu">sum</span>(pop)) <span class="co"># Summarize the total population for each age group</span></span>
-<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a><span class="co"># View the resulting dataset</span></span>
-<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(popdata24)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="combining-datasets" class="level2" data-number="2.9">
-<h2 data-number="2.9" class="anchored" data-anchor-id="combining-datasets"><span class="header-section-number">2.9</span> Combining Datasets</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine popdata23 and popdata24 row-wise</span></span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(popdata23, popdata24)</span>
-<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a><span class="co"># View the combined dataset</span></span>
-<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(combined_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine popdata23 and popdata24 row-wise</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(popdata23, popdata24)</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a><span class="co"># View the combined dataset</span></span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(combined_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="exploratory-data-analysis" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Exploratory Data Analysis</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mpsz)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"view"</span>)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(mpsz) <span class="sc">+</span></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>() <span class="sc">+</span></span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(CHAS) <span class="sc">+</span></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_dots</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="references" class="level1" data-number="4">

@@ -24,7 +24,7 @@ In this section, the methodology will be explained thereafter Exploratory Data A
 
 3 main spectrum of data will be required for this research, namely the Population Data, Master Plan 2019 Subzone boundary and Care Centres.
 
-![Figure x: Data Overview](/methodology/data/images/data_overview.png){fig-align="center"}
+![Figure x: Data Overview](/methodology/images/data_overview.png){fig-align="center"}
 
 ### WebScraping of Care Centres
 
@@ -34,85 +34,85 @@ Due to the lack of a centralised data of all care centres, web scarping is warra
 
 Web Scraper is used as it is free, works reasonably well and available in both Chrome and Firefox web store. In the below steps, Chrome will be the default web browser used.
 
-![*Figure x: Web Scraper*](/methodology/data/images/step0.png)
+![*Figure x: Web Scraper*](/methodology/images/step0.png)
 
 #### Step 1: Navigate to Developer Tools in Chrome Web Browser
 
 After downloading the extension from Chrome Web Store, press onto the menu bar at the right of the browser and locate Developer Tools while onto the website you would like to scrape information from.
 
-![*Figure x: Web Scraper*](/methodology/data/images/step1.png)
+![*Figure x: Web Scraper*](/methodology/images/step1.png)
 
 #### Step 2: Interface for Webscraper
 
 After clicking onto Developer Tools, click onto the Web Scraper in the menu bar (in black). Following which the below interface will appear.
 
-[![](/methodology/data/images/step2.png){width="499"}](Figure%20x:%20Locate%20Developer%20Tools)
+[![](/methodology/images/step2.png){width="499"}](Figure%20x:%20Locate%20Developer%20Tools)
 
 #### Step 3: Create New Sitemap
 
 Click onto "create new sitemap", thereafter "Create Sitemap". Sitemap Name will be the overarching term used for these information; in this instance, it will be AAC. The Start URL will be the HTML link that you would like the information to be scraped from.
 
-![Figure x:](/methodology/data/images/step3.png){fig-align="center"}
+![Figure x:](/methodology/images/step3.png){fig-align="center"}
 
 #### Step 4: Add New Selector
 
 After creating a new sitemap, the following interface will appear. Click onto the "Add new selector" to select the information to scrape.
 
-![Figure x:](/methodology/data/images/step4.png){fig-align="center"}
+![Figure x:](/methodology/images/step4.png){fig-align="center"}
 
 #### Step 5: Selecting Whole Box
 
 Firstly, the id will be the column name. For Type, select Element Attribute from the drop down selection. Thereafter, press on Select under Selector and select two boxes of each centre as seen in the figure below (the remaining boxes will be highlighted through its intelligent function) and press onto Done Selecting in the green box.
 
-![Figure x:](/methodology/data/images/step5.png){fig-align="center"}
+![Figure x:](/methodology/images/step5.png){fig-align="center"}
 
 #### Step 6: Sitemap Interface
 
 After adding a new selector, the sitemap page will appear the selector that you've inputted.
 
-![Figure x: Step 6 - Create New Sitemap](/methodology/data/images/step6.png){fig-align="center"}
+![Figure x: Step 6 - Create New Sitemap](/methodology/images/step6.png){fig-align="center"}
 
 #### Step 7: Selecting Name of Care Centre
 
 Firstly, the id will be name (with reference to the name of care centre), serving as the column name. Text will be chosen under Type thereafter press Select under Selector and highlight the first 2 names of the care centres (The remaining care centres will be highlighted through its intelligent function) and press onto Done selecting in the green box. Multiple box will be selected as we would like to scrap multiple names and root parent selector will be root and press onto Save Selector.
 
-![Figure x: Step 7 - Selecting Name of Care Centre](/methodology/data/images/step7.png){fig-align="center"}
+![Figure x: Step 7 - Selecting Name of Care Centre](/methodology/images/step7.png){fig-align="center"}
 
 #### Step 8: Create New Sitemap
 
 A popup window will be prompted and Group selectors was selected.
 
-![Figure x: Step 8 - Create New Sitemap](/methodology/data/images/step8.png){fig-align="center"}
+![Figure x: Step 8 - Create New Sitemap](/methodology/images/step8.png){fig-align="center"}
 
 #### Step 9: Selecting Address of Care Centre
 
 Similar to Step 7, the id will be address. Text will be chosen under Type thereafter press Select under Selector and highlight the first 2 addresses of the care centres (Remaining addresses will be highlighted through its intelligent function) and press onto Done selecting in the green box. Multiple box will be selected as we would like to scrap multiple addresses and parent selector will be wrapper_for_main_name (as we grouped selectors in step 8) and press onto Save Selector.
 
-![Figure x: Step 9 - Selecting Address of Care Centre](/methodology/data/images/step9.png){fig-align="center"}
+![Figure x: Step 9 - Selecting Address of Care Centre](/methodology/images/step9.png){fig-align="center"}
 
 #### Step 10: Data Preview
 
 Prior to data scraping, the data is previewed in ensuring each name of the care centre is correctly tagged to the address using the main website to verify.
 
-![Figure x: Step 10 - Data Preview](/methodology/data/images/step10.png){fig-align="center"}
+![Figure x: Step 10 - Data Preview](/methodology/images/step10.png){fig-align="center"}
 
 #### Step 11: Commence Scraping
 
 Head over to sitemap aac and click onto Scrape. A new browser will appear indicating that it is in process of scraping. It will be closed automatically once the process has ended.
 
-![Figure x: Step 11 - Commence Scraping](/methodology/data/images/step11.png){fig-align="center"}
+![Figure x: Step 11 - Commence Scraping](/methodology/images/step11.png){fig-align="center"}
 
 #### Step 11: Export Data
 
 Export data is selected upon clicking sitemap aac. 2 file options are offered: csv and xlsx. The former was chosen as CSV files are simple and portable which doesn't complicate data processing. Thereafter the data will be downloaded.
 
-![Figure x:](/methodology/data/images/step12.png){fig-align="center"}
+![Figure x:](/methodology/images/step12.png){fig-align="center"}
 
 #### Step 11: View CSV File
 
 In ensuring the web scraping successful and accurate, the csv. file is opened and viewed.
 
-![Figure x: Step 11 - View CSV File](/methodology/data/images/step13.png){fig-align="center"}
+![Figure x: Step 11 - View CSV File](/methodology/images/step13.png){fig-align="center"}
 
 The above steps were repeated for each care centre. All of the Care Centre data was extracted on 7th February 2025.
 
@@ -174,7 +174,7 @@ write_rds(mpsz, "data/rds/geopatial/mpsz.rds")
 mpsz = read_rds("data/rds/geopatial/mpsz.rds")
 ```
 
-## Care Centre
+## Care Centre (EXTRACT TRANSFORM LOAD)
 
 ```{r}
 aac <- read_csv("data/carecentre/activeageingcentre.csv")
@@ -555,38 +555,37 @@ write_rds(cc_data, "data/rds/carecentre/refined/cc_data.rds")
 cc_data = read_rds("data/rds/carecentre/refined/cc_data.rds")
 ```
 
-Initialization of Labels and Data Copy
+### USE THIS
 
-The first part of the code initializes a vector called labels, which contains the names of all possible categories or services present in the dataset, such as "aac" (Active Ageing Centre), "dementia," "maintenance," and others. This vector serves as a reference for the unique labels that will be processed. Additionally, a copy of the original dataset cc_data is created and stored in cc_data_t. This ensures that the original dataset remains unchanged while transformations are performed on the copy.
-
-```{r}
-labels <- c("aac", "counselling", "daycare", "dementia", "hospice", "maintenance", "nhrespite", "nursing", "rehab")
-
-cc_data_t <- cc_data
-```
-
-Transformation of the Dataset
-
-The second part of the code transforms the dataset by creating new columns for each unique label found in the label column. This is achieved by first extracting the unique values from the label column using the unique() function and storing them in unique_labels. A for loop is then used to iterate over each unique label. For each label, a new column is added to the dataset cc_data_t with the same name as the label. The ifelse() function is used to populate these new columns: if the value in the label column matches the current label in the loop, "yes" is assigned to the new column; otherwise, "no" is assigned. This process effectively converts the categorical label column into multiple binary columns, where "yes" indicates the presence of the label and "no" indicates its absence. After running the code, the dataset cc_data_t will include additional columns corresponding to each unique label. For example, a row with the label "aac" will have "yes" in the aac column and "no" in all other label columns. Similarly, a row with the label "dementia" will have "yes" in the dementia column and "no" in the others. This transformation makes it easier to analyze or model the data, as categorical information is now represented in a binary format.
+If yes is 1, no returns 0.
 
 ```{r}
 
-unique_labels <- unique(cc_data_t$label)
-for (label in unique_labels) {
-  cc_data_t[[label]] <- ifelse(cc_data_t$label == label, "yes", "no")
-}
-```
+pivoted_cc_data <- cc_data %>%
+  select(-address) %>%
 
-```{r}
-#| echo: false
-#| eval: false
-write_rds(cc_data_t, "data/rds/carecentre/refined/cc_data_t.rds")
+  mutate(present = 1) %>%  # Create a column to indicate presence (1)
+
+  pivot_wider(
+
+    names_from = label,    # Pivot based on the 'label' column
+
+    values_from = present,
+    values_fill = list(0)# Use the 'present' column for the values
+    
+  )
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
-cc_data_t = read_rds("data/rds/carecentre/refined/cc_data_t.rds")
+write_rds(pivoted_cc_data, "data/rds/carecentre/refined/pivoted_cc_data.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+pivoted_cc_data = read_rds("data/rds/carecentre/refined/pivoted_cc_data.rds")
 ```
 
 Grouping by postal_code: The group_by(postal_code) function groups the dataset by the postal_code column. This ensures that all rows with the same postal_code are treated as a single group for further operations.
@@ -622,7 +621,7 @@ cc_data_t = read_rds("data/rds/carecentre/refined/cc_data_t.rds")
 ### Adding coordinates to care centre
 
 ```{r}
-add_list <- sort(unique(cc_data_t$postal_code)) #parse a list as API cannot read df
+add_list <- sort(unique(pivoted_cc_data$postal_code)) #parse a list as API cannot read df
 #unique reduces records to pass to portal
 #sort is used to easier to find geo codes
 ```
@@ -651,7 +650,7 @@ get_coords <- function(add_list){
       lat <- res$LATITUDE
       lng <- res$LONGITUDE
       new_row <- data.frame(address = i, 
-                           postal_code = postal, 
+                           postal = postal, 
                            latitude_wgs84 = lat,  # renamed to clarify coordinate system
                            longitude_wgs84 = lng) # renamed to clarify coordinate system
     }
@@ -725,164 +724,6 @@ get_coords <- function(add_list){
 ```
 
 ```{r}
-get_coords <- function(add_list) {
-
-  # Create a data frame to store all retrieved coordinates
-  postal_coords <- data.frame()
-  
-  for (i in add_list) {
-    r <- GET('https://www.onemap.gov.sg/api/common/elastic/search?',
-             query = list(searchVal = i,
-                          returnGeom = 'Y',
-                          getAddrDetails = 'Y'))
-    data <- fromJSON(rawToChar(r$content))
-    found <- data$found
-    res <- data$results
-    
-    # Create a new data frame for each postal code
-    new_row <- data.frame()
-    
-    # If single result, append 
-    if (found == 1) {
-      postal <- res$POSTAL
-      lat <- res$LATITUDE
-      lng <- res$LONGITUDE
-      new_row <- data.frame(postal_code = i,  # Use postal_code instead of address
-                            latitude_wgs84 = lat,
-                            longitude_wgs84 = lng)
-    }
-    
-    # If multiple results, drop NIL and append top 1
-    else if (found > 1) {
-      # Remove those with NIL as postal
-      res_sub <- res[res$POSTAL != "NIL", ]
-      
-      # Set as NA first if no Postal
-      if (nrow(res_sub) == 0) {
-        new_row <- data.frame(postal_code = i,  # Use postal_code instead of address
-                              latitude_wgs84 = NA,
-                              longitude_wgs84 = NA)
-      } else {
-        top1 <- head(res_sub, n = 1)
-        postal <- top1$POSTAL
-        lat <- top1$LATITUDE
-        lng <- top1$LONGITUDE
-        new_row <- data.frame(postal_code = i,  # Use postal_code instead of address
-                              latitude_wgs84 = lat,
-                              longitude_wgs84 = lng)
-      }
-    } else {
-      new_row <- data.frame(postal_code = i,  # Use postal_code instead of address
-                            latitude_wgs84 = NA,
-                            longitude_wgs84 = NA)
-    }
-    
-    # Add the row
-    postal_coords <- rbind(postal_coords, new_row)
-  }
-  
-  # Convert to sf object with WGS84 coordinates (EPSG:4326)
-  # Filter out rows with NA coordinates first
-  valid_coords <- postal_coords[!is.na(postal_coords$latitude_wgs84) & 
-                                 !is.na(postal_coords$longitude_wgs84), ]
-  
-  if (nrow(valid_coords) > 0) {
-    coords_sf <- st_as_sf(valid_coords, 
-                          coords = c("longitude_wgs84", "latitude_wgs84"),
-                          crs = 4326)
-    
-    # Transform to SVY21 (EPSG:3414)
-    coords_svy21 <- st_transform(coords_sf, 3414)
-    
-    # Extract coordinates
-    coords_matrix <- st_coordinates(coords_svy21)
-    
-    # Add SVY21 coordinates back to the original dataframe with desired column names
-    valid_coords$longitude <- coords_matrix[, 1]  # SVY21 X coordinate as longitude
-    valid_coords$latitude <- coords_matrix[, 2]   # SVY21 Y coordinate as latitude
-    
-    # Merge back with rows that had NA coordinates
-    result <- merge(postal_coords, valid_coords[c("postal_code", "longitude", "latitude")], 
-                    by = "postal_code", all.x = TRUE)
-  } else {
-    # If no valid coordinates, add empty SVY21 columns
-    result <- postal_coords
-    result$longitude <- NA  # SVY21 coordinates
-    result$latitude <- NA   # SVY21 coordinates
-  }
-  
-  # Remove the address column (if it exists) and ensure postal_code is the column name
-  result <- result %>% select(-address, postal_code, latitude_wgs84, longitude_wgs84, longitude, latitude)
-  
-  return(result)
-}
-```
-
-```{r}
-get_coords <- function(postal_codes) {
-  # Create a data frame to store all retrieved coordinates
-  postal_coords <- data.frame()
-  
-  # Loop through each postal code
-  for (postal_code in postal_codes) {
-    # Send API request to OneMap
-    r <- GET('https://www.onemap.gov.sg/api/common/elastic/search?',
-             query = list(searchVal = postal_code,
-                          returnGeom = 'Y',
-                          getAddrDetails = 'Y'))
-    
-    # Parse the API response
-    data <- fromJSON(rawToChar(r$content))
-    found <- data$found
-    res <- data$results
-    
-    # Initialize variables for coordinates
-    lat_wgs84 <- NA
-    lng_wgs84 <- NA
-    lat_svy21 <- NA
-    lng_svy21 <- NA
-    
-    # If results are found
-    if (found > 0) {
-      # Filter out results with NIL postal codes
-      res_sub <- res[res$POSTAL != "NIL", ]
-      
-      # If valid results exist
-      if (nrow(res_sub) > 0) {
-        # Take the first valid result
-        top1 <- head(res_sub, n = 1)
-        lat_wgs84 <- top1$LATITUDE
-        lng_wgs84 <- top1$LONGITUDE
-        
-        # Convert WGS84 (EPSG:4326) to SVY21 (EPSG:3414)
-        coords_wgs84 <- st_as_sf(data.frame(lng = lng_wgs84, lat = lat_wgs84),
-                                 coords = c("lng", "lat"), crs = 4326)
-        coords_svy21 <- st_transform(coords_wgs84, 3414)
-        coords_matrix <- st_coordinates(coords_svy21)
-        
-        # Extract SVY21 coordinates
-        lng_svy21 <- coords_matrix[, 1]
-        lat_svy21 <- coords_matrix[, 2]
-      }
-    }
-    
-    # Create a new row with postal code and coordinates
-    new_row <- data.frame(postal_code = postal_code,
-                          latitude_wgs84 = lat_wgs84,
-                          longitude_wgs84 = lng_wgs84,
-                          latitude_svy21 = lat_svy21,
-                          longitude_svy21 = lng_svy21)
-    
-    # Add the row to the data frame
-    postal_coords <- rbind(postal_coords, new_row)
-  }
-  
-  # Return the final data frame
-  return(postal_coords)
-}
-```
-
-```{r}
 coords <- get_coords(add_list)
 ```
 
@@ -894,9 +735,13 @@ coords_sf <- coords %>%
   select(address, postal, longitude, latitude, latitude_wgs84, longitude_wgs84)
 ```
 
+### try this
+
 ```{r}
-cc_data_final <- cc_data_t %>% 
-  left_join(coords_sf, by = 'postal_code)
+cc_data_final <- cc_data_t %>%
+  left_join(coords_sf, 
+            join_by(postal_code = postal)
+)
 ```
 
 ## Population Data
@@ -965,6 +810,36 @@ popdata20 = read_rds("data/rds/popdata/original/popdata20.rds")
 
 ```{r}
 glimpse(popdata20)
+```
+
+```{r}
+popdata24 <- popdata24 %>%
+  mutate(Age = ifelse(Age=="90_and_over", "90", Age), 
+         Age = parse_number(Age))
+```
+
+```{r}
+popdata23 <- popdata23 %>%
+  mutate(Age = ifelse(Age=="90_and_over", "90", Age), 
+         Age = parse_number(Age))
+```
+
+```{r}
+popdata22 <- popdata22 %>%
+  mutate(Age = ifelse(Age=="90_and_over", "90", Age), 
+         Age = parse_number(Age))
+```
+
+```{r}
+popdata21 <- popdata21 %>%
+  mutate(Age = ifelse(Age=="90_and_over", "90", Age), 
+         Age = parse_number(Age))
+```
+
+```{r}
+popdata20 <- popdata20 %>%
+  mutate(Age = ifelse(Age=="90_and_over", "90", Age), 
+         Age = parse_number(Age))
 ```
 
 ### Changing Columns to lowercase
@@ -1134,41 +1009,6 @@ popdata20 = read_rds("data/rds/popdata/refined/popdata20cleaned.rds")
 
 ## Changing 90_and_over to 90
 
-```{r}
-glimpse(popdata22)
-```
-
-```{r}
-popdata24$age <- gsub("90_and_Over", "90", popdata24$age)
-popdata23$age <- gsub("90_and_Over", "90", popdata23$age)
-popdata22$age <- gsub("90_and_Over", "90", popdata22$age)
-popdata21$age <- gsub("90_and_Over", "90", popdata21$age)
-popdata20$age <- gsub("90_and_Over", "90", popdata20$age)
-```
-
-## Changing to Integer
-
-```{r}
-popdata24$age <- as.integer(popdata24$age)
-str(popdata24$age)
-
-popdata23$age <- as.integer(popdata23$age)
-str(popdata23$age)
-
-popdata22$age <- as.integer(popdata22$age)
-str(popdata22$age)
-
-popdata21$age <- as.integer(popdata21$age)
-str(popdata21$age)
-
-popdata20$age <- as.integer(popdata20$age)
-str(popdata20$age)
-```
-
-```{r}
-table(popdata21$age, useNA = "ifany")
-```
-
 ## Calculating Population for Each Age Level
 
 ```{r}
@@ -1194,7 +1034,11 @@ head(combined_data)
 # Exploratory Data Analysis
 
 ```{r}
-plot(mpsz)
+tmap_mode("view")
+tm_shape(mpsz) +
+  tm_polygons() +
+tm_shape(CHAS) +
+  tm_dots()
 ```
 
 # References
