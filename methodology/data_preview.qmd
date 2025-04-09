@@ -18,13 +18,23 @@ editor: source
 
 # Overview
 
-In this section, the methodology will be explained thereafter Exploratory Data Analysis will be done.
+In this section, we will acquire the data sets from various government open-sources data repository and websites. Thereafter, we will install the necessary R packages and import the data sets. In each data set, we will delve into the necessary checks, issues faced and steps into resolving the issue. Thereafter, exploratory data analysis is done on a micro and macro level.
 
 # Data Acquisition
 
-3 main spectrum of data will be required for this research, namely the Population Data, Master Plan 2019 Subzone boundary and Care Centres.
+In this research, 3 main spectrum of data will be required for this research, namely the Population Data, Master Plan 2019 Subzone boundary and Care Centres. These datasets are gathered from multiple open-source websites which includes Singapore Department of Statistics, Data.gov, and Agency of Integrated Care.
 
 ![Figure x: Data Overview](/methodology/images/data_overview.png){fig-align="center"}
+
+### Singapore Master Plan 2019 Subzone Boundary
+
+The Singapore Master Plan 2019 Planning Subzone Boundary is a ESRI shapefile that is obtained from Data.gov.sg.
+
+### Population Data
+
+The Singapore Resident by Planning Area/Subzone, Single Year of Age and Sex, June 2024 is selected for this
+
+As the verison January 2025 will be not be ready in due time for this research project, thus, the version of June 2024 is used.
 
 ### WebScraping of Care Centres
 
@@ -116,7 +126,7 @@ In ensuring the web scraping successful and accurate, the csv. file is opened an
 
 The above steps were repeated for each care centre. All of the Care Centre data was extracted on 7th February 2025.
 
-## Packages
+## Installing Packages
 
 ::: panel-tabset
 The following packages are required for this section:
@@ -138,7 +148,7 @@ The code chunk below, using `p_load` function of the [**pacman**](https://cran.r
 
 ```{r}
 pacman::p_load(tidyverse, sf, httr,
-               jsonlite, rvest, dplyr, units,
+               jsonlite, rvest, units,
                lubridate, tmap)
 
 # -   Creates a package list containing the necessary R packages
@@ -154,6 +164,10 @@ pacman::p_load(tidyverse, sf, httr,
 ```{r}
 mpsz = st_read(dsn = "data/subzone/",
                layer = "MP14_SUBZONE_NO_SEA_PL")
+```
+
+```{r}
+plot(mpsz)
 ```
 
 ```{r}
@@ -246,7 +260,7 @@ rehab = read_rds("data/rds/carecentre/original/rehab.rds")
 Using the glimpse() function, we are able to see that various rows in each data set while sharing the same number of columns. Columns "web-scraper-order" and "web-scraper-start-url" are redundant, thus, will be removed. Additionally, the address includes the postal code and it will seperated from the main street name and block number to facilitate the geospatial mapping thereafter.
 
 ```{r}
-glimpse(popdata20)
+glimpse(aac)
 ```
 
 ### Deleting Unwanted Codes
@@ -576,6 +590,36 @@ pivoted_cc_data <- cc_data %>%
   )
 ```
 
+using arrange(0, we are able to see that that the centres are arranged in alphabetically order and they are similar ones.
+
+```{r}
+arrange(pivoted_cc_data)
+```
+
+
+```{r}
+pivoted_cc_data$name[duplicated(pivoted_cc_data$name)]
+```
+
+```{r}
+duplicate_rows <- pivoted_cc_data %>%
+  # Count occurrences of each name
+  add_count(name) %>%
+  # Filter for names that appear more than once
+  filter(n > 1) %>%
+  # Remove the count column
+  select(-n) %>%
+  # Arrange by name for better readability
+  arrange(name)
+
+if (nrow(duplicate_rows) > 0) {
+  print(duplicate_rows)
+} else {
+  message("No duplicates found in the 'name' column.")
+}
+```
+
+
 ```{r}
 #| echo: false
 #| eval: false
@@ -588,37 +632,11 @@ write_rds(pivoted_cc_data, "data/rds/carecentre/refined/pivoted_cc_data.rds")
 pivoted_cc_data = read_rds("data/rds/carecentre/refined/pivoted_cc_data.rds")
 ```
 
-Grouping by postal_code: The group_by(postal_code) function groups the dataset by the postal_code column. This ensures that all rows with the same postal_code are treated as a single group for further operations.
 
-Retaining name and address: The summarise() function is used to retain the name and address columns. For each group (i.e., rows with the same postal_code), the first(name) and first(address) functions are used to keep the first occurrence of these columns. This ensures that the name and address values are preserved in the final output.
-
-Summarizing Label Columns:The across(aac:rehab, \~ ifelse(any(. == "yes"), "yes", "no")) part iterates over each label column (from aac to rehab). For each group, it checks if any row within the group has a "yes" for that label. If at least one "yes" is found, the combined row will have "yes" in that column; otherwise, it will have "no".
-
-Output:The result is a new dataset (cc_data_combined) where rows with the same postal_code are combined into a single row. The name and address columns are retained, and the label columns are summarized to reflect whether any row in the group had a "yes".
-
-```{r}
-cc_data_t <- cc_data_t %>%
-  group_by(postal_code) %>%
-  summarise(
-    name = first(name),  # Retain the first occurrence of 'name'
-    address = first(address),  # Retain the first occurrence of 'address'
-    across(aac:rehab, ~ ifelse(any(. == "yes"), "yes", "no"))
-  )
-```
-
-```{r}
-#| echo: false
-#| eval: false
-write_rds(cc_data_t, "data/rds/carecentre/refined/cc_data_t.rds")
-```
-
-```{r}
-#| echo: false
-#| eval: false
-cc_data_t = read_rds("data/rds/carecentre/refined/cc_data_t.rds")
-```
 
 ### Adding coordinates to care centre
+
+????? dont need this since already got postal code
 
 ```{r}
 add_list <- sort(unique(pivoted_cc_data$postal_code)) #parse a list as API cannot read df
@@ -727,20 +745,12 @@ get_coords <- function(add_list){
 coords <- get_coords(add_list)
 ```
 
-The longtitude and latitude is then combined into geometry and the crs has been set to EPSG = 3414.
+Left join is used to where both data sets share the same properties of postal code. 
 
 ```{r}
-coords_sf <- coords %>%
-  st_as_sf(coords = c("longitude", "latitude"), crs = 3414, remove = FALSE) %>%
-  select(address, postal, longitude, latitude, latitude_wgs84, longitude_wgs84)
-```
-
-### try this
-
-```{r}
-cc_data_final <- cc_data_t %>%
-  left_join(coords_sf, 
-            join_by(postal_code = postal)
+cc_data_final <- pivoted_cc_data %>%
+  left_join(coords, 
+            join_by(postal_code == postal)
 )
 ```
 
