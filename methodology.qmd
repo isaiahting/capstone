@@ -24,7 +24,7 @@ In this section, we will acquire the data sets from various government open-sour
 
 In this research, 3 main spectrum of data will be required for this research, namely the Population Data, Master Plan 2019 Subzone boundary and Care Centres. These datasets are gathered from multiple open-source websites which includes Singapore Department of Statistics, Data.gov, and Agency of Integrated Care.
 
-![Figure x: Data Overview](/methodology/images/data_overview.png){fig-align="center"}
+![Figure x: Data Overview](/metho_images/data_overview.png){fig-align="center"}
 
 ### Singapore Master Plan 2019 Subzone Boundary
 
@@ -44,85 +44,85 @@ Due to the lack of a centralised data of all care centres, web scarping is warra
 
 Web Scraper is used as it is free, works reasonably well and available in both Chrome and Firefox web store. In the below steps, Chrome will be the default web browser used.
 
-![*Figure x: Web Scraper*](/methodology/images/step0.png)
+![*Figure x: Web Scraper*](/metho_images/step0.png)
 
 #### Step 1: Navigate to Developer Tools in Chrome Web Browser
 
 After downloading the extension from Chrome Web Store, press onto the menu bar at the right of the browser and locate Developer Tools while onto the website you would like to scrape information from.
 
-![*Figure x: Web Scraper*](/methodology/images/step1.png)
+![*Figure x: Web Scraper*](/metho_images/step1.png)
 
 #### Step 2: Interface for Webscraper
 
 After clicking onto Developer Tools, click onto the Web Scraper in the menu bar (in black). Following which the below interface will appear.
 
-[![](/methodology/images/step2.png){width="499"}](Figure%20x:%20Locate%20Developer%20Tools)
+[![](/metho_images/step2.png){width="499"}](Figure%20x:%20Locate%20Developer%20Tools)
 
 #### Step 3: Create New Sitemap
 
 Click onto "create new sitemap", thereafter "Create Sitemap". Sitemap Name will be the overarching term used for these information; in this instance, it will be AAC. The Start URL will be the HTML link that you would like the information to be scraped from.
 
-![Figure x:](/methodology/images/step3.png){fig-align="center"}
+![Figure x:](/metho_images/step3.png){fig-align="center"}
 
 #### Step 4: Add New Selector
 
 After creating a new sitemap, the following interface will appear. Click onto the "Add new selector" to select the information to scrape.
 
-![Figure x:](/methodology/images/step4.png){fig-align="center"}
+![Figure x:](/metho_images/step4.png){fig-align="center"}
 
 #### Step 5: Selecting Whole Box
 
 Firstly, the id will be the column name. For Type, select Element Attribute from the drop down selection. Thereafter, press on Select under Selector and select two boxes of each centre as seen in the figure below (the remaining boxes will be highlighted through its intelligent function) and press onto Done Selecting in the green box.
 
-![Figure x:](/methodology/images/step5.png){fig-align="center"}
+![Figure x:](/metho_images/step5.png){fig-align="center"}
 
 #### Step 6: Sitemap Interface
 
 After adding a new selector, the sitemap page will appear the selector that you've inputted.
 
-![Figure x: Step 6 - Create New Sitemap](/methodology/images/step6.png){fig-align="center"}
+![Figure x: Step 6 - Create New Sitemap](/metho_images/step6.png){fig-align="center"}
 
 #### Step 7: Selecting Name of Care Centre
 
 Firstly, the id will be name (with reference to the name of care centre), serving as the column name. Text will be chosen under Type thereafter press Select under Selector and highlight the first 2 names of the care centres (The remaining care centres will be highlighted through its intelligent function) and press onto Done selecting in the green box. Multiple box will be selected as we would like to scrap multiple names and root parent selector will be root and press onto Save Selector.
 
-![Figure x: Step 7 - Selecting Name of Care Centre](/methodology/images/step7.png){fig-align="center"}
+![Figure x: Step 7 - Selecting Name of Care Centre](/metho_images/step7.png){fig-align="center"}
 
 #### Step 8: Create New Sitemap
 
 A popup window will be prompted and Group selectors was selected.
 
-![Figure x: Step 8 - Create New Sitemap](/methodology/images/step8.png){fig-align="center"}
+![Figure x: Step 8 - Create New Sitemap](/metho_images/step8.png){fig-align="center"}
 
 #### Step 9: Selecting Address of Care Centre
 
 Similar to Step 7, the id will be address. Text will be chosen under Type thereafter press Select under Selector and highlight the first 2 addresses of the care centres (Remaining addresses will be highlighted through its intelligent function) and press onto Done selecting in the green box. Multiple box will be selected as we would like to scrap multiple addresses and parent selector will be wrapper_for_main_name (as we grouped selectors in step 8) and press onto Save Selector.
 
-![Figure x: Step 9 - Selecting Address of Care Centre](/methodology/images/step9.png){fig-align="center"}
+![Figure x: Step 9 - Selecting Address of Care Centre](/metho_images/step9.png){fig-align="center"}
 
 #### Step 10: Data Preview
 
 Prior to data scraping, the data is previewed in ensuring each name of the care centre is correctly tagged to the address using the main website to verify.
 
-![Figure x: Step 10 - Data Preview](/methodology/images/step10.png){fig-align="center"}
+![Figure x: Step 10 - Data Preview](/metho_images/step10.png){fig-align="center"}
 
 #### Step 11: Commence Scraping
 
 Head over to sitemap aac and click onto Scrape. A new browser will appear indicating that it is in process of scraping. It will be closed automatically once the process has ended.
 
-![Figure x: Step 11 - Commence Scraping](/methodology/images/step11.png){fig-align="center"}
+![Figure x: Step 11 - Commence Scraping](/metho_images/step11.png){fig-align="center"}
 
 #### Step 11: Export Data
 
 Export data is selected upon clicking sitemap aac. 2 file options are offered: csv and xlsx. The former was chosen as CSV files are simple and portable which doesn't complicate data processing. Thereafter the data will be downloaded.
 
-![Figure x:](/methodology/images/step12.png){fig-align="center"}
+![Figure x:](/metho_images/images/step12.png){fig-align="center"}
 
 #### Step 11: View CSV File
 
 In ensuring the web scraping successful and accurate, the csv. file is opened and viewed.
 
-![Figure x: Step 11 - View CSV File](/methodology/images/step13.png){fig-align="center"}
+![Figure x: Step 11 - View CSV File](/metho_images/step13.png){fig-align="center"}
 
 The above steps were repeated for each care centre. All of the Care Centre data was extracted on 7th February 2025.
 
@@ -596,7 +596,6 @@ using arrange(0, we are able to see that that the centres are arranged in alphab
 arrange(pivoted_cc_data)
 ```
 
-
 ```{r}
 pivoted_cc_data$name[duplicated(pivoted_cc_data$name)]
 ```
@@ -619,7 +618,6 @@ if (nrow(duplicate_rows) > 0) {
 }
 ```
 
-
 ```{r}
 #| echo: false
 #| eval: false
@@ -631,8 +629,6 @@ write_rds(pivoted_cc_data, "data/rds/carecentre/refined/pivoted_cc_data.rds")
 #| eval: false
 pivoted_cc_data = read_rds("data/rds/carecentre/refined/pivoted_cc_data.rds")
 ```
-
-
 
 ### Adding coordinates to care centre
 
@@ -745,7 +741,7 @@ get_coords <- function(add_list){
 coords <- get_coords(add_list)
 ```
 
-Left join is used to where both data sets share the same properties of postal code. 
+Left join is used to where both data sets share the same properties of postal code.
 
 ```{r}
 cc_data_final <- pivoted_cc_data %>%
@@ -758,22 +754,27 @@ cc_data_final <- pivoted_cc_data %>%
 
 ### Importing Data
 
+rename_with() of tidyverse package is used to perform column name standardisation by converting all variable names in the respective datasets to lowercase.
+
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2024](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2024.ashx)
 
 ```{r}
-popdata24 <- read_csv("data/popdata/respopagesex2024.csv")
+popdata24 <- read_csv("data/popdata/respopagesex2024.csv") %>%
+  rename_with(tolower)
 ```
 
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2023](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2023.ashx)
 
 ```{r}
-popdata23 <- read_csv("data/popdata/respopagesex2023.csv")
+popdata23 <- read_csv("data/popdata/respopagesex2023.csv") %>%
+  rename_with(tolower)
 ```
 
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2022](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2022.ashx) 
 
 ```{r}
-popdata22 <- read_csv("data/popdata/respopagesex2022.csv")
+popdata22 <- read_csv("data/popdata/respopagesex2022.csv") %>%
+  rename_with(tolower)
 ```
 
 ::: callout-warning
@@ -789,13 +790,16 @@ Warning: One or more parsing issues, call `problems()` on your data frame for de
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2021](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2021.ashx)
 
 ```{r}
-popdata21 <- read_csv("data/popdata/respopagesex2021.csv")
+popdata21 <- read_csv("data/popdata/respopagesex2021.csv") %>%
+  rename_with(tolower)
 ```
 
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2011-2020](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2011to2020.ashx)
 
 ```{r}
-popdata20 <- read_csv("data/popdata/respopagesex2011to2020.csv")
+popdata20 <- read_csv("data/popdata/respopagesex2011to2020.csv") %>%
+  rename_with(tolower) %>%
+  filter(time == 2020)
 ```
 
 ```{r}
@@ -803,7 +807,6 @@ popdata20 <- read_csv("data/popdata/respopagesex2011to2020.csv")
 #| eval: false
 write_rds(popdata24, "data/rds/popdata/original/popdata24.rds")
 write_rds(popdata23, "data/rds/popdata/original/popdata23.rds")
-write_rds(popdata22, "data/rds/popdata/original/popdata22.rds")
 write_rds(popdata21, "data/rds/popdata/original/popdata21.rds")
 write_rds(popdata20, "data/rds/popdata/original/popdata20.rds")
 ```
@@ -813,60 +816,12 @@ write_rds(popdata20, "data/rds/popdata/original/popdata20.rds")
 #| eval: false
 popdata24 = read_rds("data/rds/popdata/original/popdata24.rds")
 popdata23 = read_rds("data/rds/popdata/original/popdata23.rds")
-popdata22 = read_rds("data/rds/popdata/original/popdata22.rds")
 popdata21 = read_rds("data/rds/popdata/original/popdata21.rds")
 popdata20 = read_rds("data/rds/popdata/original/popdata20.rds")
 ```
 
 ```{r}
-glimpse(popdata20)
-```
-
-```{r}
-popdata24 <- popdata24 %>%
-  mutate(Age = ifelse(Age=="90_and_over", "90", Age), 
-         Age = parse_number(Age))
-```
-
-```{r}
-popdata23 <- popdata23 %>%
-  mutate(Age = ifelse(Age=="90_and_over", "90", Age), 
-         Age = parse_number(Age))
-```
-
-```{r}
-popdata22 <- popdata22 %>%
-  mutate(Age = ifelse(Age=="90_and_over", "90", Age), 
-         Age = parse_number(Age))
-```
-
-```{r}
-popdata21 <- popdata21 %>%
-  mutate(Age = ifelse(Age=="90_and_over", "90", Age), 
-         Age = parse_number(Age))
-```
-
-```{r}
-popdata20 <- popdata20 %>%
-  mutate(Age = ifelse(Age=="90_and_over", "90", Age), 
-         Age = parse_number(Age))
-```
-
-### Changing Columns to lowercase
-
-**`names(popdata20)`**: This part of the code retrieves the current column names of the dataset `popdata20`. The `names()` function in R is used to get or set the names of an object, such as the column names of a data frame.
-
-**`tolower(names(popdata20))`**: The `tolower()` function is applied to the column names retrieved in the previous step. This function converts all characters in the names to lowercase. For example, if a column name is `"PA"`, it will become `"pa"`.
-
-**`names(popdata20) <- ...`**: This part assigns the new lowercase column names back to the dataset `popdata20`. The `<-` operator is used to update the column names of the dataset with the lowercase versions.
-
-```{r}
-# Assuming your dataset is already loaded as popdata20
-names(popdata20) <- tolower(names(popdata20))
-names(popdata21) <- tolower(names(popdata21))
-names(popdata22) <- tolower(names(popdata22))
-names(popdata23) <- tolower(names(popdata23))
-names(popdata24) <- tolower(names(popdata24))
+glimpse(popdata23)
 ```
 
 ### Checking for Missing Values
@@ -898,18 +853,13 @@ print(popdata24_missing)
 
 ### Issue with POPDATA22
 
-Using the below code, we are able to see clearly the rows that are affected and in the pop column, it appears as NA. The csv file (respopagesex2022.csv) was opened using excel and each row returned in the below output was then cross checked in excel. There were numbers with comma appeared in excel. This may be because read_csv() function expects a numeric value (double) in one of the columns, but instead, it found a string (the values in the column are likely formatted with commas, such as "1,020"). This is why the parser is raising an issue earlier on.
+Using the below code, we are able to see clearly the rows that are affected and in the pop column, it appears as NA. The csv file (respopagesex2022.csv) was opened using excel and each row returned in the below output was then cross checked in excel. Whole numbers with comma appeared in excel. This may be because read_csv() function expects a numeric value (double) in one of the columns, but instead, it found a string (the values in the column are likely formatted with commas, such as "1,020"). This is why the parser is raising an issue earlier on.
 
 ```{r}
 na_rows <- popdata22[is.na(popdata22$pop), ]
 print(na_rows)
 ```
 
-Using problems(), it shows details about any rows or columns that caused problems during the import. The results are a reaffirmation of the explanation above.
-
-```{r}
-problems(popdata22)
-```
 
 Referencing from [Stackoverflow](https://stackoverflow.com/questions/1523126/how-to-read-data-when-some-numbers-contain-commas-as-thousand-separator), the first line of the code is necessary as it defines a new class called `"num.with.commas"`. This class is intended to handle numeric values that are stored as strings with commas (e.g., `"1,000"`). Thereafter, the second line of the code defines a method to convert a `character` type to the custom `"num.with.commas"` class.
 
@@ -925,10 +875,9 @@ setAs("character", "num.with.commas",
         function(from) as.numeric(gsub(",", "", from) ) )
 ```
 
-The file is then re-imported again and column types were specified.
+The file is then re-imported again and specifically, the column 'pop' is parsed as a character field in facilitating the next step in removing commas within the population itself.
 
 ```{r}
-# Read the CSV file and specify column types
 popdata22 <- read_csv("data/popdata/respopagesex2022.csv", 
                       col_types = cols(
                         PA = col_character(),
@@ -936,18 +885,135 @@ popdata22 <- read_csv("data/popdata/respopagesex2022.csv",
                         Age = col_character(),
                         Sex = col_character(),
                         Pop = col_character(),
-                        Time = col_integer()  # Adjust if necessary
-                      ))
+                        Time = col_number()  # Adjust if necessary
+                      )) %>%
+  rename_with(tolower)
+```
+
+As previously stated, commas are present in the 'pop' column, hence, mutate()
+
+```{r}
+popdata22 <- popdata22 %>%
+  mutate(pop = as.numeric(str_replace_all(pop, ",", "")))
 ```
 
 ```{r}
-problems(popdata22)
+#| echo: false
+#| eval: false
+write_rds(popdata22, "data/rds/popdata/original/popdata22.rds")
 ```
+
+In the below, we've verified that there is no missing values and the above steps taken were successful.
 
 ```{r}
 names(popdata22) <- tolower(names(popdata22))
 popdata22_missing <- popdata22 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
 print(popdata22_missing)
+```
+However, upon running the below cod
+```{r}
+#| eval: false
+
+#First 
+convert_age <- function(df) {
+  df %>%
+    mutate(age = if_else(
+      age == "90_and_over", "90", age)) %>%
+    mutate(age = as.numeric(age))
+}
+
+popdata20_c <- convert_age(popdata23)
+
+```
+
+In the below `code chunk a & b`, we noticed that it returned two different outputs: `90_and_over` and `90_and_Over`. This may explain why the error `NAs introduced by coercion` was returned.
+`Code-chunk a.`
+
+```{r}
+popdata22 %>% 
+  summarise(max_age = max(age, na.rm = TRUE))
+```
+
+`Code chunk b.`
+
+```{r}
+popdata24 %>% 
+  summarise(max_age = max(age, na.rm = TRUE))
+```
+
+Hence, in addressing the above issue, the below code chunk was developed. First, The code defines a function called `convert_age` that takes a dataframe (`df`) as input. Inside the function, it modifies the `age` column using `mutate()`. It checks each value in the `age` column to see if it contains either "\_and_over" or "\_and_Over" (case-insensitive match). When a match is found, it extracts just the numeric part (e.g., "90" from "90_and_over") using `str_extract()`. If no match is found, it keeps the original value. The second `mutate()` converts the cleaned `age` column to numeric values, ensuring all ages are stored as numbers. The function returns the modified dataframe with standardised age values.
+```{r}
+convert_age <- function(df) {
+  df %>%
+    mutate(age = if_else(
+      str_detect(age, regex("_and_Over|_and_over", ignore_case = TRUE)),
+      str_extract(age, "\\d+"),  # Extract just the numeric part
+      age
+    )) %>%
+    mutate(age = as.numeric(age))
+}
+```
+
+```{r}
+popdata20_c <- convert_age(popdata20)
+```
+
+```{r}
+popdata21_c <- convert_age(popdata21)
+```
+
+```{r}
+popdata22_c <- convert_age(popdata22)
+```
+
+```{r}
+popdata23_c <- convert_age(popdata23)
+```
+
+```{r}
+popdata24_c <- convert_age(popdata24)
+```
+
+
+Another layer of confirmation of missing values was executed in ensuring no missing values were returned during the abovementioned process and it returns 0 for each dataset.
+```{r}
+popdata20_missing <- popdata20_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
+print(popdata20_missing)
+popdata21_missing <- popdata21_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
+print(popdata21_missing)
+popdata22_missing <- popdata22_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
+print(popdata22_missing)
+popdata23_missing <- popdata23_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
+print(popdata23_missing)
+popdata24_missing <- popdata24_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
+print(popdata24_missing)
+```
+
+### Remove
+```{r}
+# Return all rows where 'pop' is exactly 0
+popdata24_c %>% 
+  filter(age>=60, pop==0)
+```
+
+```{r}
+popdata23_c %>% 
+  filter(age>=60, pop==0)
+```
+
+```{r}
+popdata22_c %>% 
+  filter(age>=60, pop==0)
+```
+
+```{r}
+popdata21_c %>% 
+  filter(age>=60, pop==0)
+```
+
+```{r}
+popdata20_c %>% 
+  filter(age>=60, pop==0)
 ```
 
 ### Duplicate Check
@@ -960,7 +1026,7 @@ Thus, the code either returns the rows with duplicate values or 0 if no duplicat
 
 ```{r}
 # Check for duplicates in 'aac'
-popdata20_duplicate <- popdata20 %>% 
+popdata20_duplicate <- popdata20_c %>% 
   group_by_all() %>% 
   filter(n() > 1) %>% 
   ungroup()
@@ -968,28 +1034,28 @@ show(popdata20_duplicate)
 
 
 # Check for duplicates in 'counselling'
-popdata21_duplicate <- popdata21 %>% 
+popdata21_duplicate <- popdata21_c %>% 
   group_by_all() %>% 
   filter(n() > 1) %>% 
   ungroup()
 show(popdata21_duplicate)
 
 # Check for duplicates in 'daycare'
-popdata22_duplicate <- popdata22 %>% 
+popdata22_duplicate <- popdata22_c %>% 
   group_by_all() %>% 
   filter(n() > 1) %>% 
   ungroup()
 show(popdata22_duplicate)
 
 # Check for duplicates in 'dementia'
-popdata23_duplicate <- popdata23 %>% 
+popdata23_duplicate <- popdata23_c %>% 
   group_by_all() %>% 
   filter(n() > 1) %>% 
   ungroup()
 show(popdata23_duplicate)
 
 # Check for duplicates in 'hospice'
-popdata24_duplicate <- popdata24 %>% 
+popdata24_duplicate <- popdata24_c %>% 
   group_by_all() %>% 
   filter(n() > 1) %>% 
   ungroup()
@@ -1000,45 +1066,149 @@ show(popdata24_duplicate)
 ```{r}
 #| echo: false
 #| eval: false
-write_rds(popdata24, "data/rds/popdata/refined/popdata24cleaned.rds")
-write_rds(popdata23, "data/rds/popdata/refined/popdata23cleaned.rds")
-write_rds(popdata22, "data/rds/popdata/refined/popdata22cleaned.rds")
-write_rds(popdata21, "data/rds/popdata/refined/popdata21cleaned.rds")
-write_rds(popdata20, "data/rds/popdata/refined/popdata20cleaned.rds")
+write_rds(popdata24_c, "data/rds/popdata/refined/popdata24_c.rds")
+write_rds(popdata23_c, "data/rds/popdata/refined/popdata23_c.rds")
+write_rds(popdata22_c, "data/rds/popdata/refined/popdata22_c.rds")
+write_rds(popdata21_c, "data/rds/popdata/refined/popdata21_c.rds")
+write_rds(popdata20_c, "data/rds/popdata/refined/popdata20_c.rds")
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
-popdata24 = read_rds("data/rds/popdata/refined/popdata24cleaned.rds")
-popdata23 = read_rds("data/rds/popdata/refined/popdata23cleaned.rds")
-popdata22 = read_rds("data/rds/popdata/refined/popdata22cleaned.rds")
-popdata21 = read_rds("data/rds/popdata/refined/popdata21cleaned.rds")
-popdata20 = read_rds("data/rds/popdata/refined/popdata20cleaned.rds")
+popdata24_c = read_rds("data/rds/popdata/refined/popdata24_c.rds")
+popdata23_c = read_rds("data/rds/popdata/refined/popdata23_c.rds")
+popdata22_c = read_rds("data/rds/popdata/refined/popdata22_c.rds")
+popdata21_c = read_rds("data/rds/popdata/refined/popdata21_c.rds")
+popdata20_c = read_rds("data/rds/popdata/refined/popdata20_c.rds")
 ```
 
-## Changing 90_and_over to 90
 
-## Calculating Population for Each Age Level
+## PROF
+
+#Population Data
 
 ```{r}
-popdata24 <- popdata24 %>%
-  filter(age >= 65) %>% # Filter for age >= 65
-  group_by(age) %>%      # Group by age
-  summarise(total_pop = sum(pop)) # Summarize the total population for each age group
-
-# View the resulting dataset
-print(popdata24)
+clean_age_column <- function(df) {
+  df %>%
+    mutate(
+      age = str_trim(age),  # Trim whitespace
+      age = if_else(age == "90_and_over", "90", age),  # Replace label
+      age = suppressWarnings(as.numeric(age))  # Convert safely
+    ) %>%
+    filter(!is.na(age))  # Remove rows that still couldn't be converted
+}
 ```
 
-## Combining Datasets
+# Step 1: Load data
 
 ```{r}
-# Combine popdata23 and popdata24 row-wise
-combined_data <- bind_rows(popdata23, popdata24)
+pop20 <- read_rds("data/rds/popdata/refined/popdata20_c.rds") %>% 
+  clean_age_column()
+pop21 <- read_rds("data/rds/popdata/refined/popdata21_c.rds") %>% 
+  clean_age_column()
+pop22 <- read_rds("data/rds/popdata/refined/popdata22_c.rds") %>% 
+  clean_age_column()
+pop23 <- read_rds("data/rds/popdata/refined/popdata23_c.rds") %>% 
+  clean_age_column()
+pop24 <- read_rds("data/rds/popdata/refined/popdata24_c.rds") %>% 
+  clean_age_column()
+```
 
-# View the combined dataset
-head(combined_data)
+
+# Step 2: Compute survival rates for each year-to-year transition
+
+```{r}
+compute_survival_rate <- function(df1, df2) {
+  df1 %>%
+    filter(age >= 64 & age < 91) %>%
+    mutate(age = age + 1) %>%
+    inner_join(df2, 
+               by = c("age", "sex", "pa", "sz"),
+               suffix = c("_prev", "_next")) %>%
+    mutate(rate = pop_next / pop_prev) %>%
+    select(pa, sz, age, sex, rate)
+}
+```
+
+```{r}
+rates_2020_2021 <- compute_survival_rate(popdata20_c, popdata21_c)
+```
+
+```{r}
+rates_2021_2022 <- compute_survival_rate(pop21, popdata22)
+```
+
+```{r}
+rates_2022_2023 <- compute_survival_rate(popdata22, pop23)
+```
+
+```{r}
+rates_2023_2024 <- compute_survival_rate(pop23, pop24)
+```
+
+# Step 3: Average the survival rates
+
+```{r}
+avg_survival_rates <- bind_rows(
+  rates_2020_2021,
+  rates_2021_2022,
+  rates_2022_2023,
+  rates_2023_2024
+) %>%
+  group_by(age, sex, pa, sz) %>%
+  summarise(avg_rate = mean(rate, na.rm = TRUE), .groups = "drop")
+```
+
+# Step 4: Forecast each year 2025 to 2029
+
+```{r}
+forecast_year <- function(base_pop, rates, year) {
+  next_pop <- base_pop %>%
+    filter(age >= 64 & age < 90) %>%
+    mutate(age = age + 1) %>%
+    left_join(rates, by = c("age", "sex", "pa", "sz")) %>%
+    mutate(pop = pop * avg_rate) %>%
+    select(age, sex, pa, sz, pop)
+
+  # Handle 90+
+  age_89 <- base_pop %>%
+    filter(age == 89) %>%
+    select(sex, pa, sz, pop) %>%
+    mutate(age = 90)
+
+  age_90plus <- base_pop %>%
+    filter(age == 90) %>%
+    select(sex, pa, sz, pop)
+
+  pop_90 <- bind_rows(age_89, age_90plus) %>%
+    group_by(sex, pa, sz) %>%
+    summarise(age = 90, pop = sum(pop), .groups = "drop")
+
+  bind_rows(next_pop, pop_90) %>%
+    mutate(year = year) %>%
+    arrange(pa, sz, sex, age)
+}
+```
+
+# Step 5: Loop over the years
+
+```{r}
+# List to store forecasts
+forecast_list <- list()
+base_pop <- pop24
+
+for (y in 2025:2029) {
+  next_forecast <- forecast_year(base_pop, avg_survival_rates, y)
+  forecast_list[[as.character(y)]] <- next_forecast
+  base_pop <- next_forecast %>% select(pa, sz, age, sex,  pop)
+}
+```
+
+# Final Output
+
+```{r}
+all_forecasts <- bind_rows(forecast_list)
 ```
 
 # Exploratory Data Analysis

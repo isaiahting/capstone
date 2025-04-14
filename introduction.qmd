@@ -1,0 +1,21 @@
+---
+title: "Introduction"
+date: "21st Feb, 2025"
+date-modified: "last-modified"
+format:
+  html:
+    code-fold: false
+    code-summary: "Code Chunk"
+    number-sections: true
+execute: 
+  eval: false #r will run through all codes
+  echo: true #r will display all code chunk
+  warning: false #for mark down
+  freeze: true #r will not render all existing  html files
+  message: false #avoid printing warning message
+editor: source
+---
+
+
+Background
+Singapore is an aged society where 1 in 4 of the population are above 65 years of age.
