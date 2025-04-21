@@ -142,53 +142,86 @@ The following packages are required for this section:
 | [**leaflet**](https://rstudio.github.io/leaflet/) | For interactive maps |
 | [**scales**](https://scales.r-lib.org/) | For scaling graphs |
 
-## Code
-
 The code chunk below, using `p_load` function of the [**pacman**](https://cran.r-project.org/web/packages/pacman/pacman.pdf) package, ensures that packages required are installed and loaded in R.
 
 ```{r}
 pacman::p_load(tidyverse, sf, httr,
                jsonlite, rvest, units,
                lubridate, tmap)
-
-# -   Creates a package list containing the necessary R packages
-# -   Checks if the R packages in the package list have been installed
-# -   If not installed, will install the missing packages & launch into R environment.
 ```
 :::
 
-## Geospatial Data
+-   to explain packages
 
-### Importing Singapore's Master Plan 2019 Subzone Boundary
+## Singapore's Master Plan 2019 Subzone Boundary (MPSZ)
+
+Using `st_read`, the ESRI shapefile was imported and it contains 323 data entries and 15 fields. Each of the data entry consists of a multi-polygon shape, with geospatial coordinates with a geographic coordinate system (GCS) of WGS84. The features of GCS include using a 3D spherical model of earth with coordinates of longitude, latitude and altitude whereas PCS uses a 2D plane model with linear measurements (i..e metres).
 
 ```{r}
 mpsz = st_read(dsn = "data/subzone/",
                layer = "MP14_SUBZONE_NO_SEA_PL")
+head(mpsz, n=5)
 ```
 
-```{r}
-plot(mpsz)
-```
+### Transforming CRS
+
+As the research's focus is exploring the accessibility of care centres in Singapore, PCS would be appropriate in this context as it measures the distance between the elderly' residence and the care centre. Thus, in ensuring accurate measurement, the function \`st_transform\` with a crs of 3414 was used (Kam, 2022) in the code chunk below.
 
 ```{r}
-#| echo: false
-#| eval: false
-mppa <- st_read("data/planningarea/MasterPlan2019PlanningAreaBoundaryNoSea.kml")
-```
-
-```{r}
-#| echo: false
-#| eval: false
-write_rds(mpsz, "data/rds/geopatial/mpsz.rds")
+mpsz <- mpsz %>%
+  st_transform(crs = 3414)
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
-mpsz = read_rds("data/rds/geopatial/mpsz.rds")
+write_rds(mpsz, "data/rds/mpsz/mpsz.rds")
 ```
 
-## Care Centre (EXTRACT TRANSFORM LOAD)
+```{r}
+#| echo: false
+#| eval: false
+mpsz = read_rds("data/rds/mpsz/mpsz.rds")
+```
+
+### Sampling Grid
+
+In measuring spatial accessibility, hexagonal grid of the sampling fields is used to standardise the means of measurement as referencing to the output below, we noticed that the sampling fields in `mpsz` are not standardised. The centre of each hexagon is an Origin, additionally, acting as a starting point in ascertaining the shortest distance to the care centres. Oher sampling grids employed in similar research such as square grids, however, in the context of this research, it is more suitable as the hexagonal tshape ensures that the distance from the centre to the edges is more equal than the squares (Burdziej, 2018; Kam, 2022).
+
+```{r}
+plot(st_geometry(mpsz))
+```
+
+In the HealthierSG White Paper 2022, the Ministry of Health has indicated its intention to "expand the network \["care centres"\] to 220 by 2025". Furthermore, through the Ministry's estimation, 8 in 10 seniors will have a care centre in the vicinity of their homes (Ministry of Health, 2022). Hence, we will assume that the maximum distance to the care centres are 100 metres. Hence, in the code chunk below, `st_make_grid` from `sf` package constructed hexagonal grids encompassing the Singapore Master Plan 2019 Planning Subzone Boundary using `cellsize` that defines the radius of 100 metres and `square` to be false to generate a hexagonal grid.
+
+```{r}
+hex_grid <- st_make_grid(mpsz,
+                         cellsize = 100,
+                         what = "polygon",
+                         square = FALSE) %>%
+  st_sf()
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(mpsz, "data/rds/mpsz/mpsz.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+mpsz = read_rds("data/rds/mpsz/mpsz.rds")
+```
+
+?explain this code
+
+```{r}
+hex_grid$hex_id <- sprintf("H%04d", seq_len(nrow(hex_grid))) %>% as.factor()
+head(hex_grid)
+```
+
+## Care Centre
 
 ```{r}
 aac <- read_csv("data/carecentre/activeageingcentre.csv")
@@ -463,7 +496,7 @@ rehab_missing <- rehab %>% summarise(across(c(name, address, postal_code), ~sum(
 
 ### Labelling each dataset appropriately
 
-The below code chunk adds a column and naming it as "label" in relation to the name of the dataset. This is done so we are able to combine the dataset together and identify
+The below code chunk adds a column and naming it as "label" in relation to the name of the dataset hence we are able to identify the type of services provided by the care centres.
 
 ```{r}
 aac <- aac %>%
@@ -860,7 +893,6 @@ na_rows <- popdata22[is.na(popdata22$pop), ]
 print(na_rows)
 ```
 
-
 Referencing from [Stackoverflow](https://stackoverflow.com/questions/1523126/how-to-read-data-when-some-numbers-contain-commas-as-thousand-separator), the first line of the code is necessary as it defines a new class called `"num.with.commas"`. This class is intended to handle numeric values that are stored as strings with commas (e.g., `"1,000"`). Thereafter, the second line of the code defines a method to convert a `character` type to the custom `"num.with.commas"` class.
 
 -   The `gsub(",", "", from)` function removes commas from the string (e.g., `"1,000"` becomes `"1000"`)
@@ -910,7 +942,9 @@ names(popdata22) <- tolower(names(popdata22))
 popdata22_missing <- popdata22 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
 print(popdata22_missing)
 ```
+
 However, upon running the below cod
+
 ```{r}
 #| eval: false
 
@@ -926,8 +960,7 @@ popdata20_c <- convert_age(popdata23)
 
 ```
 
-In the below `code chunk a & b`, we noticed that it returned two different outputs: `90_and_over` and `90_and_Over`. This may explain why the error `NAs introduced by coercion` was returned.
-`Code-chunk a.`
+In the below `code chunk a & b`, we noticed that it returned two different outputs: `90_and_over` and `90_and_Over`. This may explain why the error `NAs introduced by coercion` was returned. `Code-chunk a.`
 
 ```{r}
 popdata22 %>% 
@@ -942,6 +975,7 @@ popdata24 %>%
 ```
 
 Hence, in addressing the above issue, the below code chunk was developed. First, The code defines a function called `convert_age` that takes a dataframe (`df`) as input. Inside the function, it modifies the `age` column using `mutate()`. It checks each value in the `age` column to see if it contains either "\_and_over" or "\_and_Over" (case-insensitive match). When a match is found, it extracts just the numeric part (e.g., "90" from "90_and_over") using `str_extract()`. If no match is found, it keeps the original value. The second `mutate()` converts the cleaned `age` column to numeric values, ensuring all ages are stored as numbers. The function returns the modified dataframe with standardised age values.
+
 ```{r}
 convert_age <- function(df) {
   df %>%
@@ -974,8 +1008,8 @@ popdata23_c <- convert_age(popdata23)
 popdata24_c <- convert_age(popdata24)
 ```
 
-
 Another layer of confirmation of missing values was executed in ensuring no missing values were returned during the abovementioned process and it returns 0 for each dataset.
+
 ```{r}
 popdata20_missing <- popdata20_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
 print(popdata20_missing)
@@ -990,6 +1024,7 @@ print(popdata24_missing)
 ```
 
 ### Remove
+
 ```{r}
 # Return all rows where 'pop' is exactly 0
 popdata24_c %>% 
@@ -1083,7 +1118,6 @@ popdata21_c = read_rds("data/rds/popdata/refined/popdata21_c.rds")
 popdata20_c = read_rds("data/rds/popdata/refined/popdata20_c.rds")
 ```
 
-
 ## PROF
 
 #Population Data
@@ -1114,7 +1148,6 @@ pop23 <- read_rds("data/rds/popdata/refined/popdata23_c.rds") %>%
 pop24 <- read_rds("data/rds/popdata/refined/popdata24_c.rds") %>% 
   clean_age_column()
 ```
-
 
 # Step 2: Compute survival rates for each year-to-year transition
 
@@ -1223,6 +1256,12 @@ tm_shape(CHAS) +
 
 # References
 
+Burdziej, J. (2019). Using hexagonal grids and network analysis for spatial accessibility assessment in urban environments-A case study of public amenities in Toruń. Miscellanea Geographica. Regional Studies on Development, 23(2), 99-110.
+
+Kam, T. S, (2024). R for Geospatial Data Science and Analytics. https://r4gdsa.netlify.app/
+
 Tan, K. (2023). Take-home Exercise 1: Geospatial Analytics for Public Good. Retrieved from <https://isss624-kytjy.netlify.app/take-home_ex/take-home_ex1/the1#background>
+
+Ministry of Health Singapore. (2022). Healthier SG White Paper. Retrieved from https://file.go.gov.sg/healthiersg-whitepaper-pdf.pdf
 
 Urban Redevelopment Authority. (2023). Master Plan 2019 Planning Area Boundary (No Sea) (2024) \[Dataset\]. data.gov.sg. Retrieved February 23, 2025 from https://data.gov.sg/datasets/d_6c6d7361dd826d97b91bac914ca6b2ac/view
