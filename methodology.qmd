@@ -132,7 +132,7 @@ The above steps were repeated for each care centre. All of the Care Centre data 
 The following packages are required for this section:
 
 | Package | Description |
-|-------------------------------------|-----------------------------------|
+|----|----|
 | [**sf**](https://r-spatial.github.io/sf/) | For importing, managing, and handling geospatial data |
 | [**sfdep**](https://sfdep.josiahparry.com/) | Used to compute spatial weights, global and local spatial autocorrelation statistics |
 | [**tmap**](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) | For thematic mapping |
@@ -602,9 +602,9 @@ write_rds(cc_data, "data/rds/carecentre/refined/cc_data.rds")
 cc_data = read_rds("data/rds/carecentre/refined/cc_data.rds")
 ```
 
-### USE THIS
+### Transforming Categorical Data to Binary Indicator
 
-If yes is 1, no returns 0.
+This code transforms the dataset `cc_data` from a long format to a wide format by pivoting on the categorical values in the `label` column, effectively converting them into binary indicator columns. The process begins by removing the `address` column using `select(-address)` to exclude it from the transformation. Next, a new column called `present` is created using `mutate(present = 1)`, where every row is assigned a value of 1 to indicate the presence of a label. The key reshaping operation is performed using `pivot_wider()`, which spreads the unique values from the `label` column into separate columns. The `names_from = label` argument specifies that the new column names should be derived from the distinct categories in `label`, while `values_from = present` fills these new columns with the corresponding 1s from the `present` column. Any missing combinations (where a particular label does not appear for a given record) are automatically filled with 0s due to the `values_fill = list(0)` argument. The final output, stored in `pivoted_cc_data`, is a wider dataframe where each original row now has binary flags (1 or 0) indicating the presence or absence of each label category, making it suitable for analyses that require a one-hot encoded or dummy variable representation of categorical data.
 
 ```{r}
 
@@ -664,8 +664,6 @@ pivoted_cc_data = read_rds("data/rds/carecentre/refined/pivoted_cc_data.rds")
 ```
 
 ### Adding coordinates to care centre
-
-????? dont need this since already got postal code
 
 ```{r}
 add_list <- sort(unique(pivoted_cc_data$postal_code)) #parse a list as API cannot read df

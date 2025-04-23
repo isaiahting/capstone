@@ -203,7 +203,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#seperating-postal-code-from-address" id="toc-seperating-postal-code-from-address" class="nav-link" data-scroll-target="#seperating-postal-code-from-address"><span class="header-section-number">2.4.1</span> Seperating postal code from address</a></li>
   <li><a href="#labelling-each-dataset-appropriately" id="toc-labelling-each-dataset-appropriately" class="nav-link" data-scroll-target="#labelling-each-dataset-appropriately"><span class="header-section-number">2.4.2</span> Labelling each dataset appropriately</a></li>
   <li><a href="#append-all-care-centres-into-one-dataset" id="toc-append-all-care-centres-into-one-dataset" class="nav-link" data-scroll-target="#append-all-care-centres-into-one-dataset"><span class="header-section-number">2.4.3</span> Append all Care Centres into one dataset</a></li>
-  <li><a href="#use-this" id="toc-use-this" class="nav-link" data-scroll-target="#use-this"><span class="header-section-number">2.4.4</span> USE THIS</a></li>
+  <li><a href="#transforming-categorical-data-to-binary-indicator" id="toc-transforming-categorical-data-to-binary-indicator" class="nav-link" data-scroll-target="#transforming-categorical-data-to-binary-indicator"><span class="header-section-number">2.4.4</span> Transforming Categorical Data to Binary Indicator</a></li>
   <li><a href="#adding-coordinates-to-care-centre" id="toc-adding-coordinates-to-care-centre" class="nav-link" data-scroll-target="#adding-coordinates-to-care-centre"><span class="header-section-number">2.4.5</span> Adding coordinates to care centre</a></li>
   </ul></li>
   <li><a href="#population-data-1" id="toc-population-data-1" class="nav-link" data-scroll-target="#population-data-1"><span class="header-section-number">2.5</span> Population Data</a>
@@ -250,7 +250,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">April 21, 2025</p>
+      <p class="date-modified">April 23, 2025</p>
     </div>
   </div>
     
@@ -744,9 +744,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="use-this" class="level3" data-number="2.4.4">
-<h3 data-number="2.4.4" class="anchored" data-anchor-id="use-this"><span class="header-section-number">2.4.4</span> USE THIS</h3>
-<p>If yes is 1, no returns 0.</p>
+<section id="transforming-categorical-data-to-binary-indicator" class="level3" data-number="2.4.4">
+<h3 data-number="2.4.4" class="anchored" data-anchor-id="transforming-categorical-data-to-binary-indicator"><span class="header-section-number">2.4.4</span> Transforming Categorical Data to Binary Indicator</h3>
+<p>This code transforms the dataset <code>cc_data</code> from a long format to a wide format by pivoting on the categorical values in the <code>label</code> column, effectively converting them into binary indicator columns. The process begins by removing the <code>address</code> column using <code>select(-address)</code> to exclude it from the transformation. Next, a new column called <code>present</code> is created using <code>mutate(present = 1)</code>, where every row is assigned a value of 1 to indicate the presence of a label. The key reshaping operation is performed using <code>pivot_wider()</code>, which spreads the unique values from the <code>label</code> column into separate columns. The <code>names_from = label</code> argument specifies that the new column names should be derived from the distinct categories in <code>label</code>, while <code>values_from = present</code> fills these new columns with the corresponding 1s from the <code>present</code> column. Any missing combinations (where a particular label does not appear for a given record) are automatically filled with 0s due to the <code>values_fill = list(0)</code> argument. The final output, stored in <code>pivoted_cc_data</code>, is a wider dataframe where each original row now has binary flags (1 or 0) indicating the presence or absence of each label category, making it suitable for analyses that require a one-hot encoded or dummy variable representation of categorical data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>pivoted_cc_data <span class="ot">&lt;-</span> cc_data <span class="sc">%&gt;%</span></span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>address) <span class="sc">%&gt;%</span></span>
@@ -789,7 +789,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="adding-coordinates-to-care-centre" class="level3" data-number="2.4.5">
 <h3 data-number="2.4.5" class="anchored" data-anchor-id="adding-coordinates-to-care-centre"><span class="header-section-number">2.4.5</span> Adding coordinates to care centre</h3>
-<p>????? dont need this since already got postal code</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>add_list <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(pivoted_cc_data<span class="sc">$</span>postal_code)) <span class="co">#parse a list as API cannot read df</span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="co">#unique reduces records to pass to portal</span></span>
