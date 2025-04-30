@@ -116,7 +116,7 @@ Head over to sitemap aac and click onto Scrape. A new browser will appear indica
 
 Export data is selected upon clicking sitemap aac. 2 file options are offered: csv and xlsx. The former was chosen as CSV files are simple and portable which doesn't complicate data processing. Thereafter the data will be downloaded.
 
-![Figure x:](/metho_images/images/step12.png){fig-align="center"}
+![Figure x:](/metho_images/step12.png){fig-align="center"}
 
 #### Step 11: View CSV File
 
@@ -132,26 +132,30 @@ The above steps were repeated for each care centre. All of the Care Centre data 
 The following packages are required for this section:
 
 | Package | Description |
-|----|----|
-| [**sf**](https://r-spatial.github.io/sf/) | For importing, managing, and handling geospatial data |
-| [**sfdep**](https://sfdep.josiahparry.com/) | Used to compute spatial weights, global and local spatial autocorrelation statistics |
-| [**tmap**](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) | For thematic mapping |
+|-------------------------------------|-----------------------------------|
 | [**tidyverse**](https://www.tidyverse.org/) | For non-spatial data wrangling that includes dplyr, tibble, ggplot2, readr, tidyr, stringr, forcats, lubridate and purr |
+| [**sf**](https://r-spatial.github.io/sf/) | For importing, managing, and handling geospatial data |
+| [**jsonlite**](https://cran.r-project.org/web/packages/jsonlite/index.html) | For interacting with a web API |
+| [**rvest**](https://cran.r-project.org/web/packages/rvest/index.html) | A wrapper around xml2 and httr packages |
+| [**sfdep**](https://sfdep.josiahparry.com/) | Used to compute spatial weights, global and local spatial autocorrelation statistics |
+| [**tmap**](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) | for creating elegent and cartographic quality thematic maps |
 | [**knitr**](https://cran.r-project.org/web/packages/knitr/index.html) | For dynamic report generation |
 | [**patchwork**](https://patchwork.data-imaginist.com/) | For plot manipulation |
 | [**leaflet**](https://rstudio.github.io/leaflet/) | For interactive maps |
 | [**scales**](https://scales.r-lib.org/) | For scaling graphs |
+| [**lubridate**](https://lubridate.tidyverse.org/) | For date-time manipulation |
+| [**tmap**](https://r-graph-gallery.com/package/tmap.html) | For creating interactive maps |
+| [**DT**](https://rstudio.github.io/DT/) | provides an R interface to the JavaScript library DataTables. R data objects (matrices or data frames) can be displayed as tables on HTML pages, and DataTables provides filtering, pagination, sorting, and many other features in the tables. |
 
 The code chunk below, using `p_load` function of the [**pacman**](https://cran.r-project.org/web/packages/pacman/pacman.pdf) package, ensures that packages required are installed and loaded in R.
 
 ```{r}
-pacman::p_load(tidyverse, sf, httr,
-               jsonlite, rvest, units,
-               lubridate, tmap)
+pacman::p_load(tidyverse, sf,
+               jsonlite, rvest, knitr, patchwork,
+               leaflet, scales, lubridate, tmap, DT)
 ```
 :::
 
--   to explain packages
 
 ## Singapore's Master Plan 2019 Subzone Boundary (MPSZ)
 
@@ -189,7 +193,7 @@ mpsz = read_rds("data/rds/mpsz/mpsz.rds")
 In measuring spatial accessibility, hexagonal grid of the sampling fields is used to standardise the means of measurement as referencing to the output below, we noticed that the sampling fields in `mpsz` are not standardised. The centre of each hexagon is an Origin, additionally, acting as a starting point in ascertaining the shortest distance to the care centres. Oher sampling grids employed in similar research such as square grids, however, in the context of this research, it is more suitable as the hexagonal tshape ensures that the distance from the centre to the edges is more equal than the squares (Burdziej, 2018; Kam, 2022).
 
 ```{r}
-plot(st_geometry(mpsz))
+plot(mpsz["PLN_AREA_N"])
 ```
 
 In the HealthierSG White Paper 2022, the Ministry of Health has indicated its intention to "expand the network \["care centres"\] to 220 by 2025". Furthermore, through the Ministry's estimation, 8 in 10 seniors will have a care centre in the vicinity of their homes (Ministry of Health, 2022). Hence, we will assume that the maximum distance to the care centres are 100 metres. Hence, in the code chunk below, `st_make_grid` from `sf` package constructed hexagonal grids encompassing the Singapore Master Plan 2019 Planning Subzone Boundary using `cellsize` that defines the radius of 100 metres and `square` to be false to generate a hexagonal grid.
@@ -200,6 +204,27 @@ hex_grid <- st_make_grid(mpsz,
                          what = "polygon",
                          square = FALSE) %>%
   st_sf()
+```
+
+```{r}
+hex_grid$hex_id <- sprintf("H%04d", seq_len(nrow(hex_grid))) %>% as.factor()
+head(hex_grid)
+```
+
+
+```{r}
+hex_grid <- hex_grid %>%
+  mutate(hex_id = row_number())
+```
+
+```{r}
+hex_centroids <- st_centroid(hex_grid)
+```
+
+
+```{r}
+plot(st_geometry(hex_grid), col = "lightblue")
+plot(st_geometry(hex_centroids), pch = 20, col = "red", add = TRUE)
 ```
 
 ```{r}
@@ -216,11 +241,39 @@ mpsz = read_rds("data/rds/mpsz/mpsz.rds")
 
 ?explain this code
 
+
+
+## Road Network
+
+Importing road network
+
 ```{r}
-hex_grid$hex_id <- sprintf("H%04d", seq_len(nrow(hex_grid))) %>% as.factor()
-head(hex_grid)
+roadnetwork = st_read("data/roadnetwork/RoadNetwork.kml") %>%
+  st_transform(crs=3414)
 ```
 
+```{r}
+tmap_mode("plot")
+qtm(mpsz,
+    fill = roadnetwork)
+```
+
+```{r}
+tm_shape(mpsz) +
+  tm_polygons()
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(mpsz, "data/rds/roadnetwork/roadnetwork.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+roadnetwork = read_rds("data/rds/roadnetwork/roadnetwork.rds")
+```
 ## Care Centre
 
 ```{r}
@@ -1245,11 +1298,26 @@ all_forecasts <- bind_rows(forecast_list)
 # Exploratory Data Analysis
 
 ```{r}
-tmap_mode("view")
-tm_shape(mpsz) +
-  tm_polygons() +
-tm_shape(CHAS) +
-  tm_dots()
+tmpa_mode("view")
+```
+
+```{r}
+tm_shape(mpsz)+
+  tmap_options(check.and.fix = TRUE) +
+  tm_polygons(alpha = 0.4) +
+tm_shape(condo_resale.res.sf) +  
+  tm_dots(col = "MLR_RES",
+          alpha = 0.6,
+          style="quantile") +
+  tm_view(set.zoom.limits = c(11,14))
+```
+
+## Density of Care Centre in Each Subzone
+
+refer chapt 1
+
+```{r}
+mpsz$`CC Count` <- lengths(st_intersects(mpsz, ))
 ```
 
 # References
