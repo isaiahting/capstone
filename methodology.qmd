@@ -22,7 +22,7 @@ In this section, we will acquire the data sets from various government open-sour
 
 # Data Acquisition
 
-In this research, 3 main spectrum of data will be required for this research, namely the Population Data, Master Plan 2019 Subzone boundary and Care Centres. These datasets are gathered from multiple open-source websites which includes Singapore Department of Statistics, Data.gov, and Agency of Integrated Care.
+In this research, 3 main spectrum of data will be required for this research, namely the Population Data, Master Plan 2019 Subzone boundary and Care Centres. These datasets are gathered from multiple open-source websites which includes Singapore Department of Statistics, Data.gov.sg, and Agency of Integrated Care.
 
 ![Figure x: Data Overview](/metho_images/data_overview.png){fig-align="center"}
 
@@ -34,11 +34,11 @@ The Singapore Master Plan 2019 Planning Subzone Boundary is a ESRI shapefile tha
 
 The Singapore Resident by Planning Area/Subzone, Single Year of Age and Sex, June 2024 is selected for this
 
-As the verison January 2025 will be not be ready in due time for this research project, thus, the version of June 2024 is used.
+As the version January 2025 will be not be ready in due time for this research project, thus, the version of June 2024 is used.
 
 ### WebScraping of Care Centres
 
-Due to the lack of a centralised data of all care centres, web scarping is warranted in obtaining the information of the care centres. The geographical locations of the Care Centres alongside the centre names such as Active Ageing Centre, Day Care, Community Rehabilitation Centre, Centre-based Nursing were extracted using a web scraping tool, Web Scraper, available in Chrome web store as Seen in Figure x. As there is no centralised file that consist of the centre names and their locations, the location of each centre has to be manually extracted from the [Care Services](https://www.aic.sg/care-services/) webpage of the Agency of Integrated Care as seen in Figure x.
+Due to the lack of a centralised data of all care centres, web scraping is warranted in obtaining the information of the care centres. The geographical locations of the Care Centres alongside the centre names such as Active Ageing Centre, Day Care, Community Rehabilitation Centre, Centre-based Nursing were extracted using a web scraping tool, Web Scraper, available in Chrome web store as Seen in Figure x. As there is no centralised file that consist of the centre names and their locations, the location of each centre has to be manually extracted from the [Care Services](https://www.aic.sg/care-services/) webpage of the Agency of Integrated Care as seen in Figure x.
 
 #### Step 0: Download Web Scraper from Chrome web store
 
@@ -120,11 +120,11 @@ Export data is selected upon clicking sitemap aac. 2 file options are offered: c
 
 #### Step 11: View CSV File
 
-In ensuring the web scraping successful and accurate, the csv. file is opened and viewed.
+In ensuring the web scraping successful and accurate, the csv. file is opened and examined.
 
 ![Figure x: Step 11 - View CSV File](/metho_images/step13.png){fig-align="center"}
 
-The above steps were repeated for each care centre. All of the Care Centre data was extracted on 7th February 2025.
+The above steps were repeated for each type of care centre. All of the Care Centre data were extracted on 7th February 2025.
 
 ## Installing Packages
 
@@ -156,10 +156,9 @@ pacman::p_load(tidyverse, sf,
 ```
 :::
 
-
 ## Singapore's Master Plan 2019 Subzone Boundary (MPSZ)
 
-Using `st_read`, the ESRI shapefile was imported and it contains 323 data entries and 15 fields. Each of the data entry consists of a multi-polygon shape, with geospatial coordinates with a geographic coordinate system (GCS) of WGS84. The features of GCS include using a 3D spherical model of earth with coordinates of longitude, latitude and altitude whereas PCS uses a 2D plane model with linear measurements (i..e metres).
+Using `st_read`, the ESRI shapefile was imported and it contains 323 data entries and 15 fields. Each of the data entry consists of a multi-polygon shape, with geospatial coordinates with a geographic coordinate system (GCS) of WGS84. The features of GCS include using a 3D spherical model of earth with coordinates of longitude, latitude and altitude whereas PCS uses a 2D plane model with linear measurements (i.e. metres).
 
 ```{r}
 mpsz = st_read(dsn = "data/subzone/",
@@ -190,10 +189,10 @@ mpsz = read_rds("data/rds/mpsz/mpsz.rds")
 
 ### Sampling Grid
 
-In measuring spatial accessibility, hexagonal grid of the sampling fields is used to standardise the means of measurement as referencing to the output below, we noticed that the sampling fields in `mpsz` are not standardised. The centre of each hexagon is an Origin, additionally, acting as a starting point in ascertaining the shortest distance to the care centres. Oher sampling grids employed in similar research such as square grids, however, in the context of this research, it is more suitable as the hexagonal tshape ensures that the distance from the centre to the edges is more equal than the squares (Burdziej, 2018; Kam, 2022).
+In measuring spatial accessibility, analytical grids of the sampling fields is used to standardise the means of measurement (Kam, 2022). These analytical grids can be comprised of equilateral triangles, squares or hexagon due to its ability to tessellate (ESRI, 2025). From the code output below, we noticed that the sampling fields in the subzones of `mpsz` are not equal for measurement. Therefore, it is imperative to select an appropriate analytical grid in measuring spatial accessibility. Hexagons grids is chosen over triangles and squares due to several factors. Firstly, the shape of a hexagon has a low-perimeter-to-area ratio, hence the edge effect of the grid shape reduces sampling bias. Secondly, when comparing equal area, any point inside a hexagon is closer to the centriod than any given point in an equal-area square or triangle due to the more acute angles of square and triangle versus the hexagon (Burdziej, 2018; ESRI, 2025). This is particular important in this research as we are using the centroid as a proxy in comparing accessibility to the various care centres. The centre of each hexagon is an Origin, additionally, acting as a starting point in ascertaining the shortest distance to the care centres.
 
 ```{r}
-plot(mpsz["PLN_AREA_N"])
+plot(mpsz["SUBZONE_N"])
 ```
 
 In the HealthierSG White Paper 2022, the Ministry of Health has indicated its intention to "expand the network \["care centres"\] to 220 by 2025". Furthermore, through the Ministry's estimation, 8 in 10 seniors will have a care centre in the vicinity of their homes (Ministry of Health, 2022). Hence, we will assume that the maximum distance to the care centres are 100 metres. Hence, in the code chunk below, `st_make_grid` from `sf` package constructed hexagonal grids encompassing the Singapore Master Plan 2019 Planning Subzone Boundary using `cellsize` that defines the radius of 100 metres and `square` to be false to generate a hexagonal grid.
@@ -211,7 +210,6 @@ hex_grid$hex_id <- sprintf("H%04d", seq_len(nrow(hex_grid))) %>% as.factor()
 head(hex_grid)
 ```
 
-
 ```{r}
 hex_grid <- hex_grid %>%
   mutate(hex_id = row_number())
@@ -220,7 +218,6 @@ hex_grid <- hex_grid %>%
 ```{r}
 hex_centroids <- st_centroid(hex_grid)
 ```
-
 
 ```{r}
 plot(st_geometry(hex_grid), col = "lightblue")
@@ -239,10 +236,6 @@ write_rds(mpsz, "data/rds/mpsz/mpsz.rds")
 mpsz = read_rds("data/rds/mpsz/mpsz.rds")
 ```
 
-?explain this code
-
-
-
 ## Road Network
 
 Importing road network
@@ -253,14 +246,11 @@ roadnetwork = st_read("data/roadnetwork/RoadNetwork.kml") %>%
 ```
 
 ```{r}
-tmap_mode("plot")
-qtm(mpsz,
-    fill = roadnetwork)
+mpsz_road <- st_join(mpsz, roadnetwork, left = TRUE)
 ```
 
 ```{r}
-tm_shape(mpsz) +
-  tm_polygons()
+plot(mpsz_road)
 ```
 
 ```{r}
@@ -274,6 +264,7 @@ write_rds(mpsz, "data/rds/roadnetwork/roadnetwork.rds")
 #| eval: false
 roadnetwork = read_rds("data/rds/roadnetwork/roadnetwork.rds")
 ```
+
 ## Care Centre
 
 ```{r}
@@ -458,7 +449,7 @@ rehab_duplicate <- rehab %>%
 
 ## Data Manipulation (CC)
 
-### Seperating postal code from address
+### Separating postal code from address
 
 The code uses the mutate() function to extract the postal code (last 6 digits) from the address column of the individual dataset and store it in a new column called postal_code. The postal code is then removed from the address column.
 
@@ -659,6 +650,7 @@ cc_data = read_rds("data/rds/carecentre/refined/cc_data.rds")
 
 This code transforms the dataset `cc_data` from a long format to a wide format by pivoting on the categorical values in the `label` column, effectively converting them into binary indicator columns. The process begins by removing the `address` column using `select(-address)` to exclude it from the transformation. Next, a new column called `present` is created using `mutate(present = 1)`, where every row is assigned a value of 1 to indicate the presence of a label. The key reshaping operation is performed using `pivot_wider()`, which spreads the unique values from the `label` column into separate columns. The `names_from = label` argument specifies that the new column names should be derived from the distinct categories in `label`, while `values_from = present` fills these new columns with the corresponding 1s from the `present` column. Any missing combinations (where a particular label does not appear for a given record) are automatically filled with 0s due to the `values_fill = list(0)` argument. The final output, stored in `pivoted_cc_data`, is a wider dataframe where each original row now has binary flags (1 or 0) indicating the presence or absence of each label category, making it suitable for analyses that require a one-hot encoded or dummy variable representation of categorical data.
 
+correct code
 ```{r}
 
 pivoted_cc_data <- cc_data %>%
@@ -724,62 +716,63 @@ add_list <- sort(unique(pivoted_cc_data$postal_code)) #parse a list as API canno
 #sort is used to easier to find geo codes
 ```
 
+try this 
 ```{r}
-get_coords <- function(add_list){
-
+get_coords <- function(postal_list){
   # Create a data frame to store all retrieved coordinates
   postal_coords <- data.frame()
     
-  for (i in add_list){
+  for (postal in postal_list){
     r <- GET('https://www.onemap.gov.sg/api/common/elastic/search?',
-           query=list(searchVal=i,
+           query=list(searchVal=postal,
                      returnGeom='Y',
                      getAddrDetails='Y'))
     data <- fromJSON(rawToChar(r$content))
     found <- data$found
     res <- data$results
     
-    # Create a new data frame for each address
+    # Create a new data frame for each postal code
     new_row <- data.frame()
     
     # If single result, append 
     if (found == 1){
-      postal <- res$POSTAL 
+      postal_code <- res$POSTAL 
       lat <- res$LATITUDE
       lng <- res$LONGITUDE
-      new_row <- data.frame(address = i, 
-                           postal = postal, 
-                           latitude_wgs84 = lat,  # renamed to clarify coordinate system
-                           longitude_wgs84 = lng) # renamed to clarify coordinate system
+      new_row <- data.frame(postal_code = postal, 
+                           postal_found = postal_code, 
+                           latitude_wgs84 = lat,
+                           longitude_wgs84 = lng)
     }
     
-    # If multiple results, drop NIL and append top 1
+    # If multiple results, use the exact postal code match
     else if (found > 1){
-      # Remove those with NIL as postal
-      res_sub <- res[res$POSTAL != "NIL", ]
+      # Find exact match for postal code
+      res_match <- res[res$POSTAL == postal, ]
       
-      # Set as NA first if no Postal
-      if (nrow(res_sub) == 0) {
-          new_row <- data.frame(address = i, 
-                               postal = NA, 
-                               latitude_wgs84 = NA, 
-                               longitude_wgs84 = NA)
-      }
-      else{
-        top1 <- head(res_sub, n = 1)
-        postal <- top1$POSTAL 
-        lat <- top1$LATITUDE
-        lng <- top1$LONGITUDE
-        new_row <- data.frame(address = i, 
-                             postal = postal, 
-                             latitude_wgs84 = lat, 
+      # If exact match found, use it
+      if (nrow(res_match) > 0) {
+        postal_code <- res_match$POSTAL[1]
+        lat <- res_match$LATITUDE[1]
+        lng <- res_match$LONGITUDE[1]
+        new_row <- data.frame(postal_code = postal,
+                             postal_found = postal_code,
+                             latitude_wgs84 = lat,
                              longitude_wgs84 = lng)
       }
+      # If no exact match, set as NA
+      else {
+        new_row <- data.frame(postal_code = postal,
+                             postal_found = NA,
+                             latitude_wgs84 = NA,
+                             longitude_wgs84 = NA)
+      }
     }
+    # If no results found
     else {
-      new_row <- data.frame(address = i, 
-                           postal = NA, 
-                           latitude_wgs84 = NA, 
+      new_row <- data.frame(postal_code = postal,
+                           postal_found = NA,
+                           latitude_wgs84 = NA,
                            longitude_wgs84 = NA)
     }
     
@@ -803,23 +796,31 @@ get_coords <- function(add_list){
     # Extract coordinates
     coords_matrix <- st_coordinates(coords_svy21)
     
-    # Add SVY21 coordinates back to the original dataframe with desired column names
-    valid_coords$longitude <- coords_matrix[, 1]  # SVY21 X coordinate as longitude
-    valid_coords$latitude <- coords_matrix[, 2]   # SVY21 Y coordinate as latitude
+    # Add SVY21 coordinates back to the original dataframe
+    valid_coords$longitude <- coords_matrix[, 1]  # SVY21 X coordinate
+    valid_coords$latitude <- coords_matrix[, 2]   # SVY21 Y coordinate
+    
+    # Add geometry column
+    valid_coords$geometry <- st_geometry(coords_svy21)
     
     # Merge back with rows that had NA coordinates
-    result <- merge(postal_coords, valid_coords[c("address", "longitude", "latitude")], 
-                   by = "address", all.x = TRUE)
+    result <- merge(postal_coords, 
+                   valid_coords[c("postal_code", "longitude", "latitude", "geometry")], 
+                   by = "postal_code", all.x = TRUE)
   } else {
     # If no valid coordinates, add empty SVY21 columns
     result <- postal_coords
-    result$longitude <- NA  # SVY21 coordinates
-    result$latitude <- NA   # SVY21 coordinates
+    result$longitude <- NA
+    result$latitude <- NA
+    result$geometry <- NA
   }
   
   return(result)
 }
+
+
 ```
+
 
 ```{r}
 coords <- get_coords(add_list)
@@ -830,9 +831,27 @@ Left join is used to where both data sets share the same properties of postal co
 ```{r}
 cc_data_final <- pivoted_cc_data %>%
   left_join(coords, 
-            join_by(postal_code == postal)
+            join_by(postal_code == postal_code)
 )
 ```
+
+
+?st join
+```{r}
+cc_mpsz <- cc_data_final %>%
+  left_join(mpsz,
+            join_by(geometry == geometry)
+)
+```
+
+doesnt work
+```{r}
+cc_mpsz <- st_as_sf(cc_data_final, 
+                       coords = c("longitude", "latitude"),
+                       crs=4326) %>%
+  st_transform(crs = 3414)
+```
+
 
 ## Population Data
 
@@ -1324,7 +1343,11 @@ mpsz$`CC Count` <- lengths(st_intersects(mpsz, ))
 
 Burdziej, J. (2019). Using hexagonal grids and network analysis for spatial accessibility assessment in urban environments-A case study of public amenities in Toruń. Miscellanea Geographica. Regional Studies on Development, 23(2), 99-110.
 
-Kam, T. S, (2024). R for Geospatial Data Science and Analytics. https://r4gdsa.netlify.app/
+ESRI. (2025). Why hexagons?. Retrieved on May, 2025 from https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/h-whyhexagons.htm
+
+Kam, T. S. (2024). R for Geospatial Data Science and Analytics. Retrieved on April 2, 2, 2025 from https://r4gdsa.netlify.app/
+
+Kam, T. S. (2022). GIS for Urban PlanningL QGIS methods. Retrieved on May 2, 2025 from https://gis4urbplan.netlify.app/
 
 Tan, K. (2023). Take-home Exercise 1: Geospatial Analytics for Public Good. Retrieved from <https://isss624-kytjy.netlify.app/take-home_ex/take-home_ex1/the1#background>
 
