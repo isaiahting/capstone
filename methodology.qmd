@@ -26,105 +26,107 @@ In this research, 3 main spectrum of data will be required for this research, na
 
 ![Figure x: Data Overview](/metho_images/data_overview.png){fig-align="center"}
 
-### Singapore Master Plan 2019 Subzone Boundary
+##Singapore Master Plan 2019 Subzone Boundary
 
 The Singapore Master Plan 2019 Planning Subzone Boundary is a ESRI shapefile that is obtained from Data.gov.sg.
 
-### Population Data
+## Population Data
 
 The Singapore Resident by Planning Area/Subzone, Single Year of Age and Sex, June 2024 is selected for this
 
 As the version January 2025 will be not be ready in due time for this research project, thus, the version of June 2024 is used.
 
-### WebScraping of Care Centres
+## WebScraping of Care Centres
 
 Due to the lack of a centralised data of all care centres, web scraping is warranted in obtaining the information of the care centres. The geographical locations of the Care Centres alongside the centre names such as Active Ageing Centre, Day Care, Community Rehabilitation Centre, Centre-based Nursing were extracted using a web scraping tool, Web Scraper, available in Chrome web store as Seen in Figure x. As there is no centralised file that consist of the centre names and their locations, the location of each centre has to be manually extracted from the [Care Services](https://www.aic.sg/care-services/) webpage of the Agency of Integrated Care as seen in Figure x.
 
-#### Step 0: Download Web Scraper from Chrome web store
+Step 0: Download Web Scraper from Chrome web store
 
 Web Scraper is used as it is free, works reasonably well and available in both Chrome and Firefox web store. In the below steps, Chrome will be the default web browser used.
 
 ![*Figure x: Web Scraper*](/metho_images/step0.png)
 
-#### Step 1: Navigate to Developer Tools in Chrome Web Browser
+Step 1: Navigate to Developer Tools in Chrome Web Browser
 
 After downloading the extension from Chrome Web Store, press onto the menu bar at the right of the browser and locate Developer Tools while onto the website you would like to scrape information from.
 
 ![*Figure x: Web Scraper*](/metho_images/step1.png)
 
-#### Step 2: Interface for Webscraper
+Step 2: Interface for Webscraper
 
 After clicking onto Developer Tools, click onto the Web Scraper in the menu bar (in black). Following which the below interface will appear.
 
 [![](/metho_images/step2.png){width="499"}](Figure%20x:%20Locate%20Developer%20Tools)
 
-#### Step 3: Create New Sitemap
+Step 3: Create New Sitemap
 
 Click onto "create new sitemap", thereafter "Create Sitemap". Sitemap Name will be the overarching term used for these information; in this instance, it will be AAC. The Start URL will be the HTML link that you would like the information to be scraped from.
 
 ![Figure x:](/metho_images/step3.png){fig-align="center"}
 
-#### Step 4: Add New Selector
+Step 4: Add New Selector
 
 After creating a new sitemap, the following interface will appear. Click onto the "Add new selector" to select the information to scrape.
 
 ![Figure x:](/metho_images/step4.png){fig-align="center"}
 
-#### Step 5: Selecting Whole Box
+Step 5: Selecting Whole Box
 
 Firstly, the id will be the column name. For Type, select Element Attribute from the drop down selection. Thereafter, press on Select under Selector and select two boxes of each centre as seen in the figure below (the remaining boxes will be highlighted through its intelligent function) and press onto Done Selecting in the green box.
 
 ![Figure x:](/metho_images/step5.png){fig-align="center"}
 
-#### Step 6: Sitemap Interface
+Step 6: Sitemap Interface
 
 After adding a new selector, the sitemap page will appear the selector that you've inputted.
 
 ![Figure x: Step 6 - Create New Sitemap](/metho_images/step6.png){fig-align="center"}
 
-#### Step 7: Selecting Name of Care Centre
+Step 7: Selecting Name of Care Centre
 
 Firstly, the id will be name (with reference to the name of care centre), serving as the column name. Text will be chosen under Type thereafter press Select under Selector and highlight the first 2 names of the care centres (The remaining care centres will be highlighted through its intelligent function) and press onto Done selecting in the green box. Multiple box will be selected as we would like to scrap multiple names and root parent selector will be root and press onto Save Selector.
 
 ![Figure x: Step 7 - Selecting Name of Care Centre](/metho_images/step7.png){fig-align="center"}
 
-#### Step 8: Create New Sitemap
+Step 8: Create New Sitemap
 
 A popup window will be prompted and Group selectors was selected.
 
 ![Figure x: Step 8 - Create New Sitemap](/metho_images/step8.png){fig-align="center"}
 
-#### Step 9: Selecting Address of Care Centre
+Step 9: Selecting Address of Care Centre
 
 Similar to Step 7, the id will be address. Text will be chosen under Type thereafter press Select under Selector and highlight the first 2 addresses of the care centres (Remaining addresses will be highlighted through its intelligent function) and press onto Done selecting in the green box. Multiple box will be selected as we would like to scrap multiple addresses and parent selector will be wrapper_for_main_name (as we grouped selectors in step 8) and press onto Save Selector.
 
 ![Figure x: Step 9 - Selecting Address of Care Centre](/metho_images/step9.png){fig-align="center"}
 
-#### Step 10: Data Preview
+Step 10: Data Preview
 
 Prior to data scraping, the data is previewed in ensuring each name of the care centre is correctly tagged to the address using the main website to verify.
 
 ![Figure x: Step 10 - Data Preview](/metho_images/step10.png){fig-align="center"}
 
-#### Step 11: Commence Scraping
+Step 11: Commence Scraping
 
 Head over to sitemap aac and click onto Scrape. A new browser will appear indicating that it is in process of scraping. It will be closed automatically once the process has ended.
 
 ![Figure x: Step 11 - Commence Scraping](/metho_images/step11.png){fig-align="center"}
 
-#### Step 11: Export Data
+Step 11: Export Data
 
 Export data is selected upon clicking sitemap aac. 2 file options are offered: csv and xlsx. The former was chosen as CSV files are simple and portable which doesn't complicate data processing. Thereafter the data will be downloaded.
 
 ![Figure x:](/metho_images/step12.png){fig-align="center"}
 
-#### Step 11: View CSV File
+Step 11: View CSV File
 
 In ensuring the web scraping successful and accurate, the csv. file is opened and examined.
 
 ![Figure x: Step 11 - View CSV File](/metho_images/step13.png){fig-align="center"}
 
 The above steps were repeated for each type of care centre. All of the Care Centre data were extracted on 7th February 2025.
+
+# Data Cleaning & Manipulation
 
 ## Installing Packages
 
@@ -175,6 +177,27 @@ mpsz <- mpsz %>%
   st_transform(crs = 3414)
 ```
 
+### Shared Boundaries
+
+The below codechunk uses `st_is_valid` in assessing if there are shared boundaries in the `mpsz` data. This is important as shared boundaries can lead to inconsistent data impacting the research findings. 9 polygons with self-intersection ('Ring Self-Intersection') issues were returned.
+
+```{r}
+st_is_valid(mpsz, reason = TRUE)
+```
+
+This code chunk visualises the boundaries that are affected such as the smaller islands outside of Singapore Main Island: P. Ubin, P. Tekong, Sentosa Island
+
+```{r}
+invalid_polygons <- mpsz[!st_is_valid(mpsz),]
+plot(invalid_polygons)
+```
+
+In addressing the above point, we will use st_buffer() of sf package to compute a 5-metres buffers around the data.
+
+```{r}
+mpsz <- st_buffer(mpsz, dist = 5)
+```
+
 ```{r}
 #| echo: false
 #| eval: false
@@ -210,6 +233,8 @@ hex_grid$hex_id <- sprintf("H%04d", seq_len(nrow(hex_grid))) %>% as.factor()
 head(hex_grid)
 ```
 
+?needed
+
 ```{r}
 hex_grid <- hex_grid %>%
   mutate(hex_id = row_number())
@@ -220,20 +245,19 @@ hex_centroids <- st_centroid(hex_grid)
 ```
 
 ```{r}
-plot(st_geometry(hex_grid), col = "lightblue")
-plot(st_geometry(hex_centroids), pch = 20, col = "red", add = TRUE)
+
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
-write_rds(mpsz, "data/rds/mpsz/mpsz.rds")
+write_rds(hex_grid, "data/rds/mpsz/hex_grid.rds")
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
-mpsz = read_rds("data/rds/mpsz/mpsz.rds")
+hex_grid = read_rds("data/rds/mpsz/hex_grid.rds")
 ```
 
 ## Road Network
@@ -447,8 +471,6 @@ rehab_duplicate <- rehab %>%
 
 ```
 
-## Data Manipulation (CC)
-
 ### Separating postal code from address
 
 The code uses the mutate() function to extract the postal code (last 6 digits) from the address column of the individual dataset and store it in a new column called postal_code. The postal code is then removed from the address column.
@@ -651,6 +673,7 @@ cc_data = read_rds("data/rds/carecentre/refined/cc_data.rds")
 This code transforms the dataset `cc_data` from a long format to a wide format by pivoting on the categorical values in the `label` column, effectively converting them into binary indicator columns. The process begins by removing the `address` column using `select(-address)` to exclude it from the transformation. Next, a new column called `present` is created using `mutate(present = 1)`, where every row is assigned a value of 1 to indicate the presence of a label. The key reshaping operation is performed using `pivot_wider()`, which spreads the unique values from the `label` column into separate columns. The `names_from = label` argument specifies that the new column names should be derived from the distinct categories in `label`, while `values_from = present` fills these new columns with the corresponding 1s from the `present` column. Any missing combinations (where a particular label does not appear for a given record) are automatically filled with 0s due to the `values_fill = list(0)` argument. The final output, stored in `pivoted_cc_data`, is a wider dataframe where each original row now has binary flags (1 or 0) indicating the presence or absence of each label category, making it suitable for analyses that require a one-hot encoded or dummy variable representation of categorical data.
 
 correct code
+
 ```{r}
 
 pivoted_cc_data <- cc_data %>%
@@ -710,13 +733,16 @@ pivoted_cc_data = read_rds("data/rds/carecentre/refined/pivoted_cc_data.rds")
 
 ### Adding coordinates to care centre
 
+This code prepares a list of unique postal codes from a dataset called `pivoted_cc_data` to be used for geocoding via an API. The line first extracts the `postal_code` column from the dataframe, then applies `unique()` to eliminate duplicate postal codes - this optimization reduces the number of API calls needed since the same postal code will return the same coordinates. The `sort()` function then arranges these unique postal codes in ascending order, which serves two purposes: it makes the list more organized for human review (easier to locate specific codes during debugging or verification), and it may help with processing efficiency when matching the geocoded results back to the original dataset. The resulting sorted unique list is stored in `add_list`, which can then be passed to a geocoding API (like the OneMap API in Singapore) that typically accepts individual addresses or postal codes rather than entire dataframes. This preprocessing step is crucial because APIs often have rate limits or usage constraints, so minimizing duplicate requests helps maximize efficiency and reduce potential errors or bottlenecks in the geocoding process. The comment "parse a list as API cannot read df" explicitly notes that this conversion from dataframe column to simple list is necessary because the target API expects individual values rather than dataframe structures as input.
+
 ```{r}
 add_list <- sort(unique(pivoted_cc_data$postal_code)) #parse a list as API cannot read df
 #unique reduces records to pass to portal
 #sort is used to easier to find geo codes
 ```
 
-try this 
+The below codechunk defines a function called get_coords that takes a list of Singapore postal codes as input and retrieves their geographic coordinates from the OneMap API (a Singapore government mapping service). The function first initializes an empty data frame to store the results. For each postal code in the input list, it makes an HTTP GET request to the OneMap API, which returns the location data in JSON format. The function then processes the response differently depending on how many matches are found: if there's exactly one match, it extracts those coordinates; if there are multiple matches, it looks for an exact postal code match; and if no matches are found, it records NA values. The valid coordinates (in WGS84 latitude/longitude format) are converted into an sf (simple features) spatial object, which is then transformed to Singapore's SVY21 projected coordinate system (EPSG:3414). The function extracts these SVY21 coordinates and merges them back into the original data frame, preserving any rows that had invalid or missing coordinates. The final output is a data frame containing the original postal codes, any matching postal codes found, WGS84 coordinates, SVY21 coordinates, and the geometric data as an sf geometry column. This function is particularly useful for geocoding Singapore addresses and preparing spatial data for analysis with Singapore-specific geographic information systems.
+
 ```{r}
 get_coords <- function(postal_list){
   # Create a data frame to store all retrieved coordinates
@@ -821,12 +847,13 @@ get_coords <- function(postal_list){
 
 ```
 
+The code `coords <- get_coords(add_list)` calls the previously defined `get_coords()` function to geocode (convert to geographic coordinates) a list of Singapore postal codes stored in `add_list`.
 
 ```{r}
 coords <- get_coords(add_list)
 ```
 
-Left join is used to where both data sets share the same properties of postal code.
+The below code chunk merges the original dataset (`pivoted_cc_data`) with the geocoded coordinates (`coords`) using a left join operation, which preserves all records from the primary dataset while matching and appending geographic data where available using the properties of `postal_code` in both dataframes.
 
 ```{r}
 cc_data_final <- pivoted_cc_data %>%
@@ -835,8 +862,20 @@ cc_data_final <- pivoted_cc_data %>%
 )
 ```
 
+```{r}
+#| echo: false
+#| eval: false
+write_rds(cc_data_final, "data/rds/carecentre/refined/cc_data_final.rds")
+```
 
-?st join
+```{r}
+#| echo: false
+#| eval: false
+cc_data_final = read_rds("data/rds/carecentre/refined/cc_data_final.rds")
+```
+
+?st join with MPSZ
+
 ```{r}
 cc_mpsz <- cc_data_final %>%
   left_join(mpsz,
@@ -844,12 +883,39 @@ cc_mpsz <- cc_data_final %>%
 )
 ```
 
-doesnt work
+conversation errrow
+
 ```{r}
-cc_mpsz <- st_as_sf(cc_data_final, 
-                       coords = c("longitude", "latitude"),
+cc_mpsz <- st_as_sf(cc_mpsz, 
+                       coords = c("longitude_wgs84", "latitude_wgs84"),
                        crs=4326) %>%
   st_transform(crs = 3414)
+```
+
+
+```{r}
+tmap_mode("plot")
+qtm(cc_mpsz, 
+    fill = "DEPENDENCY")
+```
+```{r}
+tm_shape(cc_mpsz)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "Blues",
+          title = "Dependency ratio") +
+  tm_layout(main.title = "Distribution of Dependency Ratio by planning subzone",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame = TRUE) +
+  tm_borders(alpha = 0.5) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha =0.2) +
+  tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS", 
+             position = c("left", "bottom"))
 ```
 
 
@@ -881,7 +947,7 @@ popdata22 <- read_csv("data/popdata/respopagesex2022.csv") %>%
 ```
 
 ::: callout-warning
-## PARSING ERROR\*
+PARSING ERROR\*
 
 ```         
 Warning: One or more parsing issues, call `problems()` on your data frame for details, e.g.:
@@ -954,7 +1020,7 @@ print(popdata24_missing)
 
 ```
 
-### Issue with POPDATA22
+### Issue with `POPDATA22`
 
 Using the below code, we are able to see clearly the rows that are affected and in the pop column, it appears as NA. The csv file (respopagesex2022.csv) was opened using excel and each row returned in the below output was then cross checked in excel. Whole numbers with comma appeared in excel. This may be because read_csv() function expects a numeric value (double) in one of the columns, but instead, it found a string (the values in the column are likely formatted with commas, such as "1,020"). This is why the parser is raising an issue earlier on.
 
@@ -1190,7 +1256,7 @@ popdata20_c = read_rds("data/rds/popdata/refined/popdata20_c.rds")
 
 ## PROF
 
-#Population Data
+###Population Data
 
 ```{r}
 clean_age_column <- function(df) {
