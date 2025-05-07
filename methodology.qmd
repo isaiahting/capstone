@@ -560,7 +560,7 @@ nursing_missing <- nursing %>% summarise(across(c(name, address, postal_code), ~
 rehab_missing <- rehab %>% summarise(across(c(name, address, postal_code), ~sum(is.na(.))))
 ```
 
-### Labelling each dataset appropriately
+### Labelling Dataset
 
 The below code chunk adds a column and naming it as "label" in relation to the name of the dataset hence we are able to identify the type of services provided by the care centres.
 
@@ -892,12 +892,12 @@ cc_mpsz <- st_as_sf(cc_mpsz,
   st_transform(crs = 3414)
 ```
 
-
 ```{r}
 tmap_mode("plot")
 qtm(cc_mpsz, 
     fill = "DEPENDENCY")
 ```
+
 ```{r}
 tm_shape(cc_mpsz)+
   tm_fill("DEPENDENCY", 
@@ -918,12 +918,14 @@ tm_shape(cc_mpsz)+
              position = c("left", "bottom"))
 ```
 
-
 ## Population Data
 
 ### Importing Data
 
-rename_with() of tidyverse package is used to perform column name standardisation by converting all variable names in the respective datasets to lowercase.
+In importing data, `read_csv()` and `rename_with()` of tidyverse package are used to perform column name standardisation by converting all variable names in the respective datasets to lowercase.
+
+:::: panel-tabset
+## Population Data 2024
 
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2024](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2024.ashx)
 
@@ -932,12 +934,16 @@ popdata24 <- read_csv("data/popdata/respopagesex2024.csv") %>%
   rename_with(tolower)
 ```
 
+## Population Data 2023
+
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2023](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2023.ashx)
 
 ```{r}
 popdata23 <- read_csv("data/popdata/respopagesex2023.csv") %>%
   rename_with(tolower)
 ```
+
+## Population Data 2022
 
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2022](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2022.ashx) 
 
@@ -956,12 +962,16 @@ Warning: One or more parsing issues, call `problems()` on your data frame for de
 ```
 :::
 
+## Population Data 2021
+
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2021](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2021.ashx)
 
 ```{r}
 popdata21 <- read_csv("data/popdata/respopagesex2021.csv") %>%
   rename_with(tolower)
 ```
+
+## Population Data 2020
 
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2011-2020](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2011to2020.ashx)
 
@@ -970,6 +980,7 @@ popdata20 <- read_csv("data/popdata/respopagesex2011to2020.csv") %>%
   rename_with(tolower) %>%
   filter(time == 2020)
 ```
+::::
 
 ```{r}
 #| echo: false
@@ -1058,7 +1069,7 @@ popdata22 <- read_csv("data/popdata/respopagesex2022.csv",
   rename_with(tolower)
 ```
 
-As previously stated, commas are present in the 'pop' column, hence, mutate()
+As previously stated, commas are present in the 'pop' column, hence, `mutate()`
 
 ```{r}
 popdata22 <- popdata22 %>%
@@ -1071,7 +1082,7 @@ popdata22 <- popdata22 %>%
 write_rds(popdata22, "data/rds/popdata/original/popdata22.rds")
 ```
 
-In the below, we've verified that there is no missing values and the above steps taken were successful.
+In the below codechunk, it was verified that there is no missing values and the above steps taken were successful.
 
 ```{r}
 names(popdata22) <- tolower(names(popdata22))
@@ -1079,7 +1090,7 @@ popdata22_missing <- popdata22 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~
 print(popdata22_missing)
 ```
 
-However, upon running the below cod
+? to assess to
 
 ```{r}
 #| eval: false
