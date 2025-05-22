@@ -1,0 +1,108 @@
+---
+title: "Area-weighted Population Estimate"
+format: html
+toc: true
+toc-depth: 4
+date: "May 20, 2025"
+date-modified: "last-modified"
+execute: 
+  eval: false
+  echo: false
+  freeze: true
+  warning: false
+---
+
+## Precursor
+
+There two sf data layers, namely:
+
+-   hexagon: sf object of hexagonal polygons.
+-   mpsz: sf object of planning subzones. Beside other field, there is a field contains the target population called aged_pop.
+
+::: callout-note
+Please ensure that both layers are in the same CRS (coordinate reference system, 3414 for svy21 ) and use projected units (e.g., meters).
+:::
+
+## Loading the Packages
+
+```{r}
+pacman::p_load(tidyverse, sf)
+```
+
+## Check and Transform CRS to Projected
+
+Use the code chunk below to check if the data layers are in svy21 projected coornates system.
+
+```{r}
+glimpse(hexagon)
+glimpse(mpsz)
+```
+
+If it is not projected, use the code chunk to transform the sf data layers into svy21.
+
+```{r}
+hexagon <- st_transform(hexagon, 3414) 
+mpsz <- st_transform(psz, 3414)
+```
+
+## Calculate the Area of Each Subzone
+
+Next, the code below will computer the area of each polygon in mpsz.
+
+```{r}
+mpsz <- mpsz %>%
+  mutate(mpsz_area = st_area(geometry))
+```
+
+## Intersect Hexagons with Subzones
+
+The code chunk below derive the overlapping geometry between hexagons and subzones.
+
+```{r}
+hex_mpsz_intersection <- st_intersection(hexagon, mpsz)
+```
+
+## Calculate Area of Each Intersection
+
+```{r}
+hex_mpsz_intersection <- hex_mpsz_intersection %>% 
+  mutate(intersection_area =
+           st_area(geometry))
+```
+
+## Estimate Hexagon Population
+
+Assume uniform population density within each subzone. So, the hexagon’s share of the population is:
+
+![](images/areaproportion.png)
+
+```{r}
+hex_mpsz_intersection <-
+  hex_psz_intersection %>%
+  mutate(hex_pop = as.numeric(
+    intersection_area / mpsz_area * 
+      population))
+```
+
+## Aggregate Estimated Population to Each Hexagon
+
+If a hexagon overlaps multiple subzones, sum the estimated populations.
+
+```{r}
+hexagon_population <- 
+  hex_mpsz_intersection %>%
+  group_by(hex_id = row_number()) %>% 
+  summarise(estimated_population =
+              sum(hex_pop, na.rm = TRUE))
+```
+
+## Keeping original hexagon attributes:
+
+```{r}
+hexagon_final <- hexagon %>% 
+  mutate(hex_id = row_number()) %>%
+  left_join(hexagon_population, 
+            by = "hex_id")
+```
+
+*hexagon_final* now includes a new column *estimated_population*, which is the area-weighted population estimate for each hexagon.

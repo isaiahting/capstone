@@ -1,0 +1,15 @@
+{
+  "hash": "01f9bcd49f3f97ed549bd411c8ac5829",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Area-weighted Population Estimate\"\nformat: html\ntoc: true\ntoc-depth: 4\ndate: \"May 20, 2025\"\ndate-modified: \"last-modified\"\nexecute: \n  eval: false\n  echo: false\n  freeze: true\n  warning: false\n---\n\n\n\n## Precursor\n\nThere two sf data layers, namely:\n\n-   hexagon: sf object of hexagonal polygons.\n-   mpsz: sf object of planning subzones. Beside other field, there is a field contains the target population called aged_pop.\n\n::: callout-note\nPlease ensure that both layers are in the same CRS (coordinate reference system, 3414 for svy21 ) and use projected units (e.g., meters).\n:::\n\n## Loading the Packages\n\n\n\n::: {.cell}\n\n:::\n\n\n\n## Check and Transform CRS to Projected\n\nUse the code chunk below to check if the data layers are in svy21 projected coornates system.\n\n\n\n::: {.cell}\n\n:::\n\n\n\nIf it is not projected, use the code chunk to transform the sf data layers into svy21.\n\n\n\n::: {.cell}\n\n:::\n\n\n\n## Calculate the Area of Each Subzone\n\nNext, the code below will computer the area of each polygon in mpsz.\n\n\n\n::: {.cell}\n\n:::\n\n\n\n## Intersect Hexagons with Subzones\n\nThe code chunk below derive the overlapping geometry between hexagons and subzones.\n\n\n\n::: {.cell}\n\n:::\n\n\n\n## Calculate Area of Each Intersection\n\n\n\n::: {.cell}\n\n:::\n\n\n\n## Estimate Hexagon Population\n\nAssume uniform population density within each subzone. So, the hexagon’s share of the population is:\n\n![](images/areaproportion.png)\n\n\n\n::: {.cell}\n\n:::\n\n\n\n## Aggregate Estimated Population to Each Hexagon\n\nIf a hexagon overlaps multiple subzones, sum the estimated populations.\n\n\n\n::: {.cell}\n\n:::\n\n\n\n## Keeping original hexagon attributes:\n\n\n\n::: {.cell}\n\n:::\n\n\n\n*hexagon_final* now includes a new column *estimated_population*, which is the area-weighted population estimate for each hexagon.\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

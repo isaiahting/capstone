@@ -16,9 +16,9 @@ execute:
 editor: source
 ---
 
-# Overview
+# Overview - describe challenges
 
-In this section, we will acquire the data sets from various government open-sources data repository and websites. Thereafter, we will install the necessary R packages and import the data sets. In each data set, we will delve into the necessary checks, issues faced and steps into resolving the issue. Thereafter, exploratory data analysis is done on a micro and macro level.
+In this section, we will acquire the data sets from various government open-sources data repository and websites. Thereafter, we will install the necessary R packages and import the data sets. In each data set, we will delve into the necessary checks, issues faced and steps into resolving the issue. Thereafter, exploratory data analysis is done on a micro and macro level. In each proces,s
 
 # Data Acquisition
 
@@ -154,9 +154,574 @@ The code chunk below, using `p_load` function of the [**pacman**](https://cran.r
 ```{r}
 pacman::p_load(tidyverse, sf,
                jsonlite, rvest, knitr, patchwork,
-               leaflet, scales, lubridate, tmap, DT)
+               leaflet, scales, lubridate, tmap, DT, geojsonsf)
 ```
 :::
+
+## Population Data
+
+### Importing Data
+
+In importing data, `read_csv()` and `rename_with()` of tidyverse package are used to perform column name standardisation by converting all variable names in the respective datasets to lowercase.
+
+:::: panel-tabset
+## Population Data 2024
+
+[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2024](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2024.ashx)
+
+```{r}
+popdata24 <- read_csv("data/popdata/respopagesex2024.csv") %>%
+  rename_with(tolower)
+```
+
+## Population Data 2023
+
+[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2023](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2023.ashx)
+
+```{r}
+popdata23 <- read_csv("data/popdata/respopagesex2023.csv") %>%
+  rename_with(tolower)
+```
+
+## Population Data 2022
+
+[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2022](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2022.ashx) 
+
+```{r}
+popdata22 <- read_csv("data/popdata/respopagesex2022.csv") %>%
+  rename_with(tolower)
+```
+
+::: callout-warning
+PARSING ERROR\*
+
+```         
+Warning: One or more parsing issues, call `problems()` on your data frame for details, e.g.:
+  dat <- vroom(...)
+  problems(dat)Rows: 60424 Columns: 6── Column specification
+```
+:::
+
+## Population Data 2021
+
+[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2021](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2021.ashx)
+
+```{r}
+popdata21 <- read_csv("data/popdata/respopagesex2021.csv") %>%
+  rename_with(tolower)
+```
+
+## Population Data 2020
+
+[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2011-2020](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2011to2020.ashx)
+
+```{r}
+popdata20 <- read_csv("data/popdata/respopagesex2011to2020.csv") %>%
+  rename_with(tolower) %>%
+  filter(time == 2020)
+```
+::::
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(popdata24, "data/rds/popdata/original/popdata24.rds")
+write_rds(popdata23, "data/rds/popdata/original/popdata23.rds")
+write_rds(popdata21, "data/rds/popdata/original/popdata21.rds")
+write_rds(popdata20, "data/rds/popdata/original/popdata20.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+popdata24 = read_rds("data/rds/popdata/original/popdata24.rds")
+popdata23 = read_rds("data/rds/popdata/original/popdata23.rds")
+popdata21 = read_rds("data/rds/popdata/original/popdata21.rds")
+popdata20 = read_rds("data/rds/popdata/original/popdata20.rds")
+```
+
+```{r}
+glimpse(popdata23)
+```
+
+### Checking for Missing Values
+
+To check for missing or null values in the name and address columns of each dataset, the code uses the summarise() function from the dplyr package. The summarise() function computes summary statistics for the specified columns, which in this case are name and address. The across() function is used to apply the sum(is.na(.)) operation to both columns simultaneously, counting the number of missing (NA) values in each column.
+
+The is.na() function checks whether each value in the name and address columns is missing or null, returning TRUE for missing values and FALSE for non-missing values. The sum() function then counts the number of TRUE values, which corresponds to the number of missing values in each column. This process is applied to each dataset (aac, counselling, daycare, dementia, hospice, maintenance, nhrespite, nursing, and rehab). In conclusion it is able to identify the number of missing values in the name and address columns across all datasets, which helps assess the completeness of the data and highlights any issues that may require cleaning or imputation before further analysis. It returns 0 missing values.
+
+Results: We noticed that there are 30 missing values popdata22 specifically under the column pop.
+
+```{r}
+popdata20_missing <- popdata20 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
+print(popdata20_missing)
+
+popdata21_missing <- popdata21 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
+print(popdata21_missing)
+
+popdata22_missing <- popdata22 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
+print(popdata22_missing)
+
+popdata23_missing <- popdata23 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
+print(popdata23_missing)
+
+popdata24_missing <- popdata24 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
+print(popdata24_missing)
+
+
+```
+
+### Issue with `POPDATA22`
+
+Using the below code, we are able to see clearly the rows that are affected and in the pop column, it appears as NA. The csv file (respopagesex2022.csv) was opened using excel and each row returned in the below output was then cross checked in excel. Whole numbers with comma appeared in excel. This may be because read_csv() function expects a numeric value (double) in one of the columns, but instead, it found a string (the values in the column are likely formatted with commas, such as "1,020"). This is why the parser is raising an issue earlier on.
+
+```{r}
+na_rows <- popdata22[is.na(popdata22$pop), ]
+print(na_rows)
+```
+
+Referencing from [Stackoverflow](https://stackoverflow.com/questions/1523126/how-to-read-data-when-some-numbers-contain-commas-as-thousand-separator), the first line of the code is necessary as it defines a new class called `"num.with.commas"`. This class is intended to handle numeric values that are stored as strings with commas (e.g., `"1,000"`). Thereafter, the second line of the code defines a method to convert a `character` type to the custom `"num.with.commas"` class.
+
+-   The `gsub(",", "", from)` function removes commas from the string (e.g., `"1,000"` becomes `"1000"`)
+
+-   The `as.numeric()` function then converts the cleaned string into a numeric value (e.g., `"1000"` becomes `1000`)
+
+This ensures that numbers with commas are properly converted to numeric values during data import.
+
+```{r}
+setClass("num.with.commas")
+setAs("character", "num.with.commas", 
+        function(from) as.numeric(gsub(",", "", from) ) )
+```
+
+The file is then re-imported again and specifically, the column 'pop' is parsed as a character field in facilitating the next step in removing commas within the population itself.
+
+```{r}
+popdata22 <- read_csv("data/popdata/respopagesex2022.csv", 
+                      col_types = cols(
+                        PA = col_character(),
+                        SZ = col_character(),
+                        Age = col_character(),
+                        Sex = col_character(),
+                        Pop = col_character(),
+                        Time = col_number()  # Adjust if necessary
+                      )) %>%
+  rename_with(tolower)
+```
+
+As previously stated, commas are present in the 'pop' column, hence, `mutate()`
+
+```{r}
+popdata22 <- popdata22 %>%
+  mutate(pop = as.numeric(str_replace_all(pop, ",", "")))
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(popdata22, "data/rds/popdata/original/popdata22.rds")
+```
+
+In the below codechunk, it was verified that there is no missing values and the above steps taken were successful.
+
+```{r}
+names(popdata22) <- tolower(names(popdata22))
+popdata22_missing <- popdata22 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
+print(popdata22_missing)
+```
+
+In the below `code chunk a & b`, we noticed that it returned two different outputs: `90_and_over` and `90_and_Over`. This may explain why the error `NAs introduced by coercion` was returned.
+
+```{r}
+#code chunk a
+popdata22 %>% 
+  summarise(max_age = max(age, na.rm = TRUE))
+```
+
+```{r}
+#code chunk b
+popdata24 %>% 
+  summarise(max_age = max(age, na.rm = TRUE))
+```
+
+Hence, in addressing the above issue, the below code chunk was developed. First, The code defines a function called `convert_age` that takes a dataframe (`df`) as input. Inside the function, it modifies the `age` column using `mutate()`. It checks each value in the `age` column to see if it contains either "\_and_over" or "\_and_Over" (case-insensitive match). When a match is found, it extracts just the numeric part (e.g., "90" from "90_and_over") using `str_extract()`. If no match is found, it keeps the original value. The second `mutate()` converts the cleaned `age` column to numeric values, ensuring all ages are stored as numbers. The function returns the modified dataframe with standardised age values.
+
+```{r}
+convert_age <- function(df) {
+  df %>%
+    mutate(age = if_else(
+      str_detect(age, regex("_and_Over|_and_over", ignore_case = TRUE)),
+      str_extract(age, "\\d+"),  # Extract just the numeric part
+      age
+    )) %>%
+    mutate(age = as.numeric(age))
+}
+```
+
+```{r}
+popdata20_c <- convert_age(popdata20)
+```
+
+```{r}
+popdata21_c <- convert_age(popdata21)
+```
+
+```{r}
+popdata22_c <- convert_age(popdata22)
+```
+
+```{r}
+popdata23_c <- convert_age(popdata23)
+```
+
+```{r}
+popdata24_c <- convert_age(popdata24)
+```
+
+Another layer of confirmation of missing values was executed in ensuring no missing values were returned during the abovementioned process and it returns 0 for each dataset.
+
+```{r}
+popdata20_missing <- popdata20_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
+print(popdata20_missing)
+popdata21_missing <- popdata21_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
+print(popdata21_missing)
+popdata22_missing <- popdata22_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
+print(popdata22_missing)
+popdata23_missing <- popdata23_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
+print(popdata23_missing)
+popdata24_missing <- popdata24_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
+print(popdata24_missing)
+```
+
+### Returning rows where pop is o
+
+```{r}
+# Return all rows where 'pop' is exactly 0
+popdata24_c %>% 
+  filter(age>=60, pop==0)
+```
+
+```{r}
+popdata23_c %>% 
+  filter(age>=60, pop==0)
+```
+
+```{r}
+popdata22_c %>% 
+  filter(age>=60, pop==0)
+```
+
+```{r}
+popdata21_c %>% 
+  filter(age>=60, pop==0)
+```
+
+```{r}
+popdata20_c %>% 
+  filter(age>=60, pop==0)
+```
+
+### Duplicate Check
+
+The code provided checks for duplicate rows in each dataset by grouping the dataset by all columns using group_by_all(). It then filters out the rows that have duplicate combinations of values across all columns using filter(n() \> 1). The n() function counts the number of occurrences for each combination of values, and filter(n() \> 1) keeps only the rows that appear more than once (i.e., duplicates).
+
+For each dataset, the nrow() function is used to check if there are any rows returned after filtering for duplicates. If there are duplicates (i.e., the number of rows is greater than zero), the dataset with the duplicate rows is returned. However, if no duplicates are found (i.e., nrow() equals zero), the code returns 0 to indicate that there are no duplicates in that dataset.
+
+Thus, the code either returns the rows with duplicate values or 0 if no duplicates are present, providing an indication of whether duplicate entries exist in each dataset.
+
+```{r}
+# Check for duplicates in 'aac'
+popdata20_duplicate <- popdata20_c %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+show(popdata20_duplicate)
+
+
+# Check for duplicates in 'counselling'
+popdata21_duplicate <- popdata21_c %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+show(popdata21_duplicate)
+
+# Check for duplicates in 'daycare'
+popdata22_duplicate <- popdata22_c %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+show(popdata22_duplicate)
+
+# Check for duplicates in 'dementia'
+popdata23_duplicate <- popdata23_c %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+show(popdata23_duplicate)
+
+# Check for duplicates in 'hospice'
+popdata24_duplicate <- popdata24_c %>% 
+  group_by_all() %>% 
+  filter(n() > 1) %>% 
+  ungroup()
+show(popdata24_duplicate)
+
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(popdata24_c, "data/rds/popdata/refined/popdata24_c.rds")
+write_rds(popdata23_c, "data/rds/popdata/refined/popdata23_c.rds")
+write_rds(popdata22_c, "data/rds/popdata/refined/popdata22_c.rds")
+write_rds(popdata21_c, "data/rds/popdata/refined/popdata21_c.rds")
+write_rds(popdata20_c, "data/rds/popdata/refined/popdata20_c.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+popdata24_c = read_rds("data/rds/popdata/refined/popdata24_c.rds")
+popdata23_c = read_rds("data/rds/popdata/refined/popdata23_c.rds")
+popdata22_c = read_rds("data/rds/popdata/refined/popdata22_c.rds")
+popdata21_c = read_rds("data/rds/popdata/refined/popdata21_c.rds")
+popdata20_c = read_rds("data/rds/popdata/refined/popdata20_c.rds")
+```
+
+## Survival Analysis from 2025 - 2030
+
+This code defines a function called `clean_age_column` that takes a dataframe (`df`) as input and processes its `age` column to ensure consistent numeric values. The function uses the `%>%` (pipe) operator from the `dplyr` package to chain a series of data transformations. First, it trims any leading or trailing whitespace from the `age` column using `str_trim`. Next, it replaces the label `"90_and_over"` with `"90"` to standardize the representation of ages 90 and above. Then, it converts the `age` column to numeric values using `as.numeric`, while suppressing any warnings that might arise from non-numeric entries (e.g., empty strings or invalid values). Finally, the function filters out any rows where the `age` could not be converted to a numeric value (resulting in `NA`), ensuring only valid numeric ages remain in the dataframe. The cleaned dataframe is then returned as the output. This function is useful for preparing age data for analysis by ensuring uniformity and removing invalid entries.
+
+```{r}
+clean_age_column <- function(df) {
+  df %>%
+    mutate(
+      age = str_trim(age),  # Trim whitespace
+      age = if_else(age == "90_and_over", "90", age),  # Replace label
+      age = suppressWarnings(as.numeric(age))  # Convert safely
+    ) %>%
+    filter(!is.na(age))  # Remove rows that still couldn't be converted
+}
+```
+
+### Step 1: Load data
+
+Firstly, we will read the rds file. Thereafter, we will apply \`clean_age_column()\` function that was defined earlier to the loaded dataframe.
+
+```{r}
+pop20 <- read_rds("data/rds/popdata/refined/popdata20_c.rds") %>% 
+  clean_age_column()
+pop21 <- read_rds("data/rds/popdata/refined/popdata21_c.rds") %>% 
+  clean_age_column()
+pop22 <- read_rds("data/rds/popdata/refined/popdata22_c.rds") %>% 
+  clean_age_column()
+pop23 <- read_rds("data/rds/popdata/refined/popdata23_c.rds") %>% 
+  clean_age_column()
+pop24 <- read_rds("data/rds/popdata/refined/popdata24_c.rds") %>% 
+  clean_age_column()
+```
+
+### Step 2: Compute survival rates for each year-to-year transition
+
+This code defines a function called `compute_survival_rate` that calculates survival rates between two consecutive time periods (e.g., years) for a population dataset. The function takes two dataframes (`df1` and `df2`) as inputs, representing population data from two different time points (e.g., 2020 and 2021).
+
+First, the function filters `df1` to include only individuals aged **59 to 90**, as survival analysis is often focused on older populations. It then increments the age by 1 (using `mutate(age = age + 1)`) to align the ages with the next time period (`df2`). Next, it performs an **inner join** between the modified `df1` and `df2` using matching columns (`age`, `sex`, `pa` \[possibly a region code\], and `sz` \[possibly another demographic grouping\]). The join suffixes (`_prev` and `_next`) distinguish between the population counts from the two time periods.
+
+After joining, the function computes the **survival rate** (`rate`) by dividing the population in the later period (`pop_next`) by the population in the earlier period (`pop_prev`). Finally, it selects and returns only the relevant columns (`pa`, `sz`, `age`, `sex`, `rate`, `pop_prev`, `pop_next`) for further analysis.
+
+In summary, this function helps estimate how many people from an initial cohort (in `df1`) survived into the next period (in `df2`) by age, sex, and other groupings, providing key insights for demographic or actuarial studies.
+
+```{r}
+compute_survival_rate <- function(df1, df2) {
+  df1 %>%
+    filter(age >= 59 & age < 91) %>%
+    mutate(age = age + 1) %>%
+    inner_join(df2, 
+               by = c("age", "sex", "pa", "sz"),
+               suffix = c("_prev", "_next")) %>%
+    mutate(rate = pop_next / pop_prev) %>%
+    select(pa, sz, age, sex, rate, pop_prev, pop_next)
+}
+#to add in inputation 
+```
+
+```{r}
+rates_2020_2021 <- compute_survival_rate(pop20, pop21)
+```
+
+```{r}
+invalid_rates_2020_2021 <- rates_2020_2021 %>%
+  filter(!between(rate, 0, 1) | is.na(rate) | is.infinite(rate))
+invalid_rates_rows
+```
+
+```{r}
+rates_2021_2022 <- compute_survival_rate(pop21, pop22)
+```
+
+```{r}
+invalid_rates_2021_2022 <- rates_2021_2022 %>%
+  filter(!between(rate, 0, 1) | is.na(rate) | is.infinite(rate))
+invalid_rates_rows
+```
+
+```{r}
+rates_2022_2023 <- compute_survival_rate(pop22, pop23)
+```
+
+```{R}
+invalid_rates_2022_2023 <- rates_2022_2023 %>%
+  filter(!between(rate, 0, 1) | is.na(rate) | is.infinite(rate))
+invalid_rates_rows
+```
+
+```{r}
+rates_2023_2024 <- compute_survival_rate(pop23, pop24)
+```
+
+```{r}
+invalid_rates_2023_2024 <- rates_2023_2024 %>%
+  filter(!between(rate, 0, 1) | is.na(rate) | is.infinite(rate))
+invalid_rates_rows
+```
+
+### Step 2: Refined
+
+The function processes survival rate data through four sequential steps, now correctly using dplyr's grouping mechanism. First, it groups the data by both age and sex, which is crucial because survival rates likely vary significantly across these demographics. Within these groups, it performs three key operations: (1) capping any rates above 1.0 at 1.0 (assuming these represent survival probabilities that shouldn't exceed 100%), (2) replacing infinite values (which occur when dividing by zero) with the maximum finite rate found in the data, and (3) imputing missing values (NaN) with the median rate for that specific age-sex group. After these grouped operations, it ungroups the data and performs a final safety check, replacing any remaining missing values with 1.0 (a neutral value indicating no change).
+
+```{r}
+clean_rates <- function(df) {
+  df %>%
+    group_by(age, sex) %>%
+    mutate(
+      # Step 1: Cap rates >1.0 at 1.0 (if survival probability)
+      rate = ifelse(rate > 1.0 & !is.na(rate), 1.0, rate),
+      # Step 2: Replace Inf with max finite rate
+      rate = ifelse(is.infinite(rate), max(rate[is.finite(rate)], na.rm = TRUE), rate),
+      # Step 3: Impute NaN with group median (now works because we're grouped)
+      rate = ifelse(is.na(rate), median(rate, na.rm = TRUE), rate)
+    ) %>%
+    ungroup() %>%
+    # Step 4: Fill any remaining NaN with 1.0 (after ungrouping)
+    mutate(rate = ifelse(is.na(rate), 1.0, rate))
+}
+```
+
+```{r}
+rates_2020_2021 <- compute_survival_rate(pop20, pop21) %>% clean_rates()
+```
+
+```{r}
+rates_2021_2022 <- compute_survival_rate(pop21, pop22) %>% clean_rates()
+```
+
+```{r}
+rates_2022_2023 <- compute_survival_rate(pop22, pop23) %>% clean_rates()
+```
+
+```{r}
+rates_2023_2024 <- compute_survival_rate(pop23, pop24) %>% clean_rates()
+```
+
+### Step 3: Average the survival rates
+
+```{r}
+avg_survival_rates <- bind_rows(
+  rates_2020_2021,
+  rates_2021_2022,
+  rates_2022_2023,
+  rates_2023_2024
+) %>%
+  group_by(age, sex, pa, sz) %>%
+  summarise(avg_rate = mean(rate, na.rm = TRUE), .groups = "drop")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(avg_survival_rates, "data/rds/popdata/avg_survival_rates.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+avg_survival_rates = read_rds("data/rds/popdata/avg_survival_rates.rds)
+```
+
+### Step 4: Forecast each year 2025 to 2029
+
+```{r}
+forecast_year <- function(base_pop, rates, year) {
+  next_pop <- base_pop %>%
+    filter(age >= 59 & age < 90) %>%
+    mutate(age = age + 1) %>%
+    left_join(rates, by = c("age", "sex", "pa", "sz")) %>%
+    mutate(pop = pop * avg_rate) %>%
+    select(age, sex, pa, sz, pop)
+
+  # Handle 90+
+  age_89 <- base_pop %>%
+    filter(age == 89) %>%
+    select(sex, pa, sz, pop) %>%
+    mutate(age = 90)
+
+  age_90plus <- base_pop %>%
+    filter(age == 90) %>%
+    select(sex, pa, sz, pop)
+
+  pop_90 <- bind_rows(age_89, age_90plus) %>%
+    group_by(sex, pa, sz) %>%
+    summarise(age = 90, pop = sum(pop), .groups = "drop")
+
+  bind_rows(next_pop, pop_90) %>%
+    mutate(year = year) %>%
+    arrange(pa, sz, sex, age)
+}
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(forecast_year, "data/rds/popdata/forecast_year.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+forecast_year = read_rds("data/rds/popdata/forecast_year.rds)
+```
+
+### Step 5: Loop over the years
+
+```{r}
+# List to store forecasts
+forecast_list <- list()
+base_pop <- pop24
+
+for (y in 2025:2029) {
+  next_forecast <- forecast_year(base_pop, avg_survival_rates, y)
+  forecast_list[[as.character(y)]] <- next_forecast
+  base_pop <- next_forecast %>% select(pa, sz, age, sex,  pop)
+}
+```
+
+### Final Output of Population Forecast
+
+```{r}
+all_forecasts <- bind_rows(forecast_list)
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(all_forecasts, "data/rds/popdata/all_forecasts.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+all_forecasts = read_rds("data/rds/popdata/all_forecasts.rds)
+```
 
 ## Singapore's Master Plan 2019 Subzone Boundary (MPSZ)
 
@@ -166,6 +731,10 @@ Using `st_read`, the ESRI shapefile was imported and it contains 323 data entrie
 mpsz = st_read(dsn = "data/subzone/",
                layer = "MP14_SUBZONE_NO_SEA_PL")
 head(mpsz, n=5)
+```
+
+```{r}
+plot(mpsz["SUBZONE_N"])
 ```
 
 ### Transforming CRS
@@ -233,19 +802,8 @@ hex_grid$hex_id <- sprintf("H%04d", seq_len(nrow(hex_grid))) %>% as.factor()
 head(hex_grid)
 ```
 
-?needed
-
-```{r}
-hex_grid <- hex_grid %>%
-  mutate(hex_id = row_number())
-```
-
 ```{r}
 hex_centroids <- st_centroid(hex_grid)
-```
-
-```{r}
-
 ```
 
 ```{r}
@@ -260,34 +818,149 @@ write_rds(hex_grid, "data/rds/mpsz/hex_grid.rds")
 hex_grid = read_rds("data/rds/mpsz/hex_grid.rds")
 ```
 
-## Road Network
-
-Importing road network
+### MPSZ Land Use
 
 ```{r}
-roadnetwork = st_read("data/roadnetwork/RoadNetwork.kml") %>%
-  st_transform(crs=3414)
+mpsz_land <- st_read("data/planningarea/AmendmenttoMasterPlan2019LandUselayer.kml") %>%
+  st_transform(crs = 3414)
 ```
 
 ```{r}
-mpsz_road <- st_join(mpsz, roadnetwork, left = TRUE)
+st_crs(mpsz_land)
 ```
 
 ```{r}
-plot(mpsz_road)
+st_is_valid(mpsz_land, reason = TRUE)
+```
+
+```{r}
+plot(mpsz_land["Name"])
+```
+
+unable to cross check
+
+```{r}
+mpsz_forecast <- mpsz %>%
+  left_join(all_forecasts, by = c("SUBZONE_N" = "sz")
+```
+
+Cross-checking subzones in MPSZ & Forecast data.
+
+```{r}
+combined_original_case <- mpsz %>%
+  distinct(SUBZONE_N) %>%
+  mutate(join_key = toupper(SUBZONE_N)) %>%
+  full_join(
+    all_forecasts %>%
+      distinct(sz) %>%
+      mutate(join_key = toupper(sz)),
+    by = "join_key"
+  ) %>%
+  select(SUBZONE_N, sz) %>%
+  arrange(SUBZONE_N, sz)
+```
+
+## Precursor
+
+There two sf data layers, namely:
+
+-   hexagon: sf object of hexagonal polygons.
+-   mpsz: sf object of planning subzones. Beside other field, there is a field contains the target population called aged_pop.
+
+::: callout-note
+Please ensure that both layers are in the same CRS (coordinate reference system, 3414 for svy21 ) and use projected units (e.g., meters).
+:::
+
+## Check and Transform CRS to Projected
+
+Use the code chunk below to check if the data layers are in svy21 projected coornates system.
+
+```{r}
+glimpse(hex_centroids)
+```
+
+If it is not projected, use the code chunk to transform the sf data layers into svy21.
+
+```{r}
+hexagon <- st_transform(hexagon, 3414) 
+mpsz <- st_transform(psz, 3414)
+```
+
+## Calculate the Area of Each Subzone
+
+Next, the code below will computer the area of each polygon in mpsz.
+
+```{r}
+mpsz <- mpsz %>%
+  mutate(mpsz_area = st_area(geometry))
+```
+
+## Intersect Hexagons with Subzones
+
+The code chunk below derive the overlapping geometry between hexagons and subzones.
+
+```{r}
+hex_mpsz_intersection <- st_intersection(hex_centroids, mpsz)
+```
+
+## Calculate Area of Each Intersection
+
+```{r}
+hex_mpsz_intersection <- hex_mpsz_intersection %>% 
+  mutate(intersection_area =
+           st_area(geometry))
+```
+
+## Estimate Hexagon Population
+
+Assume uniform population density within each subzone. So, the hexagon’s share of the population is:
+
+![](images/areaproportion.png)
+
+```{r}
+hex_mpsz_intersection <-
+  hex_psz_intersection %>%
+  mutate(hex_pop = as.numeric(
+    intersection_area / mpsz_area * 
+      population))
+
+#to push population up
+```
+
+## Aggregate Estimated Population to Each Hexagon
+
+If a hexagon overlaps multiple subzones, sum the estimated populations.
+
+```{r}
+hexagon_population <- 
+  hex_mpsz_intersection %>%
+  group_by(hex_id = row_number()) %>% 
+  summarise(estimated_population =
+              sum(hex_pop, na.rm = TRUE))
+```
+
+## Keeping original hexagon attributes:
+
+```{r}
+hexagon_final <- hexagon %>% 
+  mutate(hex_id = row_number()) %>%
+  left_join(hexagon_population, 
+            by = "hex_id")
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
-write_rds(mpsz, "data/rds/roadnetwork/roadnetwork.rds")
+write_rds(hexagon_final, "data/rds/mpsz/hexagon_final.rds")
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
-roadnetwork = read_rds("data/rds/roadnetwork/roadnetwork.rds")
+hexagon_final = read_rds("data/rds/mpsz/hexagon_final.rds")
 ```
+
+*hexagon_final* now includes a new column *estimated_population*, which is the area-weighted population estimate for each hexagon.
 
 ## Care Centre
 
@@ -825,20 +1498,17 @@ get_coords <- function(postal_list){
     # Add SVY21 coordinates back to the original dataframe
     valid_coords$longitude <- coords_matrix[, 1]  # SVY21 X coordinate
     valid_coords$latitude <- coords_matrix[, 2]   # SVY21 Y coordinate
-    
-    # Add geometry column
-    valid_coords$geometry <- st_geometry(coords_svy21)
+
     
     # Merge back with rows that had NA coordinates
     result <- merge(postal_coords, 
-                   valid_coords[c("postal_code", "longitude", "latitude", "geometry")], 
+                   valid_coords[c("postal_code", "longitude", "latitude")], 
                    by = "postal_code", all.x = TRUE)
   } else {
     # If no valid coordinates, add empty SVY21 columns
     result <- postal_coords
     result$longitude <- NA
     result$latitude <- NA
-    result$geometry <- NA
   }
   
   return(result)
@@ -863,6 +1533,12 @@ cc_data_final <- pivoted_cc_data %>%
 ```
 
 ```{r}
+cc_sf <- st_as_sf(cc_data_final,
+                  coords = c("longitude", "latitude"), #c is use column
+                         crs = 3414)
+```
+
+```{r}
 #| echo: false
 #| eval: false
 write_rds(cc_data_final, "data/rds/carecentre/refined/cc_data_final.rds")
@@ -871,35 +1547,45 @@ write_rds(cc_data_final, "data/rds/carecentre/refined/cc_data_final.rds")
 ```{r}
 #| echo: false
 #| eval: false
+write_rds(cc_sf, "data/rds/carecentre/refined/cc_sf.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
 cc_data_final = read_rds("data/rds/carecentre/refined/cc_data_final.rds")
 ```
 
-?st join with MPSZ
-
 ```{r}
-cc_mpsz <- cc_data_final %>%
-  left_join(mpsz,
-            join_by(geometry == geometry)
-)
+#| echo: false
+#| eval: false
+cc_sf = read_rds("data/rds/carecentre/refined/cc_sf.rds")
 ```
 
-conversation errrow
-
 ```{r}
-cc_mpsz <- st_as_sf(cc_mpsz, 
-                       coords = c("longitude_wgs84", "latitude_wgs84"),
-                       crs=4326) %>%
-  st_transform(crs = 3414)
+mpsz_land_fixed <- st_make_valid(mpsz_land)
 ```
 
 ```{r}
 tmap_mode("plot")
-qtm(cc_mpsz, 
-    fill = "DEPENDENCY")
+tm_shape(mpsz_land_fixed) +
+  tm_polygons()
 ```
 
 ```{r}
-tm_shape(cc_mpsz)+
+tmap_mode("plot")
+tm_shape(mpsz) +
+  tm_polygons() +
+tm_shape(cc_sf) +
+  tm_dots() #change to name
+```
+
+```{r}
+st_crs(cc_sf)
+```
+
+```{r}
+tm_shape(mpsz)+
   tm_fill("DEPENDENCY", 
           style = "quantile", 
           palette = "Blues",
@@ -916,479 +1602,6 @@ tm_shape(cc_mpsz)+
   tm_grid(alpha =0.2) +
   tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS", 
              position = c("left", "bottom"))
-```
-
-## Population Data
-
-### Importing Data
-
-In importing data, `read_csv()` and `rename_with()` of tidyverse package are used to perform column name standardisation by converting all variable names in the respective datasets to lowercase.
-
-:::: panel-tabset
-## Population Data 2024
-
-[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2024](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2024.ashx)
-
-```{r}
-popdata24 <- read_csv("data/popdata/respopagesex2024.csv") %>%
-  rename_with(tolower)
-```
-
-## Population Data 2023
-
-[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2023](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2023.ashx)
-
-```{r}
-popdata23 <- read_csv("data/popdata/respopagesex2023.csv") %>%
-  rename_with(tolower)
-```
-
-## Population Data 2022
-
-[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2022](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2022.ashx) 
-
-```{r}
-popdata22 <- read_csv("data/popdata/respopagesex2022.csv") %>%
-  rename_with(tolower)
-```
-
-::: callout-warning
-PARSING ERROR\*
-
-```         
-Warning: One or more parsing issues, call `problems()` on your data frame for details, e.g.:
-  dat <- vroom(...)
-  problems(dat)Rows: 60424 Columns: 6── Column specification
-```
-:::
-
-## Population Data 2021
-
-[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2021](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2021.ashx)
-
-```{r}
-popdata21 <- read_csv("data/popdata/respopagesex2021.csv") %>%
-  rename_with(tolower)
-```
-
-## Population Data 2020
-
-[Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2011-2020](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2011to2020.ashx)
-
-```{r}
-popdata20 <- read_csv("data/popdata/respopagesex2011to2020.csv") %>%
-  rename_with(tolower) %>%
-  filter(time == 2020)
-```
-::::
-
-```{r}
-#| echo: false
-#| eval: false
-write_rds(popdata24, "data/rds/popdata/original/popdata24.rds")
-write_rds(popdata23, "data/rds/popdata/original/popdata23.rds")
-write_rds(popdata21, "data/rds/popdata/original/popdata21.rds")
-write_rds(popdata20, "data/rds/popdata/original/popdata20.rds")
-```
-
-```{r}
-#| echo: false
-#| eval: false
-popdata24 = read_rds("data/rds/popdata/original/popdata24.rds")
-popdata23 = read_rds("data/rds/popdata/original/popdata23.rds")
-popdata21 = read_rds("data/rds/popdata/original/popdata21.rds")
-popdata20 = read_rds("data/rds/popdata/original/popdata20.rds")
-```
-
-```{r}
-glimpse(popdata23)
-```
-
-### Checking for Missing Values
-
-To check for missing or null values in the name and address columns of each dataset, the code uses the summarise() function from the dplyr package. The summarise() function computes summary statistics for the specified columns, which in this case are name and address. The across() function is used to apply the sum(is.na(.)) operation to both columns simultaneously, counting the number of missing (NA) values in each column.
-
-The is.na() function checks whether each value in the name and address columns is missing or null, returning TRUE for missing values and FALSE for non-missing values. The sum() function then counts the number of TRUE values, which corresponds to the number of missing values in each column. This process is applied to each dataset (aac, counselling, daycare, dementia, hospice, maintenance, nhrespite, nursing, and rehab). In conclusion it is able to identify the number of missing values in the name and address columns across all datasets, which helps assess the completeness of the data and highlights any issues that may require cleaning or imputation before further analysis. It returns 0 missing values.
-
-Results: We noticed that there are 30 missing values popdata22 specifically under the column pop.
-
-```{r}
-popdata20_missing <- popdata20 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
-print(popdata20_missing)
-
-popdata21_missing <- popdata21 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
-print(popdata21_missing)
-
-popdata22_missing <- popdata22 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
-print(popdata22_missing)
-
-popdata23_missing <- popdata23 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
-print(popdata23_missing)
-
-popdata24_missing <- popdata24 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
-print(popdata24_missing)
-
-
-```
-
-### Issue with `POPDATA22`
-
-Using the below code, we are able to see clearly the rows that are affected and in the pop column, it appears as NA. The csv file (respopagesex2022.csv) was opened using excel and each row returned in the below output was then cross checked in excel. Whole numbers with comma appeared in excel. This may be because read_csv() function expects a numeric value (double) in one of the columns, but instead, it found a string (the values in the column are likely formatted with commas, such as "1,020"). This is why the parser is raising an issue earlier on.
-
-```{r}
-na_rows <- popdata22[is.na(popdata22$pop), ]
-print(na_rows)
-```
-
-Referencing from [Stackoverflow](https://stackoverflow.com/questions/1523126/how-to-read-data-when-some-numbers-contain-commas-as-thousand-separator), the first line of the code is necessary as it defines a new class called `"num.with.commas"`. This class is intended to handle numeric values that are stored as strings with commas (e.g., `"1,000"`). Thereafter, the second line of the code defines a method to convert a `character` type to the custom `"num.with.commas"` class.
-
--   The `gsub(",", "", from)` function removes commas from the string (e.g., `"1,000"` becomes `"1000"`)
-
--   The `as.numeric()` function then converts the cleaned string into a numeric value (e.g., `"1000"` becomes `1000`)
-
-This ensures that numbers with commas are properly converted to numeric values during data import.
-
-```{r}
-setClass("num.with.commas")
-setAs("character", "num.with.commas", 
-        function(from) as.numeric(gsub(",", "", from) ) )
-```
-
-The file is then re-imported again and specifically, the column 'pop' is parsed as a character field in facilitating the next step in removing commas within the population itself.
-
-```{r}
-popdata22 <- read_csv("data/popdata/respopagesex2022.csv", 
-                      col_types = cols(
-                        PA = col_character(),
-                        SZ = col_character(),
-                        Age = col_character(),
-                        Sex = col_character(),
-                        Pop = col_character(),
-                        Time = col_number()  # Adjust if necessary
-                      )) %>%
-  rename_with(tolower)
-```
-
-As previously stated, commas are present in the 'pop' column, hence, `mutate()`
-
-```{r}
-popdata22 <- popdata22 %>%
-  mutate(pop = as.numeric(str_replace_all(pop, ",", "")))
-```
-
-```{r}
-#| echo: false
-#| eval: false
-write_rds(popdata22, "data/rds/popdata/original/popdata22.rds")
-```
-
-In the below codechunk, it was verified that there is no missing values and the above steps taken were successful.
-
-```{r}
-names(popdata22) <- tolower(names(popdata22))
-popdata22_missing <- popdata22 %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.))))
-print(popdata22_missing)
-```
-
-? to assess to
-
-```{r}
-#| eval: false
-
-#First 
-convert_age <- function(df) {
-  df %>%
-    mutate(age = if_else(
-      age == "90_and_over", "90", age)) %>%
-    mutate(age = as.numeric(age))
-}
-
-popdata20_c <- convert_age(popdata23)
-
-```
-
-In the below `code chunk a & b`, we noticed that it returned two different outputs: `90_and_over` and `90_and_Over`. This may explain why the error `NAs introduced by coercion` was returned. `Code-chunk a.`
-
-```{r}
-popdata22 %>% 
-  summarise(max_age = max(age, na.rm = TRUE))
-```
-
-`Code chunk b.`
-
-```{r}
-popdata24 %>% 
-  summarise(max_age = max(age, na.rm = TRUE))
-```
-
-Hence, in addressing the above issue, the below code chunk was developed. First, The code defines a function called `convert_age` that takes a dataframe (`df`) as input. Inside the function, it modifies the `age` column using `mutate()`. It checks each value in the `age` column to see if it contains either "\_and_over" or "\_and_Over" (case-insensitive match). When a match is found, it extracts just the numeric part (e.g., "90" from "90_and_over") using `str_extract()`. If no match is found, it keeps the original value. The second `mutate()` converts the cleaned `age` column to numeric values, ensuring all ages are stored as numbers. The function returns the modified dataframe with standardised age values.
-
-```{r}
-convert_age <- function(df) {
-  df %>%
-    mutate(age = if_else(
-      str_detect(age, regex("_and_Over|_and_over", ignore_case = TRUE)),
-      str_extract(age, "\\d+"),  # Extract just the numeric part
-      age
-    )) %>%
-    mutate(age = as.numeric(age))
-}
-```
-
-```{r}
-popdata20_c <- convert_age(popdata20)
-```
-
-```{r}
-popdata21_c <- convert_age(popdata21)
-```
-
-```{r}
-popdata22_c <- convert_age(popdata22)
-```
-
-```{r}
-popdata23_c <- convert_age(popdata23)
-```
-
-```{r}
-popdata24_c <- convert_age(popdata24)
-```
-
-Another layer of confirmation of missing values was executed in ensuring no missing values were returned during the abovementioned process and it returns 0 for each dataset.
-
-```{r}
-popdata20_missing <- popdata20_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
-print(popdata20_missing)
-popdata21_missing <- popdata21_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
-print(popdata21_missing)
-popdata22_missing <- popdata22_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
-print(popdata22_missing)
-popdata23_missing <- popdata23_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
-print(popdata23_missing)
-popdata24_missing <- popdata24_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
-print(popdata24_missing)
-```
-
-### Remove
-
-```{r}
-# Return all rows where 'pop' is exactly 0
-popdata24_c %>% 
-  filter(age>=60, pop==0)
-```
-
-```{r}
-popdata23_c %>% 
-  filter(age>=60, pop==0)
-```
-
-```{r}
-popdata22_c %>% 
-  filter(age>=60, pop==0)
-```
-
-```{r}
-popdata21_c %>% 
-  filter(age>=60, pop==0)
-```
-
-```{r}
-popdata20_c %>% 
-  filter(age>=60, pop==0)
-```
-
-### Duplicate Check
-
-The code provided checks for duplicate rows in each dataset by grouping the dataset by all columns using group_by_all(). It then filters out the rows that have duplicate combinations of values across all columns using filter(n() \> 1). The n() function counts the number of occurrences for each combination of values, and filter(n() \> 1) keeps only the rows that appear more than once (i.e., duplicates).
-
-For each dataset, the nrow() function is used to check if there are any rows returned after filtering for duplicates. If there are duplicates (i.e., the number of rows is greater than zero), the dataset with the duplicate rows is returned. However, if no duplicates are found (i.e., nrow() equals zero), the code returns 0 to indicate that there are no duplicates in that dataset.
-
-Thus, the code either returns the rows with duplicate values or 0 if no duplicates are present, providing an indication of whether duplicate entries exist in each dataset.
-
-```{r}
-# Check for duplicates in 'aac'
-popdata20_duplicate <- popdata20_c %>% 
-  group_by_all() %>% 
-  filter(n() > 1) %>% 
-  ungroup()
-show(popdata20_duplicate)
-
-
-# Check for duplicates in 'counselling'
-popdata21_duplicate <- popdata21_c %>% 
-  group_by_all() %>% 
-  filter(n() > 1) %>% 
-  ungroup()
-show(popdata21_duplicate)
-
-# Check for duplicates in 'daycare'
-popdata22_duplicate <- popdata22_c %>% 
-  group_by_all() %>% 
-  filter(n() > 1) %>% 
-  ungroup()
-show(popdata22_duplicate)
-
-# Check for duplicates in 'dementia'
-popdata23_duplicate <- popdata23_c %>% 
-  group_by_all() %>% 
-  filter(n() > 1) %>% 
-  ungroup()
-show(popdata23_duplicate)
-
-# Check for duplicates in 'hospice'
-popdata24_duplicate <- popdata24_c %>% 
-  group_by_all() %>% 
-  filter(n() > 1) %>% 
-  ungroup()
-show(popdata24_duplicate)
-
-```
-
-```{r}
-#| echo: false
-#| eval: false
-write_rds(popdata24_c, "data/rds/popdata/refined/popdata24_c.rds")
-write_rds(popdata23_c, "data/rds/popdata/refined/popdata23_c.rds")
-write_rds(popdata22_c, "data/rds/popdata/refined/popdata22_c.rds")
-write_rds(popdata21_c, "data/rds/popdata/refined/popdata21_c.rds")
-write_rds(popdata20_c, "data/rds/popdata/refined/popdata20_c.rds")
-```
-
-```{r}
-#| echo: false
-#| eval: false
-popdata24_c = read_rds("data/rds/popdata/refined/popdata24_c.rds")
-popdata23_c = read_rds("data/rds/popdata/refined/popdata23_c.rds")
-popdata22_c = read_rds("data/rds/popdata/refined/popdata22_c.rds")
-popdata21_c = read_rds("data/rds/popdata/refined/popdata21_c.rds")
-popdata20_c = read_rds("data/rds/popdata/refined/popdata20_c.rds")
-```
-
-## PROF
-
-###Population Data
-
-```{r}
-clean_age_column <- function(df) {
-  df %>%
-    mutate(
-      age = str_trim(age),  # Trim whitespace
-      age = if_else(age == "90_and_over", "90", age),  # Replace label
-      age = suppressWarnings(as.numeric(age))  # Convert safely
-    ) %>%
-    filter(!is.na(age))  # Remove rows that still couldn't be converted
-}
-```
-
-# Step 1: Load data
-
-```{r}
-pop20 <- read_rds("data/rds/popdata/refined/popdata20_c.rds") %>% 
-  clean_age_column()
-pop21 <- read_rds("data/rds/popdata/refined/popdata21_c.rds") %>% 
-  clean_age_column()
-pop22 <- read_rds("data/rds/popdata/refined/popdata22_c.rds") %>% 
-  clean_age_column()
-pop23 <- read_rds("data/rds/popdata/refined/popdata23_c.rds") %>% 
-  clean_age_column()
-pop24 <- read_rds("data/rds/popdata/refined/popdata24_c.rds") %>% 
-  clean_age_column()
-```
-
-# Step 2: Compute survival rates for each year-to-year transition
-
-```{r}
-compute_survival_rate <- function(df1, df2) {
-  df1 %>%
-    filter(age >= 64 & age < 91) %>%
-    mutate(age = age + 1) %>%
-    inner_join(df2, 
-               by = c("age", "sex", "pa", "sz"),
-               suffix = c("_prev", "_next")) %>%
-    mutate(rate = pop_next / pop_prev) %>%
-    select(pa, sz, age, sex, rate)
-}
-```
-
-```{r}
-rates_2020_2021 <- compute_survival_rate(popdata20_c, popdata21_c)
-```
-
-```{r}
-rates_2021_2022 <- compute_survival_rate(pop21, popdata22)
-```
-
-```{r}
-rates_2022_2023 <- compute_survival_rate(popdata22, pop23)
-```
-
-```{r}
-rates_2023_2024 <- compute_survival_rate(pop23, pop24)
-```
-
-# Step 3: Average the survival rates
-
-```{r}
-avg_survival_rates <- bind_rows(
-  rates_2020_2021,
-  rates_2021_2022,
-  rates_2022_2023,
-  rates_2023_2024
-) %>%
-  group_by(age, sex, pa, sz) %>%
-  summarise(avg_rate = mean(rate, na.rm = TRUE), .groups = "drop")
-```
-
-# Step 4: Forecast each year 2025 to 2029
-
-```{r}
-forecast_year <- function(base_pop, rates, year) {
-  next_pop <- base_pop %>%
-    filter(age >= 64 & age < 90) %>%
-    mutate(age = age + 1) %>%
-    left_join(rates, by = c("age", "sex", "pa", "sz")) %>%
-    mutate(pop = pop * avg_rate) %>%
-    select(age, sex, pa, sz, pop)
-
-  # Handle 90+
-  age_89 <- base_pop %>%
-    filter(age == 89) %>%
-    select(sex, pa, sz, pop) %>%
-    mutate(age = 90)
-
-  age_90plus <- base_pop %>%
-    filter(age == 90) %>%
-    select(sex, pa, sz, pop)
-
-  pop_90 <- bind_rows(age_89, age_90plus) %>%
-    group_by(sex, pa, sz) %>%
-    summarise(age = 90, pop = sum(pop), .groups = "drop")
-
-  bind_rows(next_pop, pop_90) %>%
-    mutate(year = year) %>%
-    arrange(pa, sz, sex, age)
-}
-```
-
-# Step 5: Loop over the years
-
-```{r}
-# List to store forecasts
-forecast_list <- list()
-base_pop <- pop24
-
-for (y in 2025:2029) {
-  next_forecast <- forecast_year(base_pop, avg_survival_rates, y)
-  forecast_list[[as.character(y)]] <- next_forecast
-  base_pop <- next_forecast %>% select(pa, sz, age, sex,  pop)
-}
-```
-
-# Final Output
-
-```{r}
-all_forecasts <- bind_rows(forecast_list)
 ```
 
 # Exploratory Data Analysis
