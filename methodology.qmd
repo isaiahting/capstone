@@ -154,7 +154,8 @@ The code chunk below, using `p_load` function of the [**pacman**](https://cran.r
 ```{r}
 pacman::p_load(tidyverse, sf,
                jsonlite, rvest, knitr, patchwork,
-               leaflet, scales, lubridate, tmap, DT, geojsonsf)
+               leaflet, scales, lubridate, tmap, DT, geojsonsf, scales,
+               VIM, mice, broom)
 ```
 :::
 
@@ -162,7 +163,7 @@ pacman::p_load(tidyverse, sf,
 
 ### Overview
 
-In this section, a total of 4 population datasets from year 2020 to year 2024 will be used in the analysis. The aim of this is to calculate the sruvival rate, in this instance, death is the outcome.
+In this section, a total of 4 population datasets from year 2020 to year 2024 will be used in the analysis. The datasets will be cleaned. Survival analysis will be done in estimating the population for age 60 and above for the period 2025 to 2029.
 
 ### Importing Data
 
@@ -492,7 +493,428 @@ popdata21_c = read_rds("data/rds/popdata/refined/popdata21_c.rds")
 popdata20_c = read_rds("data/rds/popdata/refined/popdata20_c.rds")
 ```
 
-### Survival Analysis from 2025 - 2030
+
+### EDA of Population Data
+```{r}
+
+### Step 1: Define a function to filter and aggregate age distribution data
+get_age_distribution <- function(data, min_age = 60, max_age = 90) {
+  data %>%
+    filter(age >= min_age & age <= max_age) %>%
+    group_by(time, age, sex) %>%
+    summarise(total_pop = sum(pop), .groups = "drop")
+}
+```
+
+```{r}
+### Step 2: Use the function to process data
+age_dist <- get_age_distribution(popdata20_c)  # Default: ages 60-90
+
+### Step 3: Plot age distributions by year and sex
+plot_age_distribution <- function(age_data) {
+  ggplot(age_data, aes(x = age, y = total_pop, fill = sex)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~time, scales = "free_y") +
+    labs(
+      title = "Age Distribution (60-90 Years) by Sex and Year",
+      x = "Age",
+      y = "Total Population",
+      fill = "Sex"
+    ) +
+    scale_x_continuous(breaks = seq(60, 90, by = 5)) +
+    theme_minimal() +
+    theme(legend.position = "bottom")
+}
+
+# Generate the plot
+plot_age_distribution(age_dist)
+```
+
+
+```{r}
+#| echo: false #not show code
+#| eval: false
+```
+
+
+
+In generating the population pyramid, the below oko
+
+```{r}
+#load data
+get_age_distribution <- function(data, min_age = 60, max_age = 90) {
+  data %>%
+    filter(age >= min_age & age <= max_age) %>%
+    mutate(
+      # Standardize sex labels to match your data
+      sex = factor(sex, levels = c("Males", "Females"))
+    ) %>%
+    group_by(time, age, sex) %>%
+    summarise(total_pop = sum(pop), .groups = "drop")
+}
+```
+
+
+
+```{r}
+#2020
+age_dist <- get_age_distribution(popdata20_c)
+# 3. Create population pyramid plot function 
+plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
+  # Filter and transform data
+  plot_data <- age_data %>% 
+    filter(time == plot_year) %>%
+    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
+  
+  # Calculate axis limits
+  max_pop <- max(abs(plot_data$total_pop))
+  
+  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    geom_hline(yintercept = 0, color = "black") +
+    coord_flip() +
+    scale_y_continuous(
+      labels = function(x) comma(abs(x)),
+      breaks = pretty_breaks(n = 6),
+      limits = c(-max_pop * 1.1, max_pop * 1.1)
+    ) +
+    scale_fill_manual(
+      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
+      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
+    ) +
+    labs(
+      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
+      x = "Age",
+      y = "Population Count",
+      fill = "Gender"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      legend.position = "bottom"
+    )
+}
+
+# 4. Generate and save the plot ------------------------------------------------
+final_plot <- plot_population_pyramid(age_dist)
+print(final_plot)
+```
+```{r}
+#| echo: false #not show code
+
+age_dist <- get_age_distribution(popdata21_c)
+# 3. Create population pyramid plot function 
+plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
+  # Filter and transform data
+  plot_data <- age_data %>% 
+    filter(time == plot_year) %>%
+    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
+  
+  # Calculate axis limits
+  max_pop <- max(abs(plot_data$total_pop))
+  
+  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    geom_hline(yintercept = 0, color = "black") +
+    coord_flip() +
+    scale_y_continuous(
+      labels = function(x) comma(abs(x)),
+      breaks = pretty_breaks(n = 6),
+      limits = c(-max_pop * 1.1, max_pop * 1.1)
+    ) +
+    scale_fill_manual(
+      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
+      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
+    ) +
+    labs(
+      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
+      x = "Age",
+      y = "Population Count",
+      fill = "Gender"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      legend.position = "bottom"
+    )
+}
+
+# 4. Generate and save the plot ------------------------------------------------
+final_plot <- plot_population_pyramid(age_dist)
+print(final_plot)
+```
+```{r}
+#| echo: false #not show code
+
+age_dist <- get_age_distribution(popdata22_c)
+# 3. Create population pyramid plot function 
+plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
+  # Filter and transform data
+  plot_data <- age_data %>% 
+    filter(time == plot_year) %>%
+    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
+  
+  # Calculate axis limits
+  max_pop <- max(abs(plot_data$total_pop))
+  
+  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    geom_hline(yintercept = 0, color = "black") +
+    coord_flip() +
+    scale_y_continuous(
+      labels = function(x) comma(abs(x)),
+      breaks = pretty_breaks(n = 6),
+      limits = c(-max_pop * 1.1, max_pop * 1.1)
+    ) +
+    scale_fill_manual(
+      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
+      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
+    ) +
+    labs(
+      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
+      x = "Age",
+      y = "Population Count",
+      fill = "Gender"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      legend.position = "bottom"
+    )
+}
+
+# 4. Generate and save the plot ------------------------------------------------
+final_plot <- plot_population_pyramid(age_dist)
+print(final_plot)
+```
+
+```{r}
+#| echo: false #not show code
+
+age_dist <- get_age_distribution(popdata23_c)
+# 3. Create population pyramid plot function 
+plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
+  # Filter and transform data
+  plot_data <- age_data %>% 
+    filter(time == plot_year) %>%
+    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
+  
+  # Calculate axis limits
+  max_pop <- max(abs(plot_data$total_pop))
+  
+  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    geom_hline(yintercept = 0, color = "black") +
+    coord_flip() +
+    scale_y_continuous(
+      labels = function(x) comma(abs(x)),
+      breaks = pretty_breaks(n = 6),
+      limits = c(-max_pop * 1.1, max_pop * 1.1)
+    ) +
+    scale_fill_manual(
+      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
+      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
+    ) +
+    labs(
+      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
+      x = "Age",
+      y = "Population Count",
+      fill = "Gender"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      legend.position = "bottom"
+    )
+}
+
+# 4. Generate and save the plot ------------------------------------------------
+final_plot <- plot_population_pyramid(age_dist)
+print(final_plot)
+```
+
+```{r}
+#| echo: false #not show code
+
+age_dist <- get_age_distribution(popdata24_c)
+# 3. Create population pyramid plot function 
+plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
+  # Filter and transform data
+  plot_data <- age_data %>% 
+    filter(time == plot_year) %>%
+    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
+  
+  # Calculate axis limits
+  max_pop <- max(abs(plot_data$total_pop))
+  
+  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    geom_hline(yintercept = 0, color = "black") +
+    coord_flip() +
+    scale_y_continuous(
+      labels = function(x) comma(abs(x)),
+      breaks = pretty_breaks(n = 6),
+      limits = c(-max_pop * 1.1, max_pop * 1.1)
+    ) +
+    scale_fill_manual(
+      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
+      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
+    ) +
+    labs(
+      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
+      x = "Age",
+      y = "Population Count",
+      fill = "Gender"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      legend.position = "bottom"
+    )
+}
+
+# 4. Generate and save the plot ------------------------------------------------
+final_plot <- plot_population_pyramid(age_dist)
+print(final_plot)
+```
+
+### Testing for Missing Values
+```{r}
+# Compare means of other variables between zero/non-zero groups
+pop20_i %>% 
+  group_by(zero_pop = (pop == 0)) %>% 
+  summarise(across(c(age, time), mean))
+```
+### Percentage of Missing Values
+
+pop20
+```{r}
+pop20_geri <- pop20 %>%
+  filter(age>=60)
+```
+
+```{r}
+zero_pop20 <- pop20 %>% 
+  filter(pop == 0, age>=60)
+```
+
+```{r}
+(nrow(zero_pop20) / nrow(pop20_geri)) * 100
+```
+
+
+pop21
+```{r}
+pop21_geri <- pop21 %>%
+  filter(age>=60)
+```
+
+```{r}
+zero_pop21 <- pop21 %>% 
+  filter(pop == 0, age>=60)
+```
+
+```{r}
+(nrow(zero_pop21) / nrow(pop21_geri)) * 100
+```
+
+pop22
+```{r}
+pop22_geri <- pop22 %>%
+  filter(age>=60)
+```
+
+```{r}
+zero_pop22 <- pop22 %>% 
+  filter(pop == 0, age>=60)
+```
+
+```{r}
+(nrow(zero_pop22) / nrow(pop22_geri)) * 100
+```
+
+pop23
+```{r}
+pop23_geri <- pop23 %>%
+  filter(age>=60)
+```
+
+```{r}
+zero_pop23 <- pop23 %>% 
+  filter(pop == 0, age>=60)
+```
+
+```{r}
+(nrow(zero_pop23) / nrow(pop23_geri)) * 100
+```
+
+pop24
+```{r}
+pop24_geri <- pop24 %>%
+  filter(age>=60)
+```
+
+```{r}
+zero_pop24 <- pop24 %>% 
+  filter(pop == 0, age>=60)
+```
+
+```{r}
+(nrow(zero_pop24) / nrow(pop24_geri)) * 100
+```
+
+
+
+### Imputation
+```{r}
+# Create zero indicator
+pop20_i <- pop20 %>%
+  mutate(
+    zero_pop = (pop == 0),
+    log_pop = ifelse(pop > 0, log(pop), NA)  # For visualization
+)
+```
+
+```{r}
+# Check zero patterns
+zero_summary <- pop20_i %>%
+  filter(age>=60) %>%
+  group_by(pa, sz, age, sex) %>%
+  summarise(
+    n_zeros = sum(zero_pop),
+    prop_zeros = mean(zero_pop),
+    .groups = 'drop'
+  )
+```
+```{r}
+# Visualize zeros
+ggplot(zero_summary, aes(x = age, y = prop_zeros, fill = sex)) +
+  geom_boxplot() +
+  facet_wrap(~pa) +
+  labs(title = "Proportion of Zero Population by Demographics")
+```
+
+
+```{r}
+ggplot(pop20_i, aes(x=time, y=pop)) + 
+  geom_point(alpha=0.5) +
+  facet_grid(sex ~ age) +
+  labs(title="Population Distribution by Demographics")
+```
+
+### Survival Analysis
+
+![Figure x: Population Pyramid 2020](/metho_images/2020.png) ![Figure x: Population Pyramid 2021](/metho_images/2021.png) ![Figure x: Population Pyramid 2022](/metho_images/2022.png) ![Figure x: Population Pyramid 2023](/metho_images/2023.png) ![Figure x: Population Pyramid 2024](/metho_images/2024.png) \### Survival Analysis from 2025 - 2030
+
+#### Introduction
+
+In this section,
+
+The aim of this is to calculate the sruvival rate, in this instance, death is the event of interest.
+
+As the population data is used, we will assume that the data is non-parametric in nature. **Kaplan-Meier**
+
+It is assumed that residents will stay in the same address with in relation to their subzones throughout the study period. Hence, if there is a decrease of population in the subzone, the reasonable explanation of this outcome is death.
 
 This code defines a function called `clean_age_column` that takes a dataframe (`df`) as input and processes its `age` column to ensure consistent numeric values. The function uses the `%>%` (pipe) operator from the `dplyr` package to chain a series of data transformations. First, it trims any leading or trailing whitespace from the `age` column using `str_trim`. Next, it replaces the label `"90_and_over"` with `"90"` to standardize the representation of ages 90 and above. Then, it converts the `age` column to numeric values using `as.numeric`, while suppressing any warnings that might arise from non-numeric entries (e.g., empty strings or invalid values). Finally, the function filters out any rows where the `age` could not be converted to a numeric value (resulting in `NA`), ensuring only valid numeric ages remain in the dataframe. The cleaned dataframe is then returned as the output. This function is useful for preparing age data for analysis by ensuring uniformity and removing invalid entries.
 
@@ -508,7 +930,7 @@ clean_age_column <- function(df) {
 }
 ```
 
-### Step 1: Load data
+#### Step 1: Load data
 
 Firstly, we will read the rds file. Thereafter, we will apply \`clean_age_column()\` function that was defined earlier to the loaded dataframe.
 
@@ -525,11 +947,11 @@ pop24 <- read_rds("data/rds/popdata/refined/popdata24_c.rds") %>%
   clean_age_column()
 ```
 
-### Step 2: Compute survival rates for each year-to-year transition
+#### Step 2: Compute survival rates for each year-to-year transition
 
 This code defines a function called `compute_survival_rate` that calculates survival rates between two consecutive time periods (e.g., years) for a population dataset. The function takes two dataframes (`df1` and `df2`) as inputs, representing population data from two different time points (e.g., 2020 and 2021).
 
-First, the function filters `df1` to include only individuals aged **59 to 90**, as survival analysis is often focused on older populations. It then increments the age by 1 (using `mutate(age = age + 1)`) to align the ages with the next time period (`df2`). Next, it performs an **inner join** between the modified `df1` and `df2` using matching columns (`age`, `sex`, `pa` \[possibly a region code\], and `sz` \[possibly another demographic grouping\]). The join suffixes (`_prev` and `_next`) distinguish between the population counts from the two time periods.
+First, the function filters `df1` to include only individuals aged **59 to 90**, as survival analysis is often focused on older populations. It then increments the age by 1 (using `mutate(age = age + 1)`) to align the ages with the next time period (`df2`). Next, it performs an **inner join** between the modified `df1` and `df2` using matching columns (`age`, `sex`, `pa` \[possibly a region code\], and `sz`. The join suffixes (`_prev` and `_next`) distinguish between the population counts from the two time periods.
 
 After joining, the function computes the **survival rate** (`rate`) by dividing the population in the later period (`pop_next`) by the population in the earlier period (`pop_prev`). Finally, it selects and returns only the relevant columns (`pa`, `sz`, `age`, `sex`, `rate`, `pop_prev`, `pop_next`) for further analysis.
 
@@ -592,6 +1014,53 @@ invalid_rates_rows
 
 The function processes survival rate data through four sequential steps, now correctly using dplyr's grouping mechanism. First, it groups the data by both age and sex, which is crucial because survival rates likely vary significantly across these demographics. Within these groups, it performs three key operations: (1) capping any rates above 1.0 at 1.0 (assuming these represent survival probabilities that shouldn't exceed 100%), (2) replacing infinite values (which occur when dividing by zero) with the maximum finite rate found in the data, and (3) imputing missing values (NaN) with the median rate for that specific age-sex group. After these grouped operations, it ungroups the data and performs a final safety check, replacing any remaining missing values with 1.0 (a neutral value indicating no change).
 
+
+```{r}
+compute_survival_rate <- function(df1, df2) {
+  df1 %>%
+    filter(age >= 59 & age < 91) %>%
+    mutate(age = age + 1) %>%
+    inner_join(df2, 
+               by = c("age", "sex", "pa", "sz"),
+               suffix = c("_prev", "_next")) %>%
+    mutate(rate = pop_next / pop_prev) %>%
+    select(pa, sz, age, sex, rate, pop_prev, pop_next)
+}
+```
+
+
+refined (tried)
+
+```{r}
+clean_rates <- function(df, rate_type = "survival") {
+  df %>%
+    group_by(age, sex) %>%
+    mutate(
+      # Handle infinites first - replace with NA for proper imputation
+      rate = ifelse(is.infinite(rate), NA, rate),
+      
+      # Cap rates only if they represent probabilities
+      rate = if(rate_type == "survival" || rate_type == "probability") {
+        pmin(pmax(rate, 0), 1)  # Bound between 0 and 1
+      } else {
+        pmax(rate, 0)  # Only ensure non-negative for hazard rates
+      },
+      
+      # Impute missing values with group median
+      rate = ifelse(is.na(rate), median(rate, na.rm = TRUE), rate)
+    ) %>%
+    ungroup() %>%
+    # Final check - if entire groups had no valid data
+    mutate(
+      rate = ifelse(is.na(rate), 
+                   if(rate_type == "survival") 1.0 else 0.0, 
+                   rate)
+    )
+}
+```
+
+
+?
 ```{r}
 clean_rates <- function(df) {
   df %>%
@@ -609,6 +1078,186 @@ clean_rates <- function(df) {
     mutate(rate = ifelse(is.na(rate), 1.0, rate))
 }
 ```
+
+claude version
+
+```{r}
+clean_survival_rates <- function(df) {
+  df %>%
+    group_by(age, sex) %>%
+    mutate(
+      # Handle infinites first - replace with NA for proper imputation
+      rate = ifelse(is.infinite(rate), NA, rate),
+      
+      # Bound survival rates between 0 and 1
+      rate = pmin(pmax(rate, 0), 1),
+      
+      # Impute missing values with group median
+      rate = ifelse(is.na(rate), median(rate, na.rm = TRUE), rate)
+    ) %>%
+    ungroup() %>%
+    # Final imputation for any remaining NAs (if entire groups had no valid data)
+    mutate(rate = ifelse(is.na(rate), 1.0, rate))
+}
+```
+
+
+### Step 2 refined by Claude
+```{r}
+compute_survival_rate <- function(df1, df2) {
+  df1 %>%
+    filter(age >= 59 & age < 91) %>%
+    mutate(age = age + 1) %>%
+    inner_join(df2, 
+               by = c("age", "sex", "pa", "sz"),
+               suffix = c("_prev", "_next")) %>%
+    mutate(rate = pop_next / pop_prev) %>%
+    select(pa, sz, age, sex, rate, pop_prev, pop_next)
+}
+```
+```{r}
+# Stochastic regression imputation function
+stochastic_impute_rates <- function(df, rate_type = "survival") {
+```
+```{R}
+  # Step 1: Prepare data for imputation
+  df_clean <- df %>%
+    mutate(
+      # Handle infinites and zeros in denominator
+      rate = case_when(
+        is.infinite(rate) ~ NA_real_,
+        pop_prev == 0 ~ NA_real_,  # Can't compute rate with zero denominator
+        TRUE ~ rate
+      ),
+      # Create indicator for missingness
+      rate_missing = is.na(rate),
+      # Log transform population for better modeling (add small constant to avoid log(0))
+      log_pop_prev = log(pop_prev + 0.1),
+      log_pop_next = log(pop_next + 0.1)
+    )
+```
+```{R}
+  # Step 2: Only proceed with imputation if we have missing values
+  if (!any(df_clean$rate_missing)) {
+    message("No missing values found. Returning original data with bounds applied.")
+    return(apply_rate_bounds(df_clean, rate_type))
+  }
+```  
+```{r}
+  # Step 3: Fit regression model for imputation
+  # Use available predictors: age, sex, pa, log_pop_prev
+  complete_cases <- df_clean %>% filter(!rate_missing)
+  
+  if (nrow(complete_cases) < 10) {
+    warning("Too few complete cases for reliable regression imputation. Using group medians.")
+    return(fallback_imputation(df_clean, rate_type))
+  }
+  
+  # Fit the regression model
+  imputation_model <- tryCatch({
+    if (rate_type == "survival") {
+      # Logistic regression for survival rates (bounded 0-1)
+      # Transform rate to logit scale for modeling
+      complete_cases_trans <- complete_cases %>%
+        mutate(
+          # Ensure rates are in (0,1) for logit transformation
+          rate_bounded = pmin(pmax(rate, 0.001), 0.999),
+          logit_rate = log(rate_bounded / (1 - rate_bounded))
+        )
+      
+      lm(logit_rate ~ age + sex + pa + log_pop_prev, 
+         data = complete_cases_trans)
+    } else {
+      # Linear regression for other rate types
+      lm(rate ~ age + sex + pa + log_pop_prev, 
+         data = complete_cases)
+    }
+  }, error = function(e) {
+    warning("Regression model failed. Using group medians.")
+    return(NULL)
+  })
+  
+  if (is.null(imputation_model)) {
+    return(fallback_imputation(df_clean, rate_type))
+  }
+  
+  # Step 4: Get model statistics for adding stochastic component
+  model_sigma <- sigma(imputation_model)  # Residual standard error
+  
+  # Step 5: Predict missing values
+  missing_cases <- df_clean %>% filter(rate_missing)
+  
+  if (nrow(missing_cases) > 0) {
+    predicted_values <- tryCatch({
+      predict(imputation_model, newdata = missing_cases)
+    }, error = function(e) {
+      warning("Prediction failed. Using group medians.")
+      return(NULL)
+    })
+    
+    if (!is.null(predicted_values)) {
+      # Add stochastic component (random noise)
+      set.seed(123)  # For reproducibility
+      random_error <- rnorm(length(predicted_values), mean = 0, sd = model_sigma)
+      stochastic_predictions <- predicted_values + random_error
+      
+      # Transform back if using logistic regression
+      if (rate_type == "survival") {
+        # Convert from logit back to probability scale
+        stochastic_predictions <- exp(stochastic_predictions) / (1 + exp(stochastic_predictions))
+      }
+      
+      # Fill in the missing values
+      df_clean$rate[df_clean$rate_missing] <- stochastic_predictions
+    }
+  }
+  
+  # Step 6: Apply appropriate bounds and return
+  return(apply_rate_bounds(df_clean, rate_type))
+}
+
+# Helper function to apply rate bounds
+apply_rate_bounds <- function(df, rate_type) {
+  df %>%
+    mutate(
+      rate = case_when(
+        rate_type == "survival" | rate_type == "probability" ~ pmin(pmax(rate, 0), 1),
+        TRUE ~ pmax(rate, 0)  # Only ensure non-negative for hazard rates
+      )
+    ) %>%
+    select(-rate_missing, -log_pop_prev, -log_pop_next)  # Remove helper columns
+}
+
+# Fallback function using group medians when regression fails
+fallback_imputation <- function(df, rate_type) {
+  message("Using fallback group median imputation.")
+  
+  df %>%
+    group_by(age, sex) %>%
+    mutate(
+      rate = ifelse(rate_missing, median(rate, na.rm = TRUE), rate)
+    ) %>%
+    ungroup() %>%
+    # Final check - if entire groups had no valid data
+    mutate(
+      rate = ifelse(is.na(rate), 
+                   ifelse(rate_type == "survival", 1.0, 0.0), 
+                   rate)
+    ) %>%
+    select(-rate_missing, -log_pop_prev, -log_pop_next)
+}
+
+# Updated main function (replaces your clean_rates function)
+clean_rates <- function(df, rate_type = "survival") {
+  stochastic_impute_rates(df, rate_type)
+}
+
+# Example usage:
+# survival_rates <- compute_survival_rate(pop20_t1, pop20_t2)
+# clean_survival_rates <- clean_rates(survival_rates, rate_type = "survival")
+
+```
+
 
 ```{r}
 rates_2020_2021 <- compute_survival_rate(pop20, pop21) %>% clean_rates()
@@ -723,7 +1372,7 @@ write_rds(all_forecasts, "data/rds/popdata/all_forecasts.rds")
 ```{r}
 #| echo: false
 #| eval: false
-all_forecasts = read_rds("data/rds/popdata/all_forecasts.rds)
+all_forecasts = read_rds("data/rds/popdata/all_forecasts.rds")
 ```
 
 ```{r}
@@ -755,6 +1404,223 @@ pivot_data <- all_forecasts %>%
     names_glue = "aged_{year}"
   
   )
+```
+
+REGRESSION
+
+```{r}
+# Create missing indicators for both columns
+check_missing_data <- function(data) {
+  df_check <- data %>%
+    mutate(
+      pop_prev_missing = is.na(pop_prev) | pop_prev == 0,
+      pop_next_missing = is.na(pop_next) | pop_next == 0,
+      any_missing = pop_prev_missing | pop_next_missing
+    )
+  
+  # Visualize missing patterns
+  missing_pattern <- df_check %>%
+    select(pop_prev, pop_next, age, sex, pa, sz) %>%
+    mutate(
+      pop_prev = ifelse(is.na(pop_prev) | pop_prev == 0, NA, pop_prev),
+      pop_next = ifelse(is.na(pop_next) | pop_next == 0, NA, pop_next)
+    )
+  
+  VIM::aggr(missing_pattern, col = c('navyblue','red'), numbers = TRUE, sortVars = TRUE)
+  
+  # Test if missingness depends on other variables
+  missing_test_prev <- glm(pop_prev_missing ~ age + sex + pa, 
+                          family = binomial, data = df_check)
+  missing_test_next <- glm(pop_next_missing ~ age + sex + pa, 
+                          family = binomial, data = df_check)
+  
+  list(
+    prev_test = summary(missing_test_prev),
+    next_test = summary(missing_test_next),
+    missing_summary = df_check %>% 
+      summarise(
+        prev_zeros = sum(pop_prev_missing, na.rm = TRUE),
+        next_zeros = sum(pop_next_missing, na.rm = TRUE),
+        both_zeros = sum(pop_prev_missing & pop_next_missing, na.rm = TRUE),
+        total_obs = n()
+      )
+  )
+}
+
+# Run the analysis
+missing_analysis <- check_missing_data(rates_2020_2021)
+```
+```{r}
+# Simpler version that avoids potential package conflicts
+check_missing_simple <- function(data) {
+  # Check for zeros and NAs
+  summary_stats <- data %>%
+    summarise(
+      total_rows = n(),
+      pop_prev_zeros = sum(pop_prev == 0, na.rm = TRUE),
+      pop_prev_nas = sum(is.na(pop_prev)),
+      pop_next_zeros = sum(pop_next == 0, na.rm = TRUE),
+      pop_next_nas = sum(is.na(pop_next)),
+      both_zero = sum((pop_prev == 0 | is.na(pop_prev)) & 
+                     (pop_next == 0 | is.na(pop_next)), na.rm = TRUE)
+    ) %>%
+    mutate(
+      pct_prev_missing = round((pop_prev_zeros + pop_prev_nas) / total_rows * 100, 2),
+      pct_next_missing = round((pop_next_zeros + pop_next_nas) / total_rows * 100, 2),
+      pct_both_missing = round(both_zero / total_rows * 100, 2)
+    )
+  
+  print("Missing Data Summary:")
+  print(summary_stats)
+  
+  # Create missing indicators for modeling
+  data_with_indicators <- data %>%
+    mutate(
+      pop_prev_missing = is.na(pop_prev) | pop_prev == 0,
+      pop_next_missing = is.na(pop_next) | pop_next == 0
+    )
+  
+  # Test if missingness is systematic
+  if(sum(data_with_indicators$pop_prev_missing) > 0) {
+    prev_model <- glm(pop_prev_missing ~ age + sex + pa, 
+                     family = binomial, data = data_with_indicators)
+    cat("\nPop_prev missingness model p-values:\n")
+    print(summary(prev_model)$coefficients[, 4])
+  }
+  
+  if(sum(data_with_indicators$pop_next_missing) > 0) {
+    next_model <- glm(pop_next_missing ~ age + sex + pa, 
+                     family = binomial, data = data_with_indicators)
+    cat("\nPop_next missingness model p-values:\n")
+    print(summary(next_model)$coefficients[, 4])
+  }
+  
+  return(summary_stats)
+}
+
+# Run the analysis
+missing_summary <- check_missing_simple(rates_2020_2021)
+```
+```{r}
+
+check_regression_assumptions_both <- function(data) {
+  # Filter valid data
+  valid_data <- data %>% filter(pop_prev > 0 & pop_next > 0)
+  zero_prev <- sum(data$pop_prev == 0 | is.na(data$pop_prev), na.rm = TRUE)
+  zero_next <- sum(data$pop_next == 0 | is.na(data$pop_next), na.rm = TRUE)
+  
+  if(nrow(valid_data) < 20) {
+    warning("Insufficient valid data for reliable regression imputation")
+    return(NULL)
+  }
+  
+  # Fit models
+  model_prev <- lm(log(pop_prev) ~ age + sex + pa, data = valid_data)
+  model_next <- lm(log(pop_next) ~ age + sex + pa, data = valid_data)
+  
+  # Run all tests
+  results <- list(
+    data_summary = list(
+      total_obs = nrow(data),
+      valid_obs = nrow(valid_data),
+      zero_prev = zero_prev,
+      zero_next = zero_next,
+      pct_missing_prev = round(zero_prev/nrow(data)*100, 2),
+      pct_missing_next = round(zero_next/nrow(data)*100, 2)
+    ),
+    prev_diagnostics = list(
+      linearity = lmtest::raintest(model_prev)$p.value,
+      specification = lmtest::resettest(model_prev)$p.value,
+      normality = shapiro.test(residuals(model_prev))$p.value,
+      homoscedasticity = lmtest::bptest(model_prev)$p.value,
+      vif_max = max(car::vif(model_prev)),
+      r_squared = summary(model_prev)$r.squared
+    ),
+    next_diagnostics = list(
+      linearity = lmtest::raintest(model_next)$p.value,
+      specification = lmtest::resettest(model_next)$p.value,
+      normality = shapiro.test(residuals(model_next))$p.value,
+      homoscedasticity = lmtest::bptest(model_next)$p.value,
+      vif_max = max(car::vif(model_next)),
+      r_squared = summary(model_next)$r.squared
+    )
+  )
+  
+  # Print comprehensive diagnostics
+  cat("=== REGRESSION IMPUTATION DIAGNOSTICS ===\n\n")
+  
+  cat("DATA SUMMARY:\n")
+  cat("Total observations:", results$data_summary$total_obs, "\n")
+  cat("Valid observations:", results$data_summary$valid_obs, "\n")
+  cat("Zero/missing pop_prev:", results$data_summary$zero_prev, 
+      "(", results$data_summary$pct_missing_prev, "%)\n")
+  cat("Zero/missing pop_next:", results$data_summary$zero_next, 
+      "(", results$data_summary$pct_missing_next, "%)\n\n")
+  
+  # Function to print diagnostics
+  print_diagnostics <- function(diag, var_name) {
+    cat(paste0(var_name, " DIAGNOSTICS:\n"))
+    cat("Linearity (Rainbow test):", round(diag$linearity, 4), 
+        ifelse(diag$linearity > 0.05, " ✓", " ✗"), "\n")
+    cat("Specification (RESET test):", round(diag$specification, 4),
+        ifelse(diag$specification > 0.05, " ✓", " ✗"), "\n")
+    cat("Normality (Shapiro test):", round(diag$normality, 4),
+        ifelse(diag$normality > 0.05, " ✓", " ✗"), "\n")
+    cat("Homoscedasticity (BP test):", round(diag$homoscedasticity, 4),
+        ifelse(diag$homoscedasticity > 0.05, " ✓", " ✗"), "\n")
+    cat("Max VIF:", round(diag$vif_max, 2),
+        ifelse(diag$vif_max < 5, " ✓", " ✗"), "\n")
+    cat("R-squared:", round(diag$r_squared, 3), 
+        ifelse(diag$r_squared > 0.3, " ✓", " ✗"), "\n\n")
+  }
+  
+  print_diagnostics(results$prev_diagnostics, "POP_PREV")
+  print_diagnostics(results$next_diagnostics, "POP_NEXT")
+  
+  # Overall recommendation
+  prev_pass <- all(c(results$prev_diagnostics$linearity > 0.05,
+                     results$prev_diagnostics$specification > 0.05,
+                     results$prev_diagnostics$vif_max < 5,
+                     results$prev_diagnostics$r_squared > 0.2))
+  
+  next_pass <- all(c(results$next_diagnostics$linearity > 0.05,
+                     results$next_diagnostics$specification > 0.05,
+                     results$next_diagnostics$vif_max < 5,
+                     results$next_diagnostics$r_squared > 0.2))
+  
+  cat("RECOMMENDATION:\n")
+  if(prev_pass && next_pass) {
+    cat("✓ Regression imputation appropriate for both variables\n")
+  } else if(prev_pass || next_pass) {
+    cat("⚠ Regression imputation appropriate for", 
+        ifelse(prev_pass, "pop_prev", "pop_next"), "only\n")
+    cat("Consider alternative imputation for", 
+        ifelse(!prev_pass, "pop_prev", "pop_next"), "\n")
+  } else {
+    cat("✗ Regression imputation not recommended for either variable\n")
+    cat("Consider: Multiple imputation, hot-deck, or median/mean imputation\n")
+  }
+  
+  return(results)
+}
+
+# Run the comprehensive check
+comprehensive_check <- check_regression_assumptions_both(rates_2020_2021)
+```
+
+```{r}
+# First, let's verify your data structure
+str(rates_2020_2021)
+summary(rates_2020_2021)
+
+# Check for the required columns
+required_cols <- c("pop_prev", "pop_next", "age", "sex", "pa", "sz")
+missing_cols <- required_cols[!required_cols %in% names(rates_2020_2021)]
+if(length(missing_cols) > 0) {
+  cat("Missing columns:", paste(missing_cols, collapse = ", "))
+} else {
+  cat("All required columns present")
+}
 ```
 
 ## MPSZ: Singapore's Master Plan 2019 Subzone Boundary
