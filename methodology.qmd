@@ -493,8 +493,8 @@ popdata21_c = read_rds("data/rds/popdata/refined/popdata21_c.rds")
 popdata20_c = read_rds("data/rds/popdata/refined/popdata20_c.rds")
 ```
 
-
 ### EDA of Population Data
+
 ```{r}
 
 ### Step 1: Define a function to filter and aggregate age distribution data
@@ -530,13 +530,10 @@ plot_age_distribution <- function(age_data) {
 plot_age_distribution(age_dist)
 ```
 
-
 ```{r}
 #| echo: false #not show code
 #| eval: false
 ```
-
-
 
 In generating the population pyramid, the below oko
 
@@ -553,8 +550,6 @@ get_age_distribution <- function(data, min_age = 60, max_age = 90) {
     summarise(total_pop = sum(pop), .groups = "drop")
 }
 ```
-
-
 
 ```{r}
 #2020
@@ -599,6 +594,7 @@ plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
 final_plot <- plot_population_pyramid(age_dist)
 print(final_plot)
 ```
+
 ```{r}
 #| echo: false #not show code
 
@@ -643,6 +639,7 @@ plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
 final_plot <- plot_population_pyramid(age_dist)
 print(final_plot)
 ```
+
 ```{r}
 #| echo: false #not show code
 
@@ -779,15 +776,18 @@ print(final_plot)
 ```
 
 ### Testing for Missing Values
+
 ```{r}
 # Compare means of other variables between zero/non-zero groups
 pop20_i %>% 
   group_by(zero_pop = (pop == 0)) %>% 
   summarise(across(c(age, time), mean))
 ```
+
 ### Percentage of Missing Values
 
 pop20
+
 ```{r}
 pop20_geri <- pop20 %>%
   filter(age>=60)
@@ -802,8 +802,8 @@ zero_pop20 <- pop20 %>%
 (nrow(zero_pop20) / nrow(pop20_geri)) * 100
 ```
 
-
 pop21
+
 ```{r}
 pop21_geri <- pop21 %>%
   filter(age>=60)
@@ -819,6 +819,7 @@ zero_pop21 <- pop21 %>%
 ```
 
 pop22
+
 ```{r}
 pop22_geri <- pop22 %>%
   filter(age>=60)
@@ -834,6 +835,7 @@ zero_pop22 <- pop22 %>%
 ```
 
 pop23
+
 ```{r}
 pop23_geri <- pop23 %>%
   filter(age>=60)
@@ -849,6 +851,7 @@ zero_pop23 <- pop23 %>%
 ```
 
 pop24
+
 ```{r}
 pop24_geri <- pop24 %>%
   filter(age>=60)
@@ -863,9 +866,8 @@ zero_pop24 <- pop24 %>%
 (nrow(zero_pop24) / nrow(pop24_geri)) * 100
 ```
 
-
-
 ### Imputation
+
 ```{r}
 # Create zero indicator
 pop20_i <- pop20 %>%
@@ -886,6 +888,7 @@ zero_summary <- pop20_i %>%
     .groups = 'drop'
   )
 ```
+
 ```{r}
 # Visualize zeros
 ggplot(zero_summary, aes(x = age, y = prop_zeros, fill = sex)) +
@@ -893,7 +896,6 @@ ggplot(zero_summary, aes(x = age, y = prop_zeros, fill = sex)) +
   facet_wrap(~pa) +
   labs(title = "Proportion of Zero Population by Demographics")
 ```
-
 
 ```{r}
 ggplot(pop20_i, aes(x=time, y=pop)) + 
@@ -903,6 +905,10 @@ ggplot(pop20_i, aes(x=time, y=pop)) +
 ```
 
 ### Survival Analysis
+
+
+
+
 
 ![Figure x: Population Pyramid 2020](/metho_images/2020.png) ![Figure x: Population Pyramid 2021](/metho_images/2021.png) ![Figure x: Population Pyramid 2022](/metho_images/2022.png) ![Figure x: Population Pyramid 2023](/metho_images/2023.png) ![Figure x: Population Pyramid 2024](/metho_images/2024.png) \### Survival Analysis from 2025 - 2030
 
@@ -1014,6 +1020,27 @@ invalid_rates_rows
 
 The function processes survival rate data through four sequential steps, now correctly using dplyr's grouping mechanism. First, it groups the data by both age and sex, which is crucial because survival rates likely vary significantly across these demographics. Within these groups, it performs three key operations: (1) capping any rates above 1.0 at 1.0 (assuming these represent survival probabilities that shouldn't exceed 100%), (2) replacing infinite values (which occur when dividing by zero) with the maximum finite rate found in the data, and (3) imputing missing values (NaN) with the median rate for that specific age-sex group. After these grouped operations, it ungroups the data and performs a final safety check, replacing any remaining missing values with 1.0 (a neutral value indicating no change).
 
+```{r}
+clean_age_column <- function(df) {
+  df %>%
+    mutate(
+      age = str_trim(age),  # Trim whitespace
+      age = if_else(age == "90_and_over", "90", age),  # Replace label
+      age = suppressWarnings(as.numeric(age))  # Convert safely
+    ) %>%
+    filter(!is.na(age))  # Remove rows that still couldn't be converted
+}
+pop20 <- read_rds("data/rds/popdata/refined/popdata20_c.rds") %>% 
+  clean_age_column()
+pop21 <- read_rds("data/rds/popdata/refined/popdata21_c.rds") %>% 
+  clean_age_column()
+pop22 <- read_rds("data/rds/popdata/refined/popdata22_c.rds") %>% 
+  clean_age_column()
+pop23 <- read_rds("data/rds/popdata/refined/popdata23_c.rds") %>% 
+  clean_age_column()
+pop24 <- read_rds("data/rds/popdata/refined/popdata24_c.rds") %>% 
+  clean_age_column()
+```
 
 ```{r}
 compute_survival_rate <- function(df1, df2) {
@@ -1028,16 +1055,33 @@ compute_survival_rate <- function(df1, df2) {
 }
 ```
 
+The `clean_rates` function serves as a natural post-processing step for the output of `compute_survival_rate`, addressing several statistical and data quality considerations inherent to survival rate calculations. The compute_survival_rate function generates initial survival rate estimates by computing population ratios between two time periods (pop_next/pop_prev) for specific demographic groups (defined by age, sex, pa, and sz). This calculation can produce three types of problematic outputs that clean_rates systematically addresses: (1) undefined values (infinities) resulting from zero denominators, (2) rates outside the valid [0,1] range for probabilities, and (3) missing values from the inner join operation or zero populations.
 
-refined (tried)
+The cleaning process employs statistically appropriate methods: replacement of infinite values with NAs followed by median imputation within age-sex strata maintains the grouped structure used in the original calculation. The bounding of values preserves the probabilistic interpretation of survival rates. The two functions together implement a complete analytical workflow where compute_survival_rate performs the demographic-specific calculation and `clean_rates` ensures the results meet necessary statistical assumptions for subsequent analysis. This separation of concerns between calculation and validation follows established data processing paradigms, with each function handling a distinct phase of the data transformation pipeline.
 
+adjusted code chunk for prov_next more than pop_prev
 ```{r}
+  #use this
 clean_rates <- function(df, rate_type = "survival") {
   df %>%
     group_by(age, sex) %>%
     mutate(
       # Handle infinites first - replace with NA for proper imputation
       rate = ifelse(is.infinite(rate), NA, rate),
+      
+      # Detect illogical population scenario: pop_next > pop_prev
+      # This suggests population growth rather than mortality/migration
+      pop_growth_detected = ifelse(exists("pop_next") && exists("pop_prev"), 
+                                  pop_next > pop_prev, FALSE),
+      
+      # If population growth detected, impute rate based on rate_type
+      rate = case_when(
+        pop_growth_detected & rate_type == "survival" ~ 1.0,  # Perfect survival
+        pop_growth_detected & rate_type == "probability" ~ 0.0,  # Zero probability of death
+        pop_growth_detected & rate_type == "hazard" ~ 0.0,  # Zero hazard rate
+        pop_growth_detected ~ NA_real_,  # Set to NA for other rate types
+        TRUE ~ rate  # Keep original rate if no population growth issue
+      ),
       
       # Cap rates only if they represent probabilities
       rate = if(rate_type == "survival" || rate_type == "probability") {
@@ -1055,222 +1099,24 @@ clean_rates <- function(df, rate_type = "survival") {
       rate = ifelse(is.na(rate), 
                    if(rate_type == "survival") 1.0 else 0.0, 
                    rate)
-    )
-}
-```
-
-
-?
-```{r}
-clean_rates <- function(df) {
-  df %>%
-    group_by(age, sex) %>%
-    mutate(
-      # Step 1: Cap rates >1.0 at 1.0 (if survival probability)
-      rate = ifelse(rate > 1.0 & !is.na(rate), 1.0, rate),
-      # Step 2: Replace Inf with max finite rate
-      rate = ifelse(is.infinite(rate), max(rate[is.finite(rate)], na.rm = TRUE), rate),
-      # Step 3: Impute NaN with group median (now works because we're grouped)
-      rate = ifelse(is.na(rate), median(rate, na.rm = TRUE), rate)
     ) %>%
-    ungroup() %>%
-    # Step 4: Fill any remaining NaN with 1.0 (after ungrouping)
-    mutate(rate = ifelse(is.na(rate), 1.0, rate))
-}
-```
-
-claude version
-
-```{r}
-clean_survival_rates <- function(df) {
-  df %>%
-    group_by(age, sex) %>%
-    mutate(
-      # Handle infinites first - replace with NA for proper imputation
-      rate = ifelse(is.infinite(rate), NA, rate),
-      
-      # Bound survival rates between 0 and 1
-      rate = pmin(pmax(rate, 0), 1),
-      
-      # Impute missing values with group median
-      rate = ifelse(is.na(rate), median(rate, na.rm = TRUE), rate)
-    ) %>%
-    ungroup() %>%
-    # Final imputation for any remaining NAs (if entire groups had no valid data)
-    mutate(rate = ifelse(is.na(rate), 1.0, rate))
+    # Clean up temporary column
+    select(-pop_growth_detected)
 }
 ```
 
 
-### Step 2 refined by Claude
-```{r}
-compute_survival_rate <- function(df1, df2) {
-  df1 %>%
-    filter(age >= 59 & age < 91) %>%
-    mutate(age = age + 1) %>%
-    inner_join(df2, 
-               by = c("age", "sex", "pa", "sz"),
-               suffix = c("_prev", "_next")) %>%
-    mutate(rate = pop_next / pop_prev) %>%
-    select(pa, sz, age, sex, rate, pop_prev, pop_next)
-}
-```
-```{r}
-# Stochastic regression imputation function
-stochastic_impute_rates <- function(df, rate_type = "survival") {
-```
-```{R}
-  # Step 1: Prepare data for imputation
-  df_clean <- df %>%
-    mutate(
-      # Handle infinites and zeros in denominator
-      rate = case_when(
-        is.infinite(rate) ~ NA_real_,
-        pop_prev == 0 ~ NA_real_,  # Can't compute rate with zero denominator
-        TRUE ~ rate
-      ),
-      # Create indicator for missingness
-      rate_missing = is.na(rate),
-      # Log transform population for better modeling (add small constant to avoid log(0))
-      log_pop_prev = log(pop_prev + 0.1),
-      log_pop_next = log(pop_next + 0.1)
-    )
-```
-```{R}
-  # Step 2: Only proceed with imputation if we have missing values
-  if (!any(df_clean$rate_missing)) {
-    message("No missing values found. Returning original data with bounds applied.")
-    return(apply_rate_bounds(df_clean, rate_type))
-  }
-```  
-```{r}
-  # Step 3: Fit regression model for imputation
-  # Use available predictors: age, sex, pa, log_pop_prev
-  complete_cases <- df_clean %>% filter(!rate_missing)
-  
-  if (nrow(complete_cases) < 10) {
-    warning("Too few complete cases for reliable regression imputation. Using group medians.")
-    return(fallback_imputation(df_clean, rate_type))
-  }
-  
-  # Fit the regression model
-  imputation_model <- tryCatch({
-    if (rate_type == "survival") {
-      # Logistic regression for survival rates (bounded 0-1)
-      # Transform rate to logit scale for modeling
-      complete_cases_trans <- complete_cases %>%
-        mutate(
-          # Ensure rates are in (0,1) for logit transformation
-          rate_bounded = pmin(pmax(rate, 0.001), 0.999),
-          logit_rate = log(rate_bounded / (1 - rate_bounded))
-        )
-      
-      lm(logit_rate ~ age + sex + pa + log_pop_prev, 
-         data = complete_cases_trans)
-    } else {
-      # Linear regression for other rate types
-      lm(rate ~ age + sex + pa + log_pop_prev, 
-         data = complete_cases)
-    }
-  }, error = function(e) {
-    warning("Regression model failed. Using group medians.")
-    return(NULL)
-  })
-  
-  if (is.null(imputation_model)) {
-    return(fallback_imputation(df_clean, rate_type))
-  }
-  
-  # Step 4: Get model statistics for adding stochastic component
-  model_sigma <- sigma(imputation_model)  # Residual standard error
-  
-  # Step 5: Predict missing values
-  missing_cases <- df_clean %>% filter(rate_missing)
-  
-  if (nrow(missing_cases) > 0) {
-    predicted_values <- tryCatch({
-      predict(imputation_model, newdata = missing_cases)
-    }, error = function(e) {
-      warning("Prediction failed. Using group medians.")
-      return(NULL)
-    })
-    
-    if (!is.null(predicted_values)) {
-      # Add stochastic component (random noise)
-      set.seed(123)  # For reproducibility
-      random_error <- rnorm(length(predicted_values), mean = 0, sd = model_sigma)
-      stochastic_predictions <- predicted_values + random_error
-      
-      # Transform back if using logistic regression
-      if (rate_type == "survival") {
-        # Convert from logit back to probability scale
-        stochastic_predictions <- exp(stochastic_predictions) / (1 + exp(stochastic_predictions))
-      }
-      
-      # Fill in the missing values
-      df_clean$rate[df_clean$rate_missing] <- stochastic_predictions
-    }
-  }
-  
-  # Step 6: Apply appropriate bounds and return
-  return(apply_rate_bounds(df_clean, rate_type))
-}
-
-# Helper function to apply rate bounds
-apply_rate_bounds <- function(df, rate_type) {
-  df %>%
-    mutate(
-      rate = case_when(
-        rate_type == "survival" | rate_type == "probability" ~ pmin(pmax(rate, 0), 1),
-        TRUE ~ pmax(rate, 0)  # Only ensure non-negative for hazard rates
-      )
-    ) %>%
-    select(-rate_missing, -log_pop_prev, -log_pop_next)  # Remove helper columns
-}
-
-# Fallback function using group medians when regression fails
-fallback_imputation <- function(df, rate_type) {
-  message("Using fallback group median imputation.")
-  
-  df %>%
-    group_by(age, sex) %>%
-    mutate(
-      rate = ifelse(rate_missing, median(rate, na.rm = TRUE), rate)
-    ) %>%
-    ungroup() %>%
-    # Final check - if entire groups had no valid data
-    mutate(
-      rate = ifelse(is.na(rate), 
-                   ifelse(rate_type == "survival", 1.0, 0.0), 
-                   rate)
-    ) %>%
-    select(-rate_missing, -log_pop_prev, -log_pop_next)
-}
-
-# Updated main function (replaces your clean_rates function)
-clean_rates <- function(df, rate_type = "survival") {
-  stochastic_impute_rates(df, rate_type)
-}
-
-# Example usage:
-# survival_rates <- compute_survival_rate(pop20_t1, pop20_t2)
-# clean_survival_rates <- clean_rates(survival_rates, rate_type = "survival")
-
-```
 
 
 ```{r}
 rates_2020_2021 <- compute_survival_rate(pop20, pop21) %>% clean_rates()
 ```
-
 ```{r}
 rates_2021_2022 <- compute_survival_rate(pop21, pop22) %>% clean_rates()
 ```
-
 ```{r}
 rates_2022_2023 <- compute_survival_rate(pop22, pop23) %>% clean_rates()
 ```
-
 ```{r}
 rates_2023_2024 <- compute_survival_rate(pop23, pop24) %>% clean_rates()
 ```
@@ -1285,7 +1131,8 @@ avg_survival_rates <- bind_rows(
   rates_2023_2024
 ) %>%
   group_by(age, sex, pa, sz) %>%
-  summarise(avg_rate = mean(rate, na.rm = TRUE), .groups = "drop")
+  summarise(avg_rate = mean(rate, na.rm = TRUE), .groups = "drop") %>%
+  distinct(age, sex, pa, sz, .keep_all = TRUE) #remove potential duplicates 
 ```
 
 ```{r}
@@ -1304,32 +1151,67 @@ avg_survival_rates = read_rds("data/rds/popdata/avg_survival_rates.rds)
 
 ```{r}
 forecast_year <- function(base_pop, rates, year) {
-  next_pop <- base_pop %>%
-    filter(age >= 59 & age < 90) %>%
+  # Ensure base_pop has no duplicates before processing
+  base_pop_clean <- base_pop %>%
+    group_by(age, sex, pa, sz) %>%
+    summarise(pop = sum(pop, na.rm = TRUE), .groups = "drop")
+  
+  # Main forecasting for ages 59-88 (they become 60-89)
+  next_pop <- base_pop_clean %>%
+    filter(age >= 59 & age < 89) %>%  # Changed from < 90 to < 89
     mutate(age = age + 1) %>%
     left_join(rates, by = c("age", "sex", "pa", "sz")) %>%
-    mutate(pop = pop * avg_rate) %>%
+    mutate(
+      # Handle missing rates
+      avg_rate = ifelse(is.na(avg_rate), 
+                       mean(rates$avg_rate, na.rm = TRUE), 
+                       avg_rate),
+      pop = pop * avg_rate
+    ) %>%
     select(age, sex, pa, sz, pop)
-
-  # Handle 90+
-  age_89 <- base_pop %>%
+  
+  # Handle age 89 and 90 - both stay at age 90 (terminal age)
+  age_89_to_90 <- base_pop_clean %>%
     filter(age == 89) %>%
-    select(sex, pa, sz, pop) %>%
-    mutate(age = 90)
-
-  age_90plus <- base_pop %>%
+    left_join(rates %>% filter(age == 90), by = c("sex", "pa", "sz")) %>%
+    mutate(
+      age = 90,
+      avg_rate = ifelse(is.na(avg_rate), 
+                       mean(rates$avg_rate[rates$age == 90], na.rm = TRUE), 
+                       avg_rate),
+      pop = pop * avg_rate
+    ) %>%
+    select(age, sex, pa, sz, pop)
+  
+  # Age 90 stays at 90 (no aging beyond 90)
+  age_90_stays <- base_pop_clean %>%
     filter(age == 90) %>%
-    select(sex, pa, sz, pop)
-
-  pop_90 <- bind_rows(age_89, age_90plus) %>%
-    group_by(sex, pa, sz) %>%
-    summarise(age = 90, pop = sum(pop), .groups = "drop")
-
-  bind_rows(next_pop, pop_90) %>%
+    left_join(rates %>% filter(age == 90), by = c("sex", "pa", "sz")) %>%
+    mutate(
+      avg_rate = ifelse(is.na(avg_rate), 
+                       mean(rates$avg_rate[rates$age == 90], na.rm = TRUE), 
+                       avg_rate),
+      pop = pop * avg_rate
+    ) %>%
+    select(age, sex, pa, sz, pop)
+  
+  # Combine age 89->90 and existing 90 populations
+  pop_90 <- bind_rows(age_89_to_90, age_90_stays) %>%
+    group_by(age, sex, pa, sz) %>%
+    summarise(pop = sum(pop, na.rm = TRUE), .groups = "drop")
+  
+  # Combine all forecasted populations
+  final_forecast <- bind_rows(next_pop, pop_90) %>%
     mutate(year = year) %>%
+    # Ensure no duplicates in final output
+    group_by(year, age, sex, pa, sz) %>%
+    summarise(pop = sum(pop, na.rm = TRUE), .groups = "drop") %>%
     arrange(pa, sz, sex, age)
+  
+  return(final_forecast)
 }
 ```
+
 
 ```{r}
 #| echo: false
@@ -1350,18 +1232,47 @@ forecast_year = read_rds("data/rds/popdata/forecast_year.rds)
 forecast_list <- list()
 base_pop <- pop24
 
+# Single loop with duplicate checking built in
 for (y in 2025:2029) {
+  cat("Forecasting year", y, "\n")
+  
+  # Generate forecast
   next_forecast <- forecast_year(base_pop, avg_survival_rates, y)
+  
+  # Check for duplicates in this year's forecast
+  dupes <- next_forecast %>%
+    group_by(age, sex, pa, sz) %>%
+    filter(n() > 1)
+  
+  if(nrow(dupes) > 0) {
+    warning(paste("Duplicates found in year", y, "- Count:", nrow(dupes)))
+    print(dupes)
+  } else {
+    cat("✓ No duplicates found in year", y, "\n")
+  }
+  
+  # Store the forecast
   forecast_list[[as.character(y)]] <- next_forecast
-  base_pop <- next_forecast %>% select(pa, sz, age, sex,  pop)
+  
+  # Update base population for next iteration
+  # Make sure all required columns exist
+  base_pop <- next_forecast %>% 
+    select(age, sex, pa, sz, pop)  # Keep all demographic columns
+  
+  cat("Base population for next year has", nrow(base_pop), "rows\n\n")
 }
 ```
 
+
 ### Final Output of Population Forecast
 
+The below code chunk includes rounding up the `pop` as previously it was in decimal place. 
 ```{r}
-all_forecasts <- bind_rows(forecast_list)
+all_forecasts <- bind_rows(forecast_list) %>%
+  mutate(pop = ceiling(pop))  # Round UP to nearest integer
 ```
+
+
 
 ```{r}
 #| echo: false
@@ -1375,15 +1286,6 @@ write_rds(all_forecasts, "data/rds/popdata/all_forecasts.rds")
 all_forecasts = read_rds("data/rds/popdata/all_forecasts.rds")
 ```
 
-```{r}
-pivoted_data <- all_forecasts %>%
-  pivot_wider(
-    names_from = year,
-    values_from = pop,
-    names_prefix = "aged_",
-    names_glue = "aged_{year}",
-  )
-```
 
 ```{r}
 pivoted_data <- all_forecasts %>%
@@ -1396,232 +1298,6 @@ pivoted_data <- all_forecasts %>%
   )
 ```
 
-```{r}
-pivot_data <- all_forecasts %>%
-  pivot_wider(
-    names_from = year,    # Pivot based on the 'label' column
-    names_prefix = "aged_",
-    names_glue = "aged_{year}"
-  
-  )
-```
-
-REGRESSION
-
-```{r}
-# Create missing indicators for both columns
-check_missing_data <- function(data) {
-  df_check <- data %>%
-    mutate(
-      pop_prev_missing = is.na(pop_prev) | pop_prev == 0,
-      pop_next_missing = is.na(pop_next) | pop_next == 0,
-      any_missing = pop_prev_missing | pop_next_missing
-    )
-  
-  # Visualize missing patterns
-  missing_pattern <- df_check %>%
-    select(pop_prev, pop_next, age, sex, pa, sz) %>%
-    mutate(
-      pop_prev = ifelse(is.na(pop_prev) | pop_prev == 0, NA, pop_prev),
-      pop_next = ifelse(is.na(pop_next) | pop_next == 0, NA, pop_next)
-    )
-  
-  VIM::aggr(missing_pattern, col = c('navyblue','red'), numbers = TRUE, sortVars = TRUE)
-  
-  # Test if missingness depends on other variables
-  missing_test_prev <- glm(pop_prev_missing ~ age + sex + pa, 
-                          family = binomial, data = df_check)
-  missing_test_next <- glm(pop_next_missing ~ age + sex + pa, 
-                          family = binomial, data = df_check)
-  
-  list(
-    prev_test = summary(missing_test_prev),
-    next_test = summary(missing_test_next),
-    missing_summary = df_check %>% 
-      summarise(
-        prev_zeros = sum(pop_prev_missing, na.rm = TRUE),
-        next_zeros = sum(pop_next_missing, na.rm = TRUE),
-        both_zeros = sum(pop_prev_missing & pop_next_missing, na.rm = TRUE),
-        total_obs = n()
-      )
-  )
-}
-
-# Run the analysis
-missing_analysis <- check_missing_data(rates_2020_2021)
-```
-```{r}
-# Simpler version that avoids potential package conflicts
-check_missing_simple <- function(data) {
-  # Check for zeros and NAs
-  summary_stats <- data %>%
-    summarise(
-      total_rows = n(),
-      pop_prev_zeros = sum(pop_prev == 0, na.rm = TRUE),
-      pop_prev_nas = sum(is.na(pop_prev)),
-      pop_next_zeros = sum(pop_next == 0, na.rm = TRUE),
-      pop_next_nas = sum(is.na(pop_next)),
-      both_zero = sum((pop_prev == 0 | is.na(pop_prev)) & 
-                     (pop_next == 0 | is.na(pop_next)), na.rm = TRUE)
-    ) %>%
-    mutate(
-      pct_prev_missing = round((pop_prev_zeros + pop_prev_nas) / total_rows * 100, 2),
-      pct_next_missing = round((pop_next_zeros + pop_next_nas) / total_rows * 100, 2),
-      pct_both_missing = round(both_zero / total_rows * 100, 2)
-    )
-  
-  print("Missing Data Summary:")
-  print(summary_stats)
-  
-  # Create missing indicators for modeling
-  data_with_indicators <- data %>%
-    mutate(
-      pop_prev_missing = is.na(pop_prev) | pop_prev == 0,
-      pop_next_missing = is.na(pop_next) | pop_next == 0
-    )
-  
-  # Test if missingness is systematic
-  if(sum(data_with_indicators$pop_prev_missing) > 0) {
-    prev_model <- glm(pop_prev_missing ~ age + sex + pa, 
-                     family = binomial, data = data_with_indicators)
-    cat("\nPop_prev missingness model p-values:\n")
-    print(summary(prev_model)$coefficients[, 4])
-  }
-  
-  if(sum(data_with_indicators$pop_next_missing) > 0) {
-    next_model <- glm(pop_next_missing ~ age + sex + pa, 
-                     family = binomial, data = data_with_indicators)
-    cat("\nPop_next missingness model p-values:\n")
-    print(summary(next_model)$coefficients[, 4])
-  }
-  
-  return(summary_stats)
-}
-
-# Run the analysis
-missing_summary <- check_missing_simple(rates_2020_2021)
-```
-```{r}
-
-check_regression_assumptions_both <- function(data) {
-  # Filter valid data
-  valid_data <- data %>% filter(pop_prev > 0 & pop_next > 0)
-  zero_prev <- sum(data$pop_prev == 0 | is.na(data$pop_prev), na.rm = TRUE)
-  zero_next <- sum(data$pop_next == 0 | is.na(data$pop_next), na.rm = TRUE)
-  
-  if(nrow(valid_data) < 20) {
-    warning("Insufficient valid data for reliable regression imputation")
-    return(NULL)
-  }
-  
-  # Fit models
-  model_prev <- lm(log(pop_prev) ~ age + sex + pa, data = valid_data)
-  model_next <- lm(log(pop_next) ~ age + sex + pa, data = valid_data)
-  
-  # Run all tests
-  results <- list(
-    data_summary = list(
-      total_obs = nrow(data),
-      valid_obs = nrow(valid_data),
-      zero_prev = zero_prev,
-      zero_next = zero_next,
-      pct_missing_prev = round(zero_prev/nrow(data)*100, 2),
-      pct_missing_next = round(zero_next/nrow(data)*100, 2)
-    ),
-    prev_diagnostics = list(
-      linearity = lmtest::raintest(model_prev)$p.value,
-      specification = lmtest::resettest(model_prev)$p.value,
-      normality = shapiro.test(residuals(model_prev))$p.value,
-      homoscedasticity = lmtest::bptest(model_prev)$p.value,
-      vif_max = max(car::vif(model_prev)),
-      r_squared = summary(model_prev)$r.squared
-    ),
-    next_diagnostics = list(
-      linearity = lmtest::raintest(model_next)$p.value,
-      specification = lmtest::resettest(model_next)$p.value,
-      normality = shapiro.test(residuals(model_next))$p.value,
-      homoscedasticity = lmtest::bptest(model_next)$p.value,
-      vif_max = max(car::vif(model_next)),
-      r_squared = summary(model_next)$r.squared
-    )
-  )
-  
-  # Print comprehensive diagnostics
-  cat("=== REGRESSION IMPUTATION DIAGNOSTICS ===\n\n")
-  
-  cat("DATA SUMMARY:\n")
-  cat("Total observations:", results$data_summary$total_obs, "\n")
-  cat("Valid observations:", results$data_summary$valid_obs, "\n")
-  cat("Zero/missing pop_prev:", results$data_summary$zero_prev, 
-      "(", results$data_summary$pct_missing_prev, "%)\n")
-  cat("Zero/missing pop_next:", results$data_summary$zero_next, 
-      "(", results$data_summary$pct_missing_next, "%)\n\n")
-  
-  # Function to print diagnostics
-  print_diagnostics <- function(diag, var_name) {
-    cat(paste0(var_name, " DIAGNOSTICS:\n"))
-    cat("Linearity (Rainbow test):", round(diag$linearity, 4), 
-        ifelse(diag$linearity > 0.05, " ✓", " ✗"), "\n")
-    cat("Specification (RESET test):", round(diag$specification, 4),
-        ifelse(diag$specification > 0.05, " ✓", " ✗"), "\n")
-    cat("Normality (Shapiro test):", round(diag$normality, 4),
-        ifelse(diag$normality > 0.05, " ✓", " ✗"), "\n")
-    cat("Homoscedasticity (BP test):", round(diag$homoscedasticity, 4),
-        ifelse(diag$homoscedasticity > 0.05, " ✓", " ✗"), "\n")
-    cat("Max VIF:", round(diag$vif_max, 2),
-        ifelse(diag$vif_max < 5, " ✓", " ✗"), "\n")
-    cat("R-squared:", round(diag$r_squared, 3), 
-        ifelse(diag$r_squared > 0.3, " ✓", " ✗"), "\n\n")
-  }
-  
-  print_diagnostics(results$prev_diagnostics, "POP_PREV")
-  print_diagnostics(results$next_diagnostics, "POP_NEXT")
-  
-  # Overall recommendation
-  prev_pass <- all(c(results$prev_diagnostics$linearity > 0.05,
-                     results$prev_diagnostics$specification > 0.05,
-                     results$prev_diagnostics$vif_max < 5,
-                     results$prev_diagnostics$r_squared > 0.2))
-  
-  next_pass <- all(c(results$next_diagnostics$linearity > 0.05,
-                     results$next_diagnostics$specification > 0.05,
-                     results$next_diagnostics$vif_max < 5,
-                     results$next_diagnostics$r_squared > 0.2))
-  
-  cat("RECOMMENDATION:\n")
-  if(prev_pass && next_pass) {
-    cat("✓ Regression imputation appropriate for both variables\n")
-  } else if(prev_pass || next_pass) {
-    cat("⚠ Regression imputation appropriate for", 
-        ifelse(prev_pass, "pop_prev", "pop_next"), "only\n")
-    cat("Consider alternative imputation for", 
-        ifelse(!prev_pass, "pop_prev", "pop_next"), "\n")
-  } else {
-    cat("✗ Regression imputation not recommended for either variable\n")
-    cat("Consider: Multiple imputation, hot-deck, or median/mean imputation\n")
-  }
-  
-  return(results)
-}
-
-# Run the comprehensive check
-comprehensive_check <- check_regression_assumptions_both(rates_2020_2021)
-```
-
-```{r}
-# First, let's verify your data structure
-str(rates_2020_2021)
-summary(rates_2020_2021)
-
-# Check for the required columns
-required_cols <- c("pop_prev", "pop_next", "age", "sex", "pa", "sz")
-missing_cols <- required_cols[!required_cols %in% names(rates_2020_2021)]
-if(length(missing_cols) > 0) {
-  cat("Missing columns:", paste(missing_cols, collapse = ", "))
-} else {
-  cat("All required columns present")
-}
-```
 
 ## MPSZ: Singapore's Master Plan 2019 Subzone Boundary
 
