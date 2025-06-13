@@ -866,44 +866,6 @@ zero_pop24 <- pop24 %>%
 (nrow(zero_pop24) / nrow(pop24_geri)) * 100
 ```
 
-### Imputation
-
-```{r}
-# Create zero indicator
-pop20_i <- pop20 %>%
-  mutate(
-    zero_pop = (pop == 0),
-    log_pop = ifelse(pop > 0, log(pop), NA)  # For visualization
-)
-```
-
-```{r}
-# Check zero patterns
-zero_summary <- pop20_i %>%
-  filter(age>=60) %>%
-  group_by(pa, sz, age, sex) %>%
-  summarise(
-    n_zeros = sum(zero_pop),
-    prop_zeros = mean(zero_pop),
-    .groups = 'drop'
-  )
-```
-
-```{r}
-# Visualize zeros
-ggplot(zero_summary, aes(x = age, y = prop_zeros, fill = sex)) +
-  geom_boxplot() +
-  facet_wrap(~pa) +
-  labs(title = "Proportion of Zero Population by Demographics")
-```
-
-```{r}
-ggplot(pop20_i, aes(x=time, y=pop)) + 
-  geom_point(alpha=0.5) +
-  facet_grid(sex ~ age) +
-  labs(title="Population Distribution by Demographics")
-```
-
 ### Survival Analysis
 
 
@@ -1148,67 +1110,81 @@ avg_survival_rates = read_rds("data/rds/popdata/avg_survival_rates.rds)
 ```
 
 ### Step 4: Forecast each year 2025 to 2029
-
 ```{r}
 forecast_year <- function(base_pop, rates, year) {
-  # Ensure base_pop has no duplicates before processing
+  # 1. Validate and clean input data
+  required_cols <- c("age", "sex", "pa", "sz", "pop")
+  if(!all(required_cols %in% names(base_pop))) {
+    stop(paste("Missing required columns:", 
+              setdiff(required_cols, names(base_pop))))
+  }
+  
+  # 2. Convert pop to numeric safely
   base_pop_clean <- base_pop %>%
+    mutate(pop = as.numeric(pop)) %>%
+    filter(!is.na(pop)) %>%  # Remove NA cases
+    select(all_of(required_cols))
+  
+  # 3. Summarize with careful NA handling
+  base_pop_agg <- base_pop_clean %>%
     group_by(age, sex, pa, sz) %>%
     summarise(pop = sum(pop, na.rm = TRUE), .groups = "drop")
   
-  # Main forecasting for ages 59-88 (they become 60-89)
-  next_pop <- base_pop_clean %>%
-    filter(age >= 59 & age < 89) %>%  # Changed from < 90 to < 89
+  # 4. Forecast for ages 59-88
+  next_pop <- base_pop_agg %>%
+    filter(between(age, 59, 88)) %>%
     mutate(age = age + 1) %>%
-    left_join(rates, by = c("age", "sex", "pa", "sz")) %>%
+    left_join(
+      rates %>% select(age, sex, pa, sz, avg_rate), 
+      by = c("age", "sex", "pa", "sz")
+    ) %>%
     mutate(
-      # Handle missing rates
-      avg_rate = ifelse(is.na(avg_rate), 
-                       mean(rates$avg_rate, na.rm = TRUE), 
-                       avg_rate),
+      avg_rate = coalesce(avg_rate, median(rates$avg_rate, na.rm = TRUE)),
       pop = pop * avg_rate
     ) %>%
-    select(age, sex, pa, sz, pop)
+    select(all_of(required_cols))
   
-  # Handle age 89 and 90 - both stay at age 90 (terminal age)
-  age_89_to_90 <- base_pop_clean %>%
-    filter(age == 89) %>%
-    left_join(rates %>% filter(age == 90), by = c("sex", "pa", "sz")) %>%
+  # 5. Handle age 89+
+  pop_90 <- base_pop_agg %>%
+    filter(age >= 89) %>%
+    mutate(age = 90) %>%
+    left_join(
+      rates %>% filter(age == 90) %>% select(sex, pa, sz, avg_rate),
+      by = c("sex", "pa", "sz")
+    ) %>%
     mutate(
-      age = 90,
-      avg_rate = ifelse(is.na(avg_rate), 
-                       mean(rates$avg_rate[rates$age == 90], na.rm = TRUE), 
-                       avg_rate),
+      avg_rate = coalesce(avg_rate, median(rates$avg_rate[rates$age == 90], na.rm = TRUE)),
       pop = pop * avg_rate
     ) %>%
-    select(age, sex, pa, sz, pop)
+    select(all_of(required_cols))
   
-  # Age 90 stays at 90 (no aging beyond 90)
-  age_90_stays <- base_pop_clean %>%
-    filter(age == 90) %>%
-    left_join(rates %>% filter(age == 90), by = c("sex", "pa", "sz")) %>%
-    mutate(
-      avg_rate = ifelse(is.na(avg_rate), 
-                       mean(rates$avg_rate[rates$age == 90], na.rm = TRUE), 
-                       avg_rate),
-      pop = pop * avg_rate
-    ) %>%
-    select(age, sex, pa, sz, pop)
-  
-  # Combine age 89->90 and existing 90 populations
-  pop_90 <- bind_rows(age_89_to_90, age_90_stays) %>%
-    group_by(age, sex, pa, sz) %>%
-    summarise(pop = sum(pop, na.rm = TRUE), .groups = "drop")
-  
-  # Combine all forecasted populations
-  final_forecast <- bind_rows(next_pop, pop_90) %>%
+  # 6. Combine results
+  bind_rows(next_pop, pop_90) %>%
     mutate(year = year) %>%
-    # Ensure no duplicates in final output
     group_by(year, age, sex, pa, sz) %>%
-    summarise(pop = sum(pop, na.rm = TRUE), .groups = "drop") %>%
-    arrange(pa, sz, sex, age)
-  
-  return(final_forecast)
+    summarise(pop = sum(pop, na.rm = TRUE), .groups = "drop")
+}
+
+# Run forecasting with error handling
+forecast_list <- list()
+current_pop <- pop24 %>% 
+  select(age, sex, pa, sz, pop) %>%
+  mutate(pop = as.numeric(pop))
+
+for (y in 2025:2029) {
+  tryCatch({
+    forecast <- forecast_year(current_pop, avg_survival_rates, y)
+    forecast_list[[as.character(y)]] <- forecast
+    current_pop <- forecast %>% select(age, sex, pa, sz, pop)
+    message("Successfully forecasted year ", y)
+  }, error = function(e) {
+    message("Error forecasting year ", y, ": ", e$message)
+    # Debugging info:
+    message("Current population data structure:")
+    print(str(current_pop))
+    message("Sample of problematic data:")
+    print(head(current_pop[current_pop$pop != as.numeric(current_pop$pop), ]))
+  })
 }
 ```
 
@@ -1232,37 +1208,12 @@ forecast_year = read_rds("data/rds/popdata/forecast_year.rds)
 forecast_list <- list()
 base_pop <- pop24
 
-# Single loop with duplicate checking built in
 for (y in 2025:2029) {
-  cat("Forecasting year", y, "\n")
-  
-  # Generate forecast
   next_forecast <- forecast_year(base_pop, avg_survival_rates, y)
-  
-  # Check for duplicates in this year's forecast
-  dupes <- next_forecast %>%
-    group_by(age, sex, pa, sz) %>%
-    filter(n() > 1)
-  
-  if(nrow(dupes) > 0) {
-    warning(paste("Duplicates found in year", y, "- Count:", nrow(dupes)))
-    print(dupes)
-  } else {
-    cat("✓ No duplicates found in year", y, "\n")
-  }
-  
-  # Store the forecast
   forecast_list[[as.character(y)]] <- next_forecast
-  
-  # Update base population for next iteration
-  # Make sure all required columns exist
-  base_pop <- next_forecast %>% 
-    select(age, sex, pa, sz, pop)  # Keep all demographic columns
-  
-  cat("Base population for next year has", nrow(base_pop), "rows\n\n")
+  base_pop <- next_forecast %>% select(pa, sz, age, sex,  pop)
 }
 ```
-
 
 ### Final Output of Population Forecast
 
@@ -1271,8 +1222,6 @@ The below code chunk includes rounding up the `pop` as previously it was in deci
 all_forecasts <- bind_rows(forecast_list) %>%
   mutate(pop = ceiling(pop))  # Round UP to nearest integer
 ```
-
-
 
 ```{r}
 #| echo: false
@@ -1286,18 +1235,30 @@ write_rds(all_forecasts, "data/rds/popdata/all_forecasts.rds")
 all_forecasts = read_rds("data/rds/popdata/all_forecasts.rds")
 ```
 
-
 ```{r}
+# Convert from long to wide format
 pivoted_data <- all_forecasts %>%
+  select(year, age, sex, pa, sz, pop) %>%  # Ensure only necessary columns
   pivot_wider(
     names_from = year,
     values_from = pop,
-    names_prefix = "aged_",
-    names_glue = "aged_{year}",
-    values_fn = list(pop = list)  # Keeps multiple values as lists
-  )
+    names_prefix = "pop_",  # Adds "pop_" before each year
+    values_fill = NA        # Fill missing combinations with NA
+  ) %>%
+  arrange(pa, sz, sex, age)  # Sort logically
 ```
 
+```{r}
+#| echo: false
+#| eval: false
+write_rds(pivoted_data, "data/rds/popdata/pivoted_data.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+pivoted_data = read_rds("data/rds/popdata/pivoted_data.rds")
+```
 
 ## MPSZ: Singapore's Master Plan 2019 Subzone Boundary
 
@@ -1322,7 +1283,7 @@ In the code chunk below, we use the `select()`function to pick the columns that 
 
 ```{r}
 mpsz <- mpsz %>%
-  select(SUBZONE_N, PLN_AREA_N, REGION_N, geometry)
+  select(SUBZONE_N, geometry)
 ```
 
 ```{r}
@@ -1378,15 +1339,42 @@ write_rds(mpsz, "data/rds/mpsz/mpsz.rds")
 mpsz = read_rds("data/rds/mpsz/mpsz.rds")
 ```
 
+
+### Combining MPSZ & Population Forecast
+
+```{r}
+# Create temporary cleaned versions for joining
+mpsz_clean <- mpsz %>%
+  mutate(join_key = str_trim(str_to_upper(SUBZONE_N)))
+
+pivoted_clean <- pivoted_data %>%
+  mutate(join_key = str_trim(str_to_upper(sz)))
+
+# Join and clean up
+mpsz_popforecast <- mpsz_clean %>%
+  left_join(pivoted_clean, by = "join_key") %>%
+  select(-join_key)
+```
+
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(mpsz_popforecast, "data/rds/mpsz/mpsz_popforecast.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+mpsz_popforecast = read_rds("data/rds/mpsz/mpsz_popforecast.rds")
+```
+
 ### MPSZ Land Use
 
 ```{r}
 mpsz_land = st_read(dsn = "data/landuse/",
-               layer = "mp2019_landuse")
-```
-
-```{r}
-st_crs(mpsz_land)
+               layer = "mp2019_landuse") %>%
+  st_transform(crs = 3414)
 ```
 
 ```{r}
@@ -1399,12 +1387,25 @@ Using `unique()`, it returns a list of properties in the column `LU_DESC`. As th
 unique(mpsz_land$LU_DESC)
 ```
 
-In the code chunk below, we use the `select()`function to pick the columns that are required for the anlaysis. Additionally, `filter()` the column 'LU_DESC' for those words containing 'residential' Regular expression was used alongside ignoring captital letters.
+In the code chunk below, we use the `select()`function to pick the columns that are required for the anlaysis. Additionally, `filter()` the column `LU_DESC` for those words containing 'residential' Regular expression was used alongside ignoring captital letters.
+
 
 ```{r}
 mpsz_res <- mpsz_land %>%
   select(LU_DESC, geometry) %>%
   filter(str_detect(LU_DESC, regex("residential", ignore_case = TRUE)))
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(mpsz_res, "data/rds/mpsz/mpsz_res.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+mpsz_res = read_rds("data/rds/mpsz/mpsz_res.rds")
 ```
 
 ### Sampling Grid
@@ -1447,7 +1448,6 @@ hex_res = read_rds("data/rds/mpsz/hex_res.rds")
 ```
 
 ### Visualing hex_grids & res
-
 ```{r}
 # Set tmap mode and options
 tmap_mode("plot")  # Use "view" for interactive map
@@ -1614,7 +1614,18 @@ write_rds(hexagon_final, "data/rds/mpsz/hexagon_final.rds")
 hexagon_final = read_rds("data/rds/mpsz/hexagon_final.rds")
 ```
 
-*hexagon_final* now includes a new column *estimated_population*, which is the area-weighted population estimate for each hexagon.
+*hexagon_final* now includes a new column *estimated_population*, which is the area-weighted population estimate for each hexagon.e
+
+
+## Combining Hex & population
+
+#i have this sf "hex_res" with columns geometry and hex_id and mpsz_popforecast with columns age, sex, pa, sz, pop_2025, pop_2026, pop_2027, pop_2028, pop_2029, geometry. i want the hex_res to be with base layer and mpsz_popforecast to be on top of it. 
+
+```{r}
+
+```
+
+
 
 ## Care Centre
 
