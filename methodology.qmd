@@ -16,9 +16,9 @@ execute:
 editor: source
 ---
 
-# Overview - describe challenges
+# Overview
 
-In this section, we will acquire the data sets from various government open-sources data repository and websites. Thereafter, we will install the necessary R packages and import the data sets. In each data set, we will delve into the necessary checks, issues faced and steps into resolving the issue. Thereafter, exploratory data analysis is done on a micro and macro level. In each proces
+In this section, we will acquire the data sets from various government open-sources data repository and websites. Thereafter, we will install the necessary R packages and import the data sets. In each data set, we will delve into the necessary checks, issues faced and steps into resolving the issue. Thereafter, exploratory data analysis is done.
 
 # Data Acquisition
 
@@ -365,21 +365,9 @@ convert_age <- function(df) {
 
 ```{r}
 popdata20_c <- convert_age(popdata20)
-```
-
-```{r}
 popdata21_c <- convert_age(popdata21)
-```
-
-```{r}
 popdata22_c <- convert_age(popdata22)
-```
-
-```{r}
 popdata23_c <- convert_age(popdata23)
-```
-
-```{r}
 popdata24_c <- convert_age(popdata24)
 ```
 
@@ -396,34 +384,6 @@ popdata23_missing <- popdata23_c %>% summarise(across(c(pa,sz,age,sex,pop,time),
 print(popdata23_missing)
 popdata24_missing <- popdata24_c %>% summarise(across(c(pa,sz,age,sex,pop,time), ~sum(is.na(.)))) 
 print(popdata24_missing)
-```
-
-### Returning rows where pop is o
-
-```{r}
-# Return all rows where 'pop' is exactly 0
-popdata24_c %>% 
-  filter(age>=60, pop==0)
-```
-
-```{r}
-popdata23_c %>% 
-  filter(age>=60, pop==0)
-```
-
-```{r}
-popdata22_c %>% 
-  filter(age>=60, pop==0)
-```
-
-```{r}
-popdata21_c %>% 
-  filter(age>=60, pop==0)
-```
-
-```{r}
-popdata20_c %>% 
-  filter(age>=60, pop==0)
 ```
 
 ### Duplicate Check
@@ -493,398 +453,51 @@ popdata21_c = read_rds("data/rds/popdata/refined/popdata21_c.rds")
 popdata20_c = read_rds("data/rds/popdata/refined/popdata20_c.rds")
 ```
 
-### EDA of Population Data
-
-```{r}
-
-### Step 1: Define a function to filter and aggregate age distribution data
-get_age_distribution <- function(data, min_age = 60, max_age = 90) {
-  data %>%
-    filter(age >= min_age & age <= max_age) %>%
-    group_by(time, age, sex) %>%
-    summarise(total_pop = sum(pop), .groups = "drop")
-}
-```
-
-```{r}
-### Step 2: Use the function to process data
-age_dist <- get_age_distribution(popdata20_c)  # Default: ages 60-90
-
-### Step 3: Plot age distributions by year and sex
-plot_age_distribution <- function(age_data) {
-  ggplot(age_data, aes(x = age, y = total_pop, fill = sex)) +
-    geom_bar(stat = "identity", position = "dodge") +
-    facet_wrap(~time, scales = "free_y") +
-    labs(
-      title = "Age Distribution (60-90 Years) by Sex and Year",
-      x = "Age",
-      y = "Total Population",
-      fill = "Sex"
-    ) +
-    scale_x_continuous(breaks = seq(60, 90, by = 5)) +
-    theme_minimal() +
-    theme(legend.position = "bottom")
-}
-
-# Generate the plot
-plot_age_distribution(age_dist)
-```
-
-```{r}
-#| echo: false #not show code
-#| eval: false
-```
-
-In generating the population pyramid, the below oko
-
-```{r}
-#load data
-get_age_distribution <- function(data, min_age = 60, max_age = 90) {
-  data %>%
-    filter(age >= min_age & age <= max_age) %>%
-    mutate(
-      # Standardize sex labels to match your data
-      sex = factor(sex, levels = c("Males", "Females"))
-    ) %>%
-    group_by(time, age, sex) %>%
-    summarise(total_pop = sum(pop), .groups = "drop")
-}
-```
-
-```{r}
-#2020
-age_dist <- get_age_distribution(popdata20_c)
-# 3. Create population pyramid plot function 
-plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
-  # Filter and transform data
-  plot_data <- age_data %>% 
-    filter(time == plot_year) %>%
-    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
-  
-  # Calculate axis limits
-  max_pop <- max(abs(plot_data$total_pop))
-  
-  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
-    geom_bar(stat = "identity", width = 0.8) +
-    geom_hline(yintercept = 0, color = "black") +
-    coord_flip() +
-    scale_y_continuous(
-      labels = function(x) comma(abs(x)),
-      breaks = pretty_breaks(n = 6),
-      limits = c(-max_pop * 1.1, max_pop * 1.1)
-    ) +
-    scale_fill_manual(
-      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
-      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
-    ) +
-    labs(
-      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
-      x = "Age",
-      y = "Population Count",
-      fill = "Gender"
-    ) +
-    theme_minimal() +
-    theme(
-      plot.title = element_text(hjust = 0.5, face = "bold"),
-      legend.position = "bottom"
-    )
-}
-
-# 4. Generate and save the plot ------------------------------------------------
-final_plot <- plot_population_pyramid(age_dist)
-print(final_plot)
-```
-
-```{r}
-#| echo: false #not show code
-
-age_dist <- get_age_distribution(popdata21_c)
-# 3. Create population pyramid plot function 
-plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
-  # Filter and transform data
-  plot_data <- age_data %>% 
-    filter(time == plot_year) %>%
-    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
-  
-  # Calculate axis limits
-  max_pop <- max(abs(plot_data$total_pop))
-  
-  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
-    geom_bar(stat = "identity", width = 0.8) +
-    geom_hline(yintercept = 0, color = "black") +
-    coord_flip() +
-    scale_y_continuous(
-      labels = function(x) comma(abs(x)),
-      breaks = pretty_breaks(n = 6),
-      limits = c(-max_pop * 1.1, max_pop * 1.1)
-    ) +
-    scale_fill_manual(
-      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
-      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
-    ) +
-    labs(
-      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
-      x = "Age",
-      y = "Population Count",
-      fill = "Gender"
-    ) +
-    theme_minimal() +
-    theme(
-      plot.title = element_text(hjust = 0.5, face = "bold"),
-      legend.position = "bottom"
-    )
-}
-
-# 4. Generate and save the plot ------------------------------------------------
-final_plot <- plot_population_pyramid(age_dist)
-print(final_plot)
-```
-
-```{r}
-#| echo: false #not show code
-
-age_dist <- get_age_distribution(popdata22_c)
-# 3. Create population pyramid plot function 
-plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
-  # Filter and transform data
-  plot_data <- age_data %>% 
-    filter(time == plot_year) %>%
-    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
-  
-  # Calculate axis limits
-  max_pop <- max(abs(plot_data$total_pop))
-  
-  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
-    geom_bar(stat = "identity", width = 0.8) +
-    geom_hline(yintercept = 0, color = "black") +
-    coord_flip() +
-    scale_y_continuous(
-      labels = function(x) comma(abs(x)),
-      breaks = pretty_breaks(n = 6),
-      limits = c(-max_pop * 1.1, max_pop * 1.1)
-    ) +
-    scale_fill_manual(
-      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
-      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
-    ) +
-    labs(
-      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
-      x = "Age",
-      y = "Population Count",
-      fill = "Gender"
-    ) +
-    theme_minimal() +
-    theme(
-      plot.title = element_text(hjust = 0.5, face = "bold"),
-      legend.position = "bottom"
-    )
-}
-
-# 4. Generate and save the plot ------------------------------------------------
-final_plot <- plot_population_pyramid(age_dist)
-print(final_plot)
-```
-
-```{r}
-#| echo: false #not show code
-
-age_dist <- get_age_distribution(popdata23_c)
-# 3. Create population pyramid plot function 
-plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
-  # Filter and transform data
-  plot_data <- age_data %>% 
-    filter(time == plot_year) %>%
-    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
-  
-  # Calculate axis limits
-  max_pop <- max(abs(plot_data$total_pop))
-  
-  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
-    geom_bar(stat = "identity", width = 0.8) +
-    geom_hline(yintercept = 0, color = "black") +
-    coord_flip() +
-    scale_y_continuous(
-      labels = function(x) comma(abs(x)),
-      breaks = pretty_breaks(n = 6),
-      limits = c(-max_pop * 1.1, max_pop * 1.1)
-    ) +
-    scale_fill_manual(
-      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
-      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
-    ) +
-    labs(
-      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
-      x = "Age",
-      y = "Population Count",
-      fill = "Gender"
-    ) +
-    theme_minimal() +
-    theme(
-      plot.title = element_text(hjust = 0.5, face = "bold"),
-      legend.position = "bottom"
-    )
-}
-
-# 4. Generate and save the plot ------------------------------------------------
-final_plot <- plot_population_pyramid(age_dist)
-print(final_plot)
-```
-
-```{r}
-#| echo: false #not show code
-
-age_dist <- get_age_distribution(popdata24_c)
-# 3. Create population pyramid plot function 
-plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
-  # Filter and transform data
-  plot_data <- age_data %>% 
-    filter(time == plot_year) %>%
-    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
-  
-  # Calculate axis limits
-  max_pop <- max(abs(plot_data$total_pop))
-  
-  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
-    geom_bar(stat = "identity", width = 0.8) +
-    geom_hline(yintercept = 0, color = "black") +
-    coord_flip() +
-    scale_y_continuous(
-      labels = function(x) comma(abs(x)),
-      breaks = pretty_breaks(n = 6),
-      limits = c(-max_pop * 1.1, max_pop * 1.1)
-    ) +
-    scale_fill_manual(
-      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
-      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
-    ) +
-    labs(
-      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
-      x = "Age",
-      y = "Population Count",
-      fill = "Gender"
-    ) +
-    theme_minimal() +
-    theme(
-      plot.title = element_text(hjust = 0.5, face = "bold"),
-      legend.position = "bottom"
-    )
-}
-
-# 4. Generate and save the plot ------------------------------------------------
-final_plot <- plot_population_pyramid(age_dist)
-print(final_plot)
-```
-
-### Testing for Missing Values
-
-```{r}
-# Compare means of other variables between zero/non-zero groups
-pop20_i %>% 
-  group_by(zero_pop = (pop == 0)) %>% 
-  summarise(across(c(age, time), mean))
-```
-
 ### Percentage of Missing Values
 
-pop20
+In `pop(year)_geri_zero`, the dataframe consists of older adults aged 60 & above where the population is zero meanwhile `pop20_geri` consists of the full dataframe of the older adults aged 60 & above. Lastly, the code chunk returns the percentage of missing values in df. From 2020 to 2024, there are 43 - 41% of missing values.
 
 ```{r}
-pop20_geri <- pop20 %>%
-  filter(age>=60)
-```
-
-```{r}
-zero_pop20 <- pop20 %>% 
+pop20_geri_zero <- popdata20_c %>%
   filter(pop == 0, age>=60)
-```
-
-```{r}
-(nrow(zero_pop20) / nrow(pop20_geri)) * 100
-```
-
-pop21
-
-```{r}
-pop21_geri <- pop21 %>%
+pop20_geri <- popdata20_c %>%
   filter(age>=60)
-```
+(nrow(pop20_geri_zero) / nrow(pop20_geri)) * 100
 
-```{r}
-zero_pop21 <- pop21 %>% 
+pop21_geri_zero <- popdata21_c %>%
   filter(pop == 0, age>=60)
-```
-
-```{r}
-(nrow(zero_pop21) / nrow(pop21_geri)) * 100
-```
-
-pop22
-
-```{r}
-pop22_geri <- pop22 %>%
+pop21_geri <- popdata21_c %>%
   filter(age>=60)
-```
+(nrow(pop21_geri_zero) / nrow(pop21_geri)) * 100
 
-```{r}
-zero_pop22 <- pop22 %>% 
+pop22_geri_zero <- popdata22_c %>%
   filter(pop == 0, age>=60)
-```
-
-```{r}
-(nrow(zero_pop22) / nrow(pop22_geri)) * 100
-```
-
-pop23
-
-```{r}
-pop23_geri <- pop23 %>%
+pop22_geri <- popdata22_c %>%
   filter(age>=60)
-```
+(nrow(pop22_geri_zero) / nrow(pop22_geri)) * 100
 
-```{r}
-zero_pop23 <- pop23 %>% 
+pop23_geri_zero <- popdata23_c %>%
   filter(pop == 0, age>=60)
-```
-
-```{r}
-(nrow(zero_pop23) / nrow(pop23_geri)) * 100
-```
-
-pop24
-
-```{r}
-pop24_geri <- pop24 %>%
+pop23_geri <- popdata23_c %>%
   filter(age>=60)
-```
+(nrow(pop23_geri_zero) / nrow(pop23_geri)) * 100
 
-```{r}
-zero_pop24 <- pop24 %>% 
+pop24_geri_zero <- popdata24_c %>%
   filter(pop == 0, age>=60)
-```
-
-```{r}
-(nrow(zero_pop24) / nrow(pop24_geri)) * 100
+pop24_geri <- popdata24_c %>%
+  filter(age>=60)
+(nrow(pop24_geri_zero) / nrow(pop24_geri)) * 100
 ```
 
 ### Survival Analysis
 
-
-
-
-
-![Figure x: Population Pyramid 2020](/metho_images/2020.png) ![Figure x: Population Pyramid 2021](/metho_images/2021.png) ![Figure x: Population Pyramid 2022](/metho_images/2022.png) ![Figure x: Population Pyramid 2023](/metho_images/2023.png) ![Figure x: Population Pyramid 2024](/metho_images/2024.png) \### Survival Analysis from 2025 - 2030
-
 #### Introduction
 
-In this section,
+In this section, the population data spanning from 2020 to 2024 will undergo cleaning and transformation processes to prepare it for advanced analytical modeling. Following this data preparation phase, survival analysis methodologies will be employed to predict the older adult population demographics from 2025 to 2029. The primary objective of this analytical approach is to calculate survival rates, where death serves as the event of interest in our survival framework. Given the nature of the population data being utilised, we adopt a non-parametric analytical stance, implementing the Kaplan-Meier estimator as our core statistical method for survival probability estimation. A fundamental assumption underlying this analysis is that residents maintain residential stability within their respective subzones throughout the entire study period. Under this assumption, any observed decrease in population within a given subzone can be reasonably attributed to mortality events, as migration and relocation factors are held constant. This methodological framework allows for a more accurate assessment of demographic changes driven primarily by natural population dynamics rather than residential mobility patterns.
 
-The aim of this is to calculate the sruvival rate, in this instance, death is the event of interest.
+#### Step 0: Defining `clean_age_column`Function
 
-As the population data is used, we will assume that the data is non-parametric in nature. **Kaplan-Meier**
-
-It is assumed that residents will stay in the same address with in relation to their subzones throughout the study period. Hence, if there is a decrease of population in the subzone, the reasonable explanation of this outcome is death.
-
-This code defines a function called `clean_age_column` that takes a dataframe (`df`) as input and processes its `age` column to ensure consistent numeric values. The function uses the `%>%` (pipe) operator from the `dplyr` package to chain a series of data transformations. First, it trims any leading or trailing whitespace from the `age` column using `str_trim`. Next, it replaces the label `"90_and_over"` with `"90"` to standardize the representation of ages 90 and above. Then, it converts the `age` column to numeric values using `as.numeric`, while suppressing any warnings that might arise from non-numeric entries (e.g., empty strings or invalid values). Finally, the function filters out any rows where the `age` could not be converted to a numeric value (resulting in `NA`), ensuring only valid numeric ages remain in the dataframe. The cleaned dataframe is then returned as the output. This function is useful for preparing age data for analysis by ensuring uniformity and removing invalid entries.
+This code defines a function called `clean_age_column` that takes a dataframe as input and processes its `age` column to ensure consistent numeric values. First, it trims any leading or trailing whitespace from the `age` column using `str_trim`. Next, it replaces the label `"90_and_over"` with `"90"` to standardise the representation of ages 90 and above. Then, it converts the `age` column to numeric values using `as.numeric`, while suppressing any warnings that might arise from non-numeric entries (e.g., empty strings or invalid values). Finally, the function filters out any rows where the `age` could not be converted to a numeric value (resulting in `NA`), ensuring only valid numeric ages remain in the dataframe. The cleaned dataframe is then returned as the output. This function ensures uniformity and removing invalid entries.
 
 ```{r}
 clean_age_column <- function(df) {
@@ -900,7 +513,7 @@ clean_age_column <- function(df) {
 
 #### Step 1: Load data
 
-Firstly, we will read the rds file. Thereafter, we will apply \`clean_age_column()\` function that was defined earlier to the loaded dataframe.
+First, we will read the population data from year 2020 to 2024 of the rds file. Thereafter, we will apply `clean_age_column()` function that was defined in step 0 to the loaded dataframe.
 
 ```{r}
 pop20 <- read_rds("data/rds/popdata/refined/popdata20_c.rds") %>% 
@@ -940,45 +553,18 @@ compute_survival_rate <- function(df1, df2) {
 
 ```{r}
 rates_2020_2021 <- compute_survival_rate(pop20, pop21)
-```
-
-```{r}
-invalid_rates_2020_2021 <- rates_2020_2021 %>%
-  filter(!between(rate, 0, 1) | is.na(rate) | is.infinite(rate))
-invalid_rates_rows
-```
-
-```{r}
 rates_2021_2022 <- compute_survival_rate(pop21, pop22)
-```
-
-```{r}
-invalid_rates_2021_2022 <- rates_2021_2022 %>%
-  filter(!between(rate, 0, 1) | is.na(rate) | is.infinite(rate))
-invalid_rates_rows
-```
-
-```{r}
 rates_2022_2023 <- compute_survival_rate(pop22, pop23)
-```
-
-```{R}
-invalid_rates_2022_2023 <- rates_2022_2023 %>%
-  filter(!between(rate, 0, 1) | is.na(rate) | is.infinite(rate))
-invalid_rates_rows
-```
-
-```{r}
 rates_2023_2024 <- compute_survival_rate(pop23, pop24)
 ```
 
+However, upon closer inspection of the df `rates_2020_2021`, we noticed the column `rate` consists of `Inf` rate. Upon closer examination of the columns `pop_past` and \`pop_next\`, there is an increase of population which is not logical. This predicament is consistent throughout the remaining 3 dataframes too. Therefore, step 2 needs to be refined in addressing this issue.
+
 ```{r}
-invalid_rates_2023_2024 <- rates_2023_2024 %>%
-  filter(!between(rate, 0, 1) | is.na(rate) | is.infinite(rate))
-invalid_rates_rows
+rates_2020_2021[is.infinite(rates_2020_2021$rate), ]
 ```
 
-### Step 2: Refined
+#### Step 2: Refined Computing Survival Rates
 
 The function processes survival rate data through four sequential steps, now correctly using dplyr's grouping mechanism. First, it groups the data by both age and sex, which is crucial because survival rates likely vary significantly across these demographics. Within these groups, it performs three key operations: (1) capping any rates above 1.0 at 1.0 (assuming these represent survival probabilities that shouldn't exceed 100%), (2) replacing infinite values (which occur when dividing by zero) with the maximum finite rate found in the data, and (3) imputing missing values (NaN) with the median rate for that specific age-sex group. After these grouped operations, it ungroups the data and performs a final safety check, replacing any remaining missing values with 1.0 (a neutral value indicating no change).
 
@@ -1017,13 +603,11 @@ compute_survival_rate <- function(df1, df2) {
 }
 ```
 
-The `clean_rates` function serves as a natural post-processing step for the output of `compute_survival_rate`, addressing several statistical and data quality considerations inherent to survival rate calculations. The compute_survival_rate function generates initial survival rate estimates by computing population ratios between two time periods (pop_next/pop_prev) for specific demographic groups (defined by age, sex, pa, and sz). This calculation can produce three types of problematic outputs that clean_rates systematically addresses: (1) undefined values (infinities) resulting from zero denominators, (2) rates outside the valid [0,1] range for probabilities, and (3) missing values from the inner join operation or zero populations.
+The `clean_rates` function serves as a natural post-processing step for the output of `compute_survival_rate`, addressing several statistical and data quality considerations inherent to survival rate calculations. The compute_survival_rate function generates initial survival rate estimates by computing population ratios between two time periods (pop_next/pop_prev) for specific demographic groups (defined by age, sex, pa, and sz). This calculation can produce three types of problematic outputs that clean_rates systematically addresses: (1) undefined values (infinities) resulting from zero denominators, (2) rates outside the valid \[0,1\] range for probabilities, and (3) missing values from the inner join operation or zero populations.
 
 The cleaning process employs statistically appropriate methods: replacement of infinite values with NAs followed by median imputation within age-sex strata maintains the grouped structure used in the original calculation. The bounding of values preserves the probabilistic interpretation of survival rates. The two functions together implement a complete analytical workflow where compute_survival_rate performs the demographic-specific calculation and `clean_rates` ensures the results meet necessary statistical assumptions for subsequent analysis. This separation of concerns between calculation and validation follows established data processing paradigms, with each function handling a distinct phase of the data transformation pipeline.
 
-adjusted code chunk for prov_next more than pop_prev
 ```{r}
-  #use this
 clean_rates <- function(df, rate_type = "survival") {
   df %>%
     group_by(age, sex) %>%
@@ -1067,23 +651,25 @@ clean_rates <- function(df, rate_type = "survival") {
 }
 ```
 
-
-
-
 ```{r}
 rates_2020_2021 <- compute_survival_rate(pop20, pop21) %>% clean_rates()
 ```
+
 ```{r}
 rates_2021_2022 <- compute_survival_rate(pop21, pop22) %>% clean_rates()
 ```
+
 ```{r}
 rates_2022_2023 <- compute_survival_rate(pop22, pop23) %>% clean_rates()
 ```
+
 ```{r}
 rates_2023_2024 <- compute_survival_rate(pop23, pop24) %>% clean_rates()
 ```
 
-### Step 3: Average the survival rates
+#### Step 3: Average the survival rates
+
+This code calculates average survival rates across multiple years by combining data from four different time periods and then computing the mean rates for each demographic and geographic group. `bind_rows()` function stacks the four datasets (rates_2020_2021, rates_2021_2022, rates_2022_2023, and rates_2023_2024) vertically into one combined dataset, essentially appending all the rows together. Next, the `group_by()` function groups the combined data by four variables: age, sex, planning area (pa), and subzone (sz), creating distinct groups for each unique combination of these characteristics. The `summarise()` function then calculates the average survival rate for each group by taking the mean of the 'rate' column, while the `na.rm = TRUE` parameter ensures that any missing values are excluded from the calculation, and `.groups = "drop"` ungroups the data after summarizing. Finally, the `distinct()` function removes any potential duplicate rows by keeping only unique combinations of age, sex, pa, and sz, while `.keep_all = TRUE` preserves all other columns in the dataset.
 
 ```{r}
 avg_survival_rates <- bind_rows(
@@ -1110,7 +696,23 @@ avg_survival_rates = read_rds("data/rds/popdata/avg_survival_rates.rds)
 ```
 
 ### Step 4: Forecast each year 2025 to 2029
+
+The `forecast_year` function defines a vector of required column names (age, sex, pa, sz, pop) that must be present in the input dateset. The function uses a conditional check with `all()` and `%in%` operators to verify that every required column exists in the base population dataset. If any columns are missing, the function immediately terminates execution using `stop()` and provides a detailed error message that specifically lists which columns are absent, calculated using `setdiff()` to find the difference between required and available columns.
+
+Next, the function creates a cleaned version of the base population data by first converting the population column to numeric format using `as.numeric()`. It then removes any rows where the population value is NA (missing), as these would create errors in subsequent calculations. The `select(all_of(required_cols))` ensures that only the necessary columns are retained, reducing memory usage and eliminating potential conflicts from extraneous variables.
+
+In step 3, the aggregation step addresses the possibility of duplicate records or multiple entries for the same demographic-geographic combination. By grouping the data by age, sex, planning area, and subzone, then summing the population values, the function ensures that each unique combination has a single, consolidated population count. This is particularly important in demographic data where the same group might appear multiple times due to data collection methods or administrative boundaries. The `.groups = "drop"` parameter automatically ungroups the data after summarization, preventing issues in subsequent operations.
+
+In step 4 of the code chunk, for individuals aged 59-88, the function implements a cohort-component method where each age group advances by one year (age + 1), simulating the passage of time. The function then performs a left join with the survival rates dataset to match each demographic-geographic group with their appropriate survival rate. This join operation is critical because survival rates typically vary by age, sex, and location due to factors like healthcare access, socioeconomic conditions, and environmental factors. When survival rates are missing for specific groups, the function implements a robust fallback mechanism using `coalesce()` combined with the median survival rate from the entire rates dataset. This approach prevents data loss while providing a reasonable estimate based on the overall population's survival characteristics. The population projection is then calculated by multiplying the current population by the survival rate, effectively reducing each cohort based on expected mortality.
+
+In step 5, The treatment of individuals aged 89 and above reflects demographic modeling conventions where very elderly populations are often grouped together due to small sample sizes and similar demographic characteristics. The function consolidates all individuals aged 89 and above into a single age category (90), recognizing that survival patterns become more uniform at advanced ages. This approach uses survival rates specific to age 90, and when these rates are unavailable, it applies the median survival rate specifically calculated from age-90 data rather than the entire dataset, providing a more age-appropriate estimate.
+
+In step 6, the function combines the forecasted populations from both the main aging process (ages 60-89) and the elderly category (90+) using `bind_rows()`, creating a comprehensive forecast dataset. It adds the forecast year as a new column, enabling tracking of temporal changes across multiple projection periods. The final aggregation step groups by all relevant variables including the year and sums any duplicate combinations that might have emerged from the separate processing of different age ranges, ensuring data consistency and preventing double-counting.
+
+In the second code chunk, the forecasting loop implements a cohort-component projection method where each year's forecast becomes the foundation for the next year's projection. This approach captures the cumulative effects of demographic change over time, as population structure evolves with each iteration. The loop begins with 2024 population data (`pop24`) as the baseline, representing the most recent observed population distribution. The `tryCatch()` mechanism provides comprehensive error handling that prevents the entire forecasting process from failing due to issues with individual years. When errors occur, the system captures detailed debugging information including the data structure of the current population using `str()`, which reveals variable types, dimensions, and sample values. Each successful forecast year produces a new dataset that replaces the current population for the next iteration, creating a sequential chain of demographic projections.
+
 ```{r}
+#1st code chunk
 forecast_year <- function(base_pop, rates, year) {
   # 1. Validate and clean input data
   required_cols <- c("age", "sex", "pa", "sz", "pop")
@@ -1165,6 +767,7 @@ forecast_year <- function(base_pop, rates, year) {
     summarise(pop = sum(pop, na.rm = TRUE), .groups = "drop")
 }
 
+#2nd code chunk
 # Run forecasting with error handling
 forecast_list <- list()
 current_pop <- pop24 %>% 
@@ -1188,7 +791,6 @@ for (y in 2025:2029) {
 }
 ```
 
-
 ```{r}
 #| echo: false
 #| eval: false
@@ -1202,6 +804,8 @@ forecast_year = read_rds("data/rds/popdata/forecast_year.rds)
 ```
 
 ### Step 5: Loop over the years
+
+This code creates an iterative population forecasting system that projects demographic changes from 2025 to 2029. An empty list called `forecast_list` is initialized to store the forecast results for each year. The variable `base_pop` is set to `pop24`, which contains the 2024 population data used as the starting point. The for loop iterates through years 2025 to 2029, calling the `forecast_year()` function for each year with the current base population, survival rates, and target year as inputs. Each forecast result is stored in `forecast_list` using the year as the key. After each forecast, `base_pop` is updated with the projected population data from the current year, selecting only the essential columns (pa, sz, age, sex, pop). This creates a sequential chain where each year's forecast becomes the input for the next year. This iterative approach captures cumulative demographic effects, as mortality and aging impacts from each year carry forward to subsequent projections. The final result is five separate population forecasts stored in `forecast_list`, representing projected demographics for each year from 2025-2029.
 
 ```{r}
 # List to store forecasts
@@ -1217,7 +821,8 @@ for (y in 2025:2029) {
 
 ### Final Output of Population Forecast
 
-The below code chunk includes rounding up the `pop` as previously it was in decimal place. 
+This code combines all the individual yearly forecasts into a single comprehensive dataset and ensures population values are whole numbers. The `bind_rows(forecast_list)` function takes all the separate forecast datasets stored in the list (one for each year from 2025-2029) and stacks them vertically into one dataframe, preserving all columns and adding all rows together. The `mutate(pop = ceiling(pop))` applies the ceiling function to round all population values up to the nearest integer, since population counts must be whole numbers and any fractional people resulting from the survival rate calculations need to be converted to realistic integer values. The ceiling function always rounds upward, so a value like 1547.3 becomes 1548, ensuring no population is lost due to rounding and maintaining conservative population estimates. The result is a single dataset containing all forecasted population data across all years, with properly formatted integer population counts ready for analysis or visualisation.
+
 ```{r}
 all_forecasts <- bind_rows(forecast_list) %>%
   mutate(pop = ceiling(pop))  # Round UP to nearest integer
@@ -1266,7 +871,7 @@ pivoted_data = read_rds("data/rds/popdata/pivoted_data.rds")
 
 Using `st_read`, the ESRI shapefile was imported and it contains 323 data entries and 15 fields. Each of the data entry consists of a multi-polygon shape, with geospatial coordinates with a geographic coordinate system (GCS) of WGS84. The features of GCS include using a 3D spherical model of earth with coordinates of longitude, latitude and altitude whereas PCS uses a 2D plane model with linear measurements (i.e. metres).
 
-As the data file is in KML version. However, the file doesn't churn the full details of the Master Plan Boundary
+As the data file is in KML version. However, the file doesn't churn the full details of the Master Plan Boundary. Therefore, the dataset was amended using QGIS and downloaded for this project.
 
 ```{r}
 mpsz = st_read(dsn = "data/planningarea/",
@@ -1339,7 +944,6 @@ write_rds(mpsz, "data/rds/mpsz/mpsz.rds")
 mpsz = read_rds("data/rds/mpsz/mpsz.rds")
 ```
 
-
 ### Combining MPSZ & Population Forecast
 
 ```{r}
@@ -1355,7 +959,6 @@ mpsz_popforecast <- mpsz_clean %>%
   left_join(pivoted_clean, by = "join_key") %>%
   select(-join_key)
 ```
-
 
 ```{r}
 #| echo: false
@@ -1388,7 +991,6 @@ unique(mpsz_land$LU_DESC)
 ```
 
 In the code chunk below, we use the `select()`function to pick the columns that are required for the anlaysis. Additionally, `filter()` the column `LU_DESC` for those words containing 'residential' Regular expression was used alongside ignoring captital letters.
-
 
 ```{r}
 mpsz_res <- mpsz_land %>%
@@ -1448,6 +1050,7 @@ hex_res = read_rds("data/rds/mpsz/hex_res.rds")
 ```
 
 ### Visualing hex_grids & res
+
 ```{r}
 # Set tmap mode and options
 tmap_mode("plot")  # Use "view" for interactive map
@@ -1616,16 +1219,13 @@ hexagon_final = read_rds("data/rds/mpsz/hexagon_final.rds")
 
 *hexagon_final* now includes a new column *estimated_population*, which is the area-weighted population estimate for each hexagon.e
 
-
 ## Combining Hex & population
 
-#i have this sf "hex_res" with columns geometry and hex_id and mpsz_popforecast with columns age, sex, pa, sz, pop_2025, pop_2026, pop_2027, pop_2028, pop_2029, geometry. i want the hex_res to be with base layer and mpsz_popforecast to be on top of it. 
+#i have this sf "hex_res" with columns geometry and hex_id and mpsz_popforecast with columns age, sex, pa, sz, pop_2025, pop_2026, pop_2027, pop_2028, pop_2029, geometry. i want the hex_res to be with base layer and mpsz_popforecast to be on top of it.
 
 ```{r}
 
 ```
-
-
 
 ## Care Centre
 
@@ -2272,6 +1872,292 @@ tm_shape(mpsz)+
 ```
 
 # Exploratory Data Analysis
+
+## Population
+
+### EDA of Population Data
+
+```{r}
+
+### Step 1: Define a function to filter and aggregate age distribution data
+get_age_distribution <- function(data, min_age = 60, max_age = 90) {
+  data %>%
+    filter(age >= min_age & age <= max_age) %>%
+    group_by(time, age, sex) %>%
+    summarise(total_pop = sum(pop), .groups = "drop")
+}
+```
+
+```{r}
+### Step 2: Use the function to process data
+age_dist <- get_age_distribution(popdata20_c)  # Default: ages 60-90
+
+### Step 3: Plot age distributions by year and sex
+plot_age_distribution <- function(age_data) {
+  ggplot(age_data, aes(x = age, y = total_pop, fill = sex)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    facet_wrap(~time, scales = "free_y") +
+    labs(
+      title = "Age Distribution (60-90 Years) by Sex and Year",
+      x = "Age",
+      y = "Total Population",
+      fill = "Sex"
+    ) +
+    scale_x_continuous(breaks = seq(60, 90, by = 5)) +
+    theme_minimal() +
+    theme(legend.position = "bottom")
+}
+
+# Generate the plot
+plot_age_distribution(age_dist)
+```
+
+```{r}
+#| echo: false #not show code
+#| eval: false
+```
+
+In generating the population pyramid, the below oko
+
+```{r}
+#load data
+get_age_distribution <- function(data, min_age = 60, max_age = 90) {
+  data %>%
+    filter(age >= min_age & age <= max_age) %>%
+    mutate(
+      # Standardize sex labels to match your data
+      sex = factor(sex, levels = c("Males", "Females"))
+    ) %>%
+    group_by(time, age, sex) %>%
+    summarise(total_pop = sum(pop), .groups = "drop")
+}
+```
+
+```{r}
+#2020
+age_dist <- get_age_distribution(popdata20_c)
+# 3. Create population pyramid plot function 
+plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
+  # Filter and transform data
+  plot_data <- age_data %>% 
+    filter(time == plot_year) %>%
+    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
+  
+  # Calculate axis limits
+  max_pop <- max(abs(plot_data$total_pop))
+  
+  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    geom_hline(yintercept = 0, color = "black") +
+    coord_flip() +
+    scale_y_continuous(
+      labels = function(x) comma(abs(x)),
+      breaks = pretty_breaks(n = 6),
+      limits = c(-max_pop * 1.1, max_pop * 1.1)
+    ) +
+    scale_fill_manual(
+      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
+      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
+    ) +
+    labs(
+      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
+      x = "Age",
+      y = "Population Count",
+      fill = "Gender"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      legend.position = "bottom"
+    )
+}
+
+# 4. Generate and save the plot ------------------------------------------------
+final_plot <- plot_population_pyramid(age_dist)
+print(final_plot)
+```
+
+```{r}
+#| echo: false #not show code
+
+age_dist <- get_age_distribution(popdata21_c)
+# 3. Create population pyramid plot function 
+plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
+  # Filter and transform data
+  plot_data <- age_data %>% 
+    filter(time == plot_year) %>%
+    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
+  
+  # Calculate axis limits
+  max_pop <- max(abs(plot_data$total_pop))
+  
+  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    geom_hline(yintercept = 0, color = "black") +
+    coord_flip() +
+    scale_y_continuous(
+      labels = function(x) comma(abs(x)),
+      breaks = pretty_breaks(n = 6),
+      limits = c(-max_pop * 1.1, max_pop * 1.1)
+    ) +
+    scale_fill_manual(
+      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
+      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
+    ) +
+    labs(
+      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
+      x = "Age",
+      y = "Population Count",
+      fill = "Gender"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      legend.position = "bottom"
+    )
+}
+
+# 4. Generate and save the plot ------------------------------------------------
+final_plot <- plot_population_pyramid(age_dist)
+print(final_plot)
+```
+
+```{r}
+#| echo: false #not show code
+
+age_dist <- get_age_distribution(popdata22_c)
+# 3. Create population pyramid plot function 
+plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
+  # Filter and transform data
+  plot_data <- age_data %>% 
+    filter(time == plot_year) %>%
+    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
+  
+  # Calculate axis limits
+  max_pop <- max(abs(plot_data$total_pop))
+  
+  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    geom_hline(yintercept = 0, color = "black") +
+    coord_flip() +
+    scale_y_continuous(
+      labels = function(x) comma(abs(x)),
+      breaks = pretty_breaks(n = 6),
+      limits = c(-max_pop * 1.1, max_pop * 1.1)
+    ) +
+    scale_fill_manual(
+      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
+      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
+    ) +
+    labs(
+      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
+      x = "Age",
+      y = "Population Count",
+      fill = "Gender"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      legend.position = "bottom"
+    )
+}
+
+# 4. Generate and save the plot ------------------------------------------------
+final_plot <- plot_population_pyramid(age_dist)
+print(final_plot)
+```
+
+```{r}
+#| echo: false #not show code
+
+age_dist <- get_age_distribution(popdata23_c)
+# 3. Create population pyramid plot function 
+plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
+  # Filter and transform data
+  plot_data <- age_data %>% 
+    filter(time == plot_year) %>%
+    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
+  
+  # Calculate axis limits
+  max_pop <- max(abs(plot_data$total_pop))
+  
+  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    geom_hline(yintercept = 0, color = "black") +
+    coord_flip() +
+    scale_y_continuous(
+      labels = function(x) comma(abs(x)),
+      breaks = pretty_breaks(n = 6),
+      limits = c(-max_pop * 1.1, max_pop * 1.1)
+    ) +
+    scale_fill_manual(
+      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
+      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
+    ) +
+    labs(
+      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
+      x = "Age",
+      y = "Population Count",
+      fill = "Gender"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      legend.position = "bottom"
+    )
+}
+
+# 4. Generate and save the plot ------------------------------------------------
+final_plot <- plot_population_pyramid(age_dist)
+print(final_plot)
+```
+
+```{r}
+#| echo: false #not show code
+
+age_dist <- get_age_distribution(popdata24_c)
+# 3. Create population pyramid plot function 
+plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
+  # Filter and transform data
+  plot_data <- age_data %>% 
+    filter(time == plot_year) %>%
+    mutate(total_pop = ifelse(sex == "Males", -total_pop, total_pop))
+  
+  # Calculate axis limits
+  max_pop <- max(abs(plot_data$total_pop))
+  
+  ggplot(plot_data, aes(x = age, y = total_pop, fill = sex)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    geom_hline(yintercept = 0, color = "black") +
+    coord_flip() +
+    scale_y_continuous(
+      labels = function(x) comma(abs(x)),
+      breaks = pretty_breaks(n = 6),
+      limits = c(-max_pop * 1.1, max_pop * 1.1)
+    ) +
+    scale_fill_manual(
+      values = c("Males" = "#3498db", "Females" = "#e74c3c"),
+      labels = c("Males" = "Male", "Females" = "Female") # Optional: display cleaner labels
+    ) +
+    labs(
+      title = paste("Population Pyramid of Age 60 & Above -", plot_year),
+      x = "Age",
+      y = "Population Count",
+      fill = "Gender"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      legend.position = "bottom"
+    )
+}
+
+# 4. Generate and save the plot ------------------------------------------------
+final_plot <- plot_population_pyramid(age_dist)
+print(final_plot)
+```
+
+![Figure x: Population Pyramid 2020](/metho_images/2020.png) ![Figure x: Population Pyramid 2021](/metho_images/2021.png) ![Figure x: Population Pyramid 2022](/metho_images/2022.png) ![Figure x: Population Pyramid 2023](/metho_images/2023.png) ![Figure x: Population Pyramid 2024](/metho_images/2024.png) \### Survival Analysis from 2025 - 2030
 
 ```{r}
 tmpa_mode("view")
