@@ -16,7 +16,7 @@ execute:
 editor: source
 ---
 
-# Overview
+# Chapter Overview
 
 In this section, we will acquire the data sets from various government open-sources data repository and websites. Thereafter, we will install the necessary R packages and import the data sets. In each data set, we will delve into the necessary checks, issues faced and steps into resolving the issue. Thereafter, exploratory data analysis is done.
 
@@ -24,105 +24,103 @@ In this section, we will acquire the data sets from various government open-sour
 
 In this research, 3 main spectrum of data will be required for this research, namely the Population Data, Master Plan 2019 Subzone boundary and Care Centres. These datasets are gathered from multiple open-source websites which includes Singapore Department of Statistics, Data.gov.sg, and Agency of Integrated Care.
 
-![Figure x: Data Overview](/metho_images/data_overview.png){fig-align="center"}
+![Figure 1: Data Overview](/metho_images/data_overview.png){fig-align="center"}
 
-##Singapore Master Plan 2019 Subzone Boundary
+## Singapore Master Plan 2019 Subzone Boundary
 
-The Singapore Master Plan 2019 Planning Subzone Boundary is a ESRI shapefile that is obtained from Data.gov.sg.
+The Singapore Master Plan 2019 Planning Subzone Boundary (No Sea) and Amendment to Master Plan 2019 Land Use Layer are ESRI shapefiles that are downloaded from Data.gov.sg.
 
 ## Population Data
 
-The Singapore Resident by Planning Area/Subzone, Single Year of Age and Sex, June 2024 is selected for this
-
-As the version January 2025 will be not be ready in due time for this research project, thus, the version of June 2024 is used.
+The population datasets are retrieved from [SingStat.gov.sg](https://www.singstat.gov.sg/find-data/search-by-theme/population/geographic-distribution/latest-data). Specifically, Singapore Resident by Planning Area/Subzone, Single Year of Age and Sex, June 2024, 2023, 2022, 2021, and, 2011-2020 are selected for this research. As the version January 2025 will be not be ready in due time for this research project, thus, the latest available dataset, June 2024 will be used.
 
 ## WebScraping of Care Centres
 
-Due to the lack of a centralised data of all care centres, web scraping is warranted in obtaining the information of the care centres. The geographical locations of the Care Centres alongside the centre names such as Active Ageing Centre, Day Care, Community Rehabilitation Centre, Centre-based Nursing were extracted using a web scraping tool, Web Scraper, available in Chrome web store as Seen in Figure x. As there is no centralised file that consist of the centre names and their locations, the location of each centre has to be manually extracted from the [Care Services](https://www.aic.sg/care-services/) webpage of the Agency of Integrated Care as seen in Figure x.
+Due to the lack of a centralised data of all care centres, web scraping is warranted in retrieving the geographical information of the care centres. The geographical locations of the Care Centres alongside the centre names such as Active Ageing Centre, Day Care, Community Rehabilitation Centre, Centre-based Nursing were extracted using a web scraping tool, Web Scraper, available in Chrome web store as Seen in Figure x. As there is no centralised file that consist of the centre names and their locations, the location of each centre has to be manually extracted, filtered by each centre type, from the [Care Services](https://www.aic.sg/care-services/) webpage of the Agency of Integrated Care as seen in Figure x.
 
 Step 0: Download Web Scraper from Chrome web store
 
 Web Scraper is used as it is free, works reasonably well and available in both Chrome and Firefox web store. In the below steps, Chrome will be the default web browser used.
 
-![*Figure x: Web Scraper*](/metho_images/step0.png)
+![*Figure 2: Web Scraper*](/metho_images/step0.png)
 
 Step 1: Navigate to Developer Tools in Chrome Web Browser
 
 After downloading the extension from Chrome Web Store, press onto the menu bar at the right of the browser and locate Developer Tools while onto the website you would like to scrape information from.
 
-![*Figure x: Web Scraper*](/metho_images/step1.png)
+![*Figure 3: Web Scraper*](/metho_images/step1.png)
 
 Step 2: Interface for Webscraper
 
 After clicking onto Developer Tools, click onto the Web Scraper in the menu bar (in black). Following which the below interface will appear.
 
-[![](/metho_images/step2.png){width="499"}](Figure%20x:%20Locate%20Developer%20Tools)
+[![Figure 4: Interface with Website](/metho_images/step2.png){width="627"}](Figure%20x:%20Locate%20Developer%20Tools)
 
 Step 3: Create New Sitemap
 
 Click onto "create new sitemap", thereafter "Create Sitemap". Sitemap Name will be the overarching term used for these information; in this instance, it will be AAC. The Start URL will be the HTML link that you would like the information to be scraped from.
 
-![Figure x:](/metho_images/step3.png){fig-align="center"}
+![Figure 5: Creating New Sitemap](/metho_images/step3.png){fig-align="center"}
 
 Step 4: Add New Selector
 
 After creating a new sitemap, the following interface will appear. Click onto the "Add new selector" to select the information to scrape.
 
-![Figure x:](/metho_images/step4.png){fig-align="center"}
+![Figure 6: Adding New Selector](/metho_images/step4.png){fig-align="center"}
 
 Step 5: Selecting Whole Box
 
 Firstly, the id will be the column name. For Type, select Element Attribute from the drop down selection. Thereafter, press on Select under Selector and select two boxes of each centre as seen in the figure below (the remaining boxes will be highlighted through its intelligent function) and press onto Done Selecting in the green box.
 
-![Figure x:](/metho_images/step5.png){fig-align="center"}
+![Figure 7: Selecting Element](/metho_images/step5.png){fig-align="center"}
 
 Step 6: Sitemap Interface
 
 After adding a new selector, the sitemap page will appear the selector that you've inputted.
 
-![Figure x: Step 6 - Create New Sitemap](/metho_images/step6.png){fig-align="center"}
+![Figure 8: Create New Sitemap](/metho_images/step6.png){fig-align="center"}
 
 Step 7: Selecting Name of Care Centre
 
 Firstly, the id will be name (with reference to the name of care centre), serving as the column name. Text will be chosen under Type thereafter press Select under Selector and highlight the first 2 names of the care centres (The remaining care centres will be highlighted through its intelligent function) and press onto Done selecting in the green box. Multiple box will be selected as we would like to scrap multiple names and root parent selector will be root and press onto Save Selector.
 
-![Figure x: Step 7 - Selecting Name of Care Centre](/metho_images/step7.png){fig-align="center"}
+![Figure 10: Selecting Name of Care Centre](/metho_images/step7.png){fig-align="center"}
 
-Step 8: Create New Sitemap
+Step 8: Misconfiguration Detected
 
 A popup window will be prompted and Group selectors was selected.
 
-![Figure x: Step 8 - Create New Sitemap](/metho_images/step8.png){fig-align="center"}
+![Figure 11: Misconfiguration Detected](/metho_images/step8.png){fig-align="center"}
 
 Step 9: Selecting Address of Care Centre
 
 Similar to Step 7, the id will be address. Text will be chosen under Type thereafter press Select under Selector and highlight the first 2 addresses of the care centres (Remaining addresses will be highlighted through its intelligent function) and press onto Done selecting in the green box. Multiple box will be selected as we would like to scrap multiple addresses and parent selector will be wrapper_for_main_name (as we grouped selectors in step 8) and press onto Save Selector.
 
-![Figure x: Step 9 - Selecting Address of Care Centre](/metho_images/step9.png){fig-align="center"}
+![Figure 12: Selecting Address of Care Centre](/metho_images/step9.png){fig-align="center"}
 
 Step 10: Data Preview
 
 Prior to data scraping, the data is previewed in ensuring each name of the care centre is correctly tagged to the address using the main website to verify.
 
-![Figure x: Step 10 - Data Preview](/metho_images/step10.png){fig-align="center"}
+![Figure 13: Data Preview](/metho_images/step10.png){fig-align="center"}
 
 Step 11: Commence Scraping
 
 Head over to sitemap aac and click onto Scrape. A new browser will appear indicating that it is in process of scraping. It will be closed automatically once the process has ended.
 
-![Figure x: Step 11 - Commence Scraping](/metho_images/step11.png){fig-align="center"}
+![Figure 14: Commence Scraping](/metho_images/step11.png){fig-align="center"}
 
 Step 11: Export Data
 
 Export data is selected upon clicking sitemap aac. 2 file options are offered: csv and xlsx. The former was chosen as CSV files are simple and portable which doesn't complicate data processing. Thereafter the data will be downloaded.
 
-![Figure x:](/metho_images/step12.png){fig-align="center"}
+![Figure 15: Export Data](/metho_images/step12.png){fig-align="center"}
 
 Step 11: View CSV File
 
 In ensuring the web scraping successful and accurate, the csv. file is opened and examined.
 
-![Figure x: Step 11 - View CSV File](/metho_images/step13.png){fig-align="center"}
+![Figure 16: View CSV File](/metho_images/step13.png){fig-align="center"}
 
 The above steps were repeated for each type of care centre. All of the Care Centre data were extracted on 7th February 2025.
 
@@ -154,8 +152,7 @@ The code chunk below, using `p_load` function of the [**pacman**](https://cran.r
 ```{r}
 pacman::p_load(tidyverse, sf,
                jsonlite, rvest, knitr, patchwork,
-               leaflet, scales, lubridate, tmap, DT, geojsonsf, scales,
-               VIM, mice, broom)
+               leaflet, scales, lubridate, tmap)
 ```
 :::
 
@@ -163,7 +160,7 @@ pacman::p_load(tidyverse, sf,
 
 ### Overview
 
-In this section, a total of 4 population datasets from year 2020 to year 2024 will be used in the analysis. The datasets will be cleaned. Survival analysis will be done in estimating the population for age 60 and above for the period 2025 to 2029.
+In this section, a total of 4 population datasets from year 2020 to year 2024 will be used in the analysis. The datasets will be cleaned and transformed. Following which, survival analysis will be done in estimating the population for age 60 and above for the period 2025 to 2029.
 
 ### Importing Data
 
@@ -695,7 +692,7 @@ write_rds(avg_survival_rates, "data/rds/popdata/avg_survival_rates.rds")
 avg_survival_rates = read_rds("data/rds/popdata/avg_survival_rates.rds)
 ```
 
-### Step 4: Forecast each year 2025 to 2029
+#### Step 4: Forecast each year 2025 to 2029
 
 The `forecast_year` function defines a vector of required column names (age, sex, pa, sz, pop) that must be present in the input dateset. The function uses a conditional check with `all()` and `%in%` operators to verify that every required column exists in the base population dataset. If any columns are missing, the function immediately terminates execution using `stop()` and provides a detailed error message that specifically lists which columns are absent, calculated using `setdiff()` to find the difference between required and available columns.
 
@@ -803,7 +800,7 @@ write_rds(forecast_year, "data/rds/popdata/forecast_year.rds")
 forecast_year = read_rds("data/rds/popdata/forecast_year.rds)
 ```
 
-### Step 5: Loop over the years
+#### Step 5: Loop over the years
 
 This code creates an iterative population forecasting system that projects demographic changes from 2025 to 2029. An empty list called `forecast_list` is initialized to store the forecast results for each year. The variable `base_pop` is set to `pop24`, which contains the 2024 population data used as the starting point. The for loop iterates through years 2025 to 2029, calling the `forecast_year()` function for each year with the current base population, survival rates, and target year as inputs. Each forecast result is stored in `forecast_list` using the year as the key. After each forecast, `base_pop` is updated with the projected population data from the current year, selecting only the essential columns (pa, sz, age, sex, pop). This creates a sequential chain where each year's forecast becomes the input for the next year. This iterative approach captures cumulative demographic effects, as mortality and aging impacts from each year carry forward to subsequent projections. The final result is five separate population forecasts stored in `forecast_list`, representing projected demographics for each year from 2025-2029.
 
@@ -869,9 +866,11 @@ pivoted_data = read_rds("data/rds/popdata/pivoted_data.rds")
 
 ### Overview
 
-Using `st_read`, the ESRI shapefile was imported and it contains 323 data entries and 15 fields. Each of the data entry consists of a multi-polygon shape, with geospatial coordinates with a geographic coordinate system (GCS) of WGS84. The features of GCS include using a 3D spherical model of earth with coordinates of longitude, latitude and altitude whereas PCS uses a 2D plane model with linear measurements (i.e. metres).
+In this section, two datsets will be imported namely Master Plan 2019 Subzone Boundary and Master Plan 2019 Land Use. The dataset will be cleaned and transformed thereafter hexagons will be created to facilitate the analysis in the next chapter.
 
-As the data file is in KML version. However, the file doesn't churn the full details of the Master Plan Boundary. Therefore, the dataset was amended using QGIS and downloaded for this project.
+### Importing Data
+
+Using `st_read` of the \`sf\` package, the ESRI shapefile was imported and it contains 323 data entries and 15 fields. Each of the data entry consists of a multi-polygon shape, with geospatial coordinates with a geographic coordinate system (GCS) of WGS84. The features of GCS include using a 3D spherical model of earth with coordinates of longitude, latitude and altitude whereas PCS uses a 2D plane model with linear measurements (i.e. metres). However, the file doesn't churn the full details of the Master Plan Boundary. Therefore, the dataset was adjusted using QGIS and downloaded for this project with the assistance of Prof Kam.
 
 ```{r}
 mpsz = st_read(dsn = "data/planningarea/",
@@ -884,34 +883,31 @@ Using `glimpse()`, we are able to visualise the columns, column types and proper
 glimpse(mpsz)
 ```
 
-In the code chunk below, we use the `select()`function to pick the columns that are required for the anlaysis.
+In the code chunk below, we use the `select()` from \`dplyr\` package to select the columns that are required for the anlaysis.
 
 ```{r}
 mpsz <- mpsz %>%
   select(SUBZONE_N, geometry)
 ```
 
+By employing `tmap`, we are able to create a static map visualisation of the subzones in Singapore. `tm_shape` is the base layer for the visualation which we will be using `mpsz` while `tm_polygons` renders the the subzone boundaries as filled polygon using `SUBZONE_N`.
+
 ```{r}
 tmap_mode("plot")
 tm_shape(mpsz) +
-  tm_polygons("SUBZONE_N")  # Horizontal legend
-
+  tm_polygons("SUBZONE_N")
 ```
 
-```{r}
-plot(mpsz["SUBZONE_N"])
-```
+### Transforming Coordinate Reference System
 
-### Transforming CRS
-
-As the research's focus is exploring the accessibility of care centres in Singapore, PCS would be appropriate in this context as it measures the distance between the elderly' residence and the care centre. Thus, in ensuring accurate measurement, the function \`st_transform\` with a crs of 3414 was used (Kam, 2022) in the code chunk below.
+As the research's focus is exploring the accessibility of care centres in Singapore, Projected Coordinate System (PCS) would be appropriate in this context as it measures the distance between the elderly' residence and the care centre. Thus, in ensuring accurate measurement, the function `st_transform` with a Coordinate Reference System (CRS) of 3414 was used (Kam, 2022) in the code chunk below.
 
 ```{r}
 mpsz <- mpsz %>%
   st_transform(crs = 3414)
 ```
 
-### Shared Boundaries
+### Checking for Shared Boundaries
 
 The below codechunk uses `st_is_valid` in assessing if there are shared boundaries in the `mpsz` data. This is important as shared boundaries can lead to inconsistent data impacting the research findings. 9 polygons with self-intersection ('Ring Self-Intersection') issues were returned.
 
@@ -926,7 +922,7 @@ invalid_polygons <- mpsz[!st_is_valid(mpsz),]
 plot(invalid_polygons)
 ```
 
-In addressing the above point, we will use st_buffer() of sf package to compute a 5-metres buffers around the data.
+In addressing the above point, we will use `st_buffer` of `sf` package to compute a 5-metre buffer around the data.
 
 ```{r}
 mpsz <- st_buffer(mpsz, dist = 5)
@@ -946,6 +942,10 @@ mpsz = read_rds("data/rds/mpsz/mpsz.rds")
 
 ### Combining MPSZ & Population Forecast
 
+This codechunk performs a spatial join between `MPSZ` and \`Population forecast data, with data cleaning to handle missing values. The first section creates cleaned versions of both datasets by adding a standardised join key - `mpsz_clean` takes the subzone geometry data and creates a `join_key` by converting the subzone names to uppercase and removing any whitespace using `str_trim()` and `str_to_upper()`. Similarly, `pivoted_clean` processes the population forecast data by creating the same type of standardised join key from the `sz` column, ensuring consistent formatting for matching between the two datasets. The main join operation uses `left_join()` to combine the subzone geometries with the population data based on the matching join keys, preserving all subzones even if they don't have corresponding population data. After joining, the temporary `join_key` column is removed using `select(-join_key)` to clean up the final dataset. The final step uses `mutate(across(where(is.numeric), ~replace_na(.x, 0)))` to identify all numeric columns in the joined dataset and replace any NA values with 0, ensuring that subzones without population forecasts display as having zero population rather than missing data.
+
+correct
+
 ```{r}
 # Create temporary cleaned versions for joining
 mpsz_clean <- mpsz %>%
@@ -954,10 +954,34 @@ mpsz_clean <- mpsz %>%
 pivoted_clean <- pivoted_data %>%
   mutate(join_key = str_trim(str_to_upper(sz)))
 
-# Join and clean up
+# Join and clean up, replacing NA with 0
 mpsz_popforecast <- mpsz_clean %>%
   left_join(pivoted_clean, by = "join_key") %>%
-  select(-join_key)
+  select(-join_key) %>%
+  mutate(across(where(is.numeric), ~replace_na(.x, 0))) #replace NA with 0
+```
+
+try
+
+```{r}
+combined_original_case <- mpsz %>%
+  distinct(SUBZONE_N) %>%
+  mutate(join_key = toupper(SUBZONE_N)) %>%
+  full_join(
+    pivoted_data %>%
+      distinct(sz) %>%
+      mutate(join_key = toupper(sz)),
+    by = "join_key"
+  ) %>%
+  select(SUBZONE_N, sz) %>%
+  arrange(SUBZONE_N, sz)
+```
+
+###Combining MPSZ & Population Forecast
+
+```{r}
+mpsz_forecast <- mpsz %>%
+  left_join(pivoted_clean, by = c("SUBZONE_N" = "sz"))
 ```
 
 ```{r}
@@ -972,7 +996,11 @@ write_rds(mpsz_popforecast, "data/rds/mpsz/mpsz_popforecast.rds")
 mpsz_popforecast = read_rds("data/rds/mpsz/mpsz_popforecast.rds")
 ```
 
-### MPSZ Land Use
+## MPSZ Land Use
+
+### Importing Data
+
+Using `st_read`, the file is loaded with an addition of transforming to the CRS to 3414.
 
 ```{r}
 mpsz_land = st_read(dsn = "data/landuse/",
@@ -980,34 +1008,34 @@ mpsz_land = st_read(dsn = "data/landuse/",
   st_transform(crs = 3414)
 ```
 
+### Checking for Shared Boundaries
+
+Similar to the step in `MPSZ`, this function is used to check if there are any shared boundaries.
+
 ```{r}
 st_is_valid(mpsz_land, reason = TRUE)
 ```
 
-Using `unique()`, it returns a list of properties in the column `LU_DESC`. As the focus of the research is accessibility to care centre, all residential aspects will be factored in this research.
+Using `unique()`, it returns a list of properties in the column `LU_DESC`. As the focus of the research is accessibility to care centre, all residential related areas will be factored in this research.
 
 ```{r}
 unique(mpsz_land$LU_DESC)
 ```
 
-In the code chunk below, we use the `select()`function to pick the columns that are required for the anlaysis. Additionally, `filter()` the column `LU_DESC` for those words containing 'residential' Regular expression was used alongside ignoring captital letters.
-
 ```{r}
-mpsz_res <- mpsz_land %>%
-  select(LU_DESC, geometry) %>%
-  filter(str_detect(LU_DESC, regex("residential", ignore_case = TRUE)))
+mpsz_land <- st_buffer(mpsz_land, dist = 1)
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
-write_rds(mpsz_res, "data/rds/mpsz/mpsz_res.rds")
+write_rds(mpsz_land, "data/rds/mpsz/mpsz_land.rds")
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
-mpsz_res = read_rds("data/rds/mpsz/mpsz_res.rds")
+mpsz_land = read_rds("data/rds/mpsz/mpsz_land.rds")
 ```
 
 ### Sampling Grid
@@ -1022,10 +1050,12 @@ tm_shape(mpsz_res) +
   tm_polygons("LU_DESC")
 ```
 
+#### Step 1: Creating polygons
+
 In the HealthierSG White Paper 2022, the Ministry of Health has indicated its intention to "expand the network \["care centres"\] to 220 by 2025". Furthermore, through the Ministry's estimation, 8 in 10 seniors will have a care centre in the vicinity of their homes (Ministry of Health, 2022). Hence, we will assume that the maximum distance to the care centres are 100 metres. Hence, in the code chunk below, `st_make_grid` from `sf` package constructed hexagonal grids encompassing the Singapore Master Plan 2019 Planning Subzone Boundary using `cellsize` that defines the radius of 100 metres and `square` to be false to generate a hexagonal grid.
 
 ```{r}
-hex_res <- st_make_grid(mpsz_res,
+hexagon <- st_make_grid(mpsz_popforecast,
                          cellsize = 100,
                          what = "polygon",
                          square = FALSE) %>%
@@ -1033,9 +1063,58 @@ hex_res <- st_make_grid(mpsz_res,
 ```
 
 ```{r}
-hex_res$hex_id <- sprintf("H%04d", seq_len(nrow(hex_res))) %>% as.factor()
-head(hex_res)
+hexagon$hex_id <- sprintf("H%04d", seq_len(nrow(hexagon))) %>% as.factor()
+head(hexagon)
 ```
+
+#### Step 2: Calculate the Area of Each Subzone
+
+Next, the code below will computer the area of each polygon in `mpsz_`.
+
+```{r}
+mpsz_popforecast <- mpsz_popforecast %>%
+  mutate(mpsz_area = st_area(geometry))
+```
+
+#### Step 3: Intersect Hexagons with Subzones
+
+The code chunk below derive the overlapping geometry between hexagons and subzones.
+
+```{r}
+hex_mpsz_intersection <- st_intersection(hexagon, mpsz_popforecast)
+```
+
+#### Step 4: Calculate Area of Each Intersection
+
+```{r}
+hex_mpsz_intersection <- hex_mpsz_intersection %>% 
+  mutate(intersection_area =
+           st_area(geometry))
+```
+
+### Filtering to Residential Use
+
+In the code chunk below, we use the `select()`function to pick the columns that are required for the anlaysis. Additionally, `filter()` the column `LU_DESC` for those words containing 'residential'. Regular expression was used alongside ignoring captital letters.
+
+```{r}
+mpsz_res <- mpsz_land %>%
+  select(LU_DESC, geometry) %>%
+  filter(str_detect(LU_DESC, regex("residential", ignore_case = TRUE)))
+```
+
+#### Step 5: Estimate Hexagon Population
+
+Assume uniform population density within each subzone. So, the hexagon’s share of the population is:
+
+```{r}
+hex_mpsz_intersection <-
+  hex_mpsz_intersection %>%
+  mutate(mpsz_popforecast = as.numeric(
+    intersection_area / mpsz_area * 
+      pop))
+```
+
+## ?OD MATRIx
 
 ```{r}
 #| echo: false
@@ -1092,139 +1171,6 @@ final_map <- base_map +
 ```{r}
 # Display the map
 final_map
-```
-
-### Cross-checking subzones in MPSZ & Forecast data.
-
-```{r}
-combined_original_case <- mpsz %>%
-  distinct(SUBZONE_N) %>%
-  mutate(join_key = toupper(SUBZONE_N)) %>%
-  full_join(
-    all_forecasts %>%
-      distinct(sz) %>%
-      mutate(join_key = toupper(sz)),
-    by = "join_key"
-  ) %>%
-  select(SUBZONE_N, sz) %>%
-  arrange(SUBZONE_N, sz)
-```
-
-###Combining MPSZ & Population Forecast
-
-```{r}
-mpsz_forecast <- mpsz %>%
-  left_join(all_forecasts, by = c("SUBZONE_N" = "sz"))
-```
-
-### Precursor
-
-There two sf data layers, namely:
-
--   hexagon: sf object of hexagonal polygons.
--   mpsz: sf object of planning subzones. Beside other field, there is a field contains the target population called aged_pop.
-
-::: callout-note
-Please ensure that both layers are in the same CRS (coordinate reference system, 3414 for svy21 ) and use projected units (e.g., meters).
-:::
-
-### Check and Transform CRS to Projected
-
-Use the code chunk below to check if the data layers are in svy21 projected coornates system.
-
-```{r}
-glimpse(hex_centroids)
-```
-
-If it is not projected, use the code chunk to transform the sf data layers into svy21.
-
-```{r}
-hexagon <- st_transform(hexagon, 3414) 
-mpsz <- st_transform(psz, 3414)
-```
-
-### Calculate the Area of Each Subzone
-
-Next, the code below will compute the area of each polygon in mpsz.
-
-```{r}
-mpsz <- mpsz %>%
-  mutate(mpsz_area = st_area(geometry))
-```
-
-### Intersect Hexagons with Subzones
-
-The code chunk below Creates new polygons where hexagons and subzones overlap
-
-```{r}
-hex_mpsz_intersection <- st_intersection(hex_centroids, mpsz)
-```
-
-### Calculate Area of Each Intersection
-
-```{r}
-hex_mpsz_intersection <- hex_mpsz_intersection %>% 
-  mutate(intersection_area =
-           st_area(geometry))
-```
-
-### Estimate Hexagon Population
-
-Assume uniform population density within each subzone. So, the hexagon’s share of the population is:
-
-![](images/areaproportion.png)
-
-```{r}
-hex_mpsz_intersection <-
-  hex_psz_intersection %>%
-  mutate(hex_pop = as.numeric(
-    intersection_area / mpsz_area * 
-      population))
-
-#to push population up
-```
-
-### Aggregate Estimated Population to Each Hexagon
-
-If a hexagon overlaps multiple subzones, sum the estimated populations.
-
-```{r}
-hexagon_population <- 
-  hex_mpsz_intersection %>%
-  group_by(hex_id = row_number()) %>% 
-  summarise(estimated_population =
-              sum(hex_pop, na.rm = TRUE))
-```
-
-### Keeping original hexagon attributes:
-
-```{r}
-hexagon_final <- hexagon %>% 
-  mutate(hex_id = row_number()) %>%
-  left_join(hexagon_population, 
-            by = "hex_id")
-```
-
-```{r}
-#| echo: false
-#| eval: false
-write_rds(hexagon_final, "data/rds/mpsz/hexagon_final.rds")
-```
-
-```{r}
-#| echo: false
-#| eval: false
-hexagon_final = read_rds("data/rds/mpsz/hexagon_final.rds")
-```
-
-*hexagon_final* now includes a new column *estimated_population*, which is the area-weighted population estimate for each hexagon.e
-
-## Combining Hex & population
-
-#i have this sf "hex_res" with columns geometry and hex_id and mpsz_popforecast with columns age, sex, pa, sz, pop_2025, pop_2026, pop_2027, pop_2028, pop_2029, geometry. i want the hex_res to be with base layer and mpsz_popforecast to be on top of it.
-
-```{r}
-
 ```
 
 ## Care Centre
@@ -1611,8 +1557,6 @@ cc_data = read_rds("data/rds/carecentre/refined/cc_data.rds")
 ### Transforming Categorical Data to Binary Indicator
 
 This code transforms the dataset `cc_data` from a long format to a wide format by pivoting on the categorical values in the `label` column, effectively converting them into binary indicator columns. The process begins by removing the `address` column using `select(-address)` to exclude it from the transformation. Next, a new column called `present` is created using `mutate(present = 1)`, where every row is assigned a value of 1 to indicate the presence of a label. The key reshaping operation is performed using `pivot_wider()`, which spreads the unique values from the `label` column into separate columns. The `names_from = label` argument specifies that the new column names should be derived from the distinct categories in `label`, while `values_from = present` fills these new columns with the corresponding 1s from the `present` column. Any missing combinations (where a particular label does not appear for a given record) are automatically filled with 0s due to the `values_fill = list(0)` argument. The final output, stored in `pivoted_cc_data`, is a wider dataframe where each original row now has binary flags (1 or 0) indicating the presence or absence of each label category, making it suitable for analyses that require a one-hot encoded or dummy variable representation of categorical data.
-
-correct code
 
 ```{r}
 
