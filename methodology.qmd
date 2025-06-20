@@ -538,7 +538,7 @@ In summary, this function helps estimate how many people from an initial cohort 
 ```{r}
 compute_survival_rate <- function(df1, df2) {
   df1 %>%
-    filter(age >= 59 & age < 91) %>%
+    filter(age >= 55 & age < 91) %>%
     mutate(age = age + 1) %>%
     inner_join(df2, 
                by = c("age", "sex", "pa", "sz"),
@@ -590,7 +590,7 @@ pop24 <- read_rds("data/rds/popdata/refined/popdata24_c.rds") %>%
 ```{r}
 compute_survival_rate <- function(df1, df2) {
   df1 %>%
-    filter(age >= 59 & age < 91) %>%
+    filter(age >= 55 & age < 91) %>%
     mutate(age = age + 1) %>%
     inner_join(df2, 
                by = c("age", "sex", "pa", "sz"),
@@ -689,7 +689,7 @@ write_rds(avg_survival_rates, "data/rds/popdata/avg_survival_rates.rds")
 ```{r}
 #| echo: false
 #| eval: false
-avg_survival_rates = read_rds("data/rds/popdata/avg_survival_rates.rds)
+avg_survival_rates = read_rds("data/rds/popdata/avg_survival_rates.rds”)
 ```
 
 #### Step 4: Forecast each year 2025 to 2029
@@ -700,7 +700,7 @@ Next, the function creates a cleaned version of the base population data by firs
 
 In step 3, the aggregation step addresses the possibility of duplicate records or multiple entries for the same demographic-geographic combination. By grouping the data by age, sex, planning area, and subzone, then summing the population values, the function ensures that each unique combination has a single, consolidated population count. This is particularly important in demographic data where the same group might appear multiple times due to data collection methods or administrative boundaries. The `.groups = "drop"` parameter automatically ungroups the data after summarization, preventing issues in subsequent operations.
 
-In step 4 of the code chunk, for individuals aged 59-88, the function implements a cohort-component method where each age group advances by one year (age + 1), simulating the passage of time. The function then performs a left join with the survival rates dataset to match each demographic-geographic group with their appropriate survival rate. This join operation is critical because survival rates typically vary by age, sex, and location due to factors like healthcare access, socioeconomic conditions, and environmental factors. When survival rates are missing for specific groups, the function implements a robust fallback mechanism using `coalesce()` combined with the median survival rate from the entire rates dataset. This approach prevents data loss while providing a reasonable estimate based on the overall population's survival characteristics. The population projection is then calculated by multiplying the current population by the survival rate, effectively reducing each cohort based on expected mortality.
+In step 4 of the code chunk, for individuals aged 55-88, the function implements a cohort-component method where each age group advances by one year (age + 1), simulating the passage of time. The function then performs a left join with the survival rates dataset to match each demographic-geographic group with their appropriate survival rate. This join operation is critical because survival rates typically vary by age, sex, and location due to factors like healthcare access, socioeconomic conditions, and environmental factors. When survival rates are missing for specific groups, the function implements a robust fallback mechanism using `coalesce()` combined with the median survival rate from the entire rates dataset. This approach prevents data loss while providing a reasonable estimate based on the overall population's survival characteristics. The population projection is then calculated by multiplying the current population by the survival rate, effectively reducing each cohort based on expected mortality.
 
 In step 5, The treatment of individuals aged 89 and above reflects demographic modeling conventions where very elderly populations are often grouped together due to small sample sizes and similar demographic characteristics. The function consolidates all individuals aged 89 and above into a single age category (90), recognizing that survival patterns become more uniform at advanced ages. This approach uses survival rates specific to age 90, and when these rates are unavailable, it applies the median survival rate specifically calculated from age-90 data rather than the entire dataset, providing a more age-appropriate estimate.
 
@@ -731,7 +731,7 @@ forecast_year <- function(base_pop, rates, year) {
   
   # 4. Forecast for ages 59-88
   next_pop <- base_pop_agg %>%
-    filter(between(age, 59, 88)) %>%
+    filter(between(age, 55, 88)) %>%
     mutate(age = age + 1) %>%
     left_join(
       rates %>% select(age, sex, pa, sz, avg_rate), 
@@ -862,6 +862,36 @@ write_rds(pivoted_data, "data/rds/popdata/pivoted_data.rds")
 pivoted_data = read_rds("data/rds/popdata/pivoted_data.rds")
 ```
 
+The data aggregation process began by filtering the pivoted dataset using `filter(age >= 60)` to include only individuals aged 60 years and above. The filtered data was then grouped by subzone using `group_by(sz)` to enable population calculations at the geographic level. For each subzone, the total elderly population was calculated using the `summarise()` function, which created new variables (`aged_2025`, `aged_2026`, `aged_2027`, `aged_2028`, `aged_2029`) by summing the population counts for both males and females across the five-year projection period from 2025 to 2029. The `sum()` function with the parameter `na.rm = TRUE` was used to handle missing values by excluding them from the calculations to ensure accurate totals. The `.groups = 'drop'` parameter was included to remove the grouping structure after summarization. This resulted in a summary dataset where each row represents a unique subzone, with columns containing the projected elderly population counts for each year from 2025 through 2029. The original age and sex variables were removed during this aggregation process as they were no longer needed, creating a streamlined dataset focused on subzone-level elderly population projections.
+
+```{r}
+# Aggregate population for ages 60 and above by subzone (combining males and females)
+geri_forecast <- pivoted_data %>%
+  filter(age >= 60) %>%
+  group_by(sz) %>%
+  summarise(
+    aged_2025 = sum(pop_2025, na.rm = TRUE),
+    aged_2026 = sum(pop_2026, na.rm = TRUE),
+    aged_2027 = sum(pop_2027, na.rm = TRUE),
+    aged_2028 = sum(pop_2028, na.rm = TRUE),
+    aged_2029 = sum(pop_2029, na.rm = TRUE),
+    .groups = 'drop'
+  )
+
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(geri_forecast, "data/rds/popdata/geri_forecast.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+geri_forecast = read_rds("data/rds/popdata/geri_forecast.rds")
+```
+
 ## MPSZ: Singapore's Master Plan 2019 Subzone Boundary
 
 ### Overview
@@ -940,7 +970,7 @@ write_rds(mpsz, "data/rds/mpsz/mpsz.rds")
 mpsz = read_rds("data/rds/mpsz/mpsz.rds")
 ```
 
-### Combining MPSZ & Population Forecast
+### Combining MPSZ & Population Forecast - correct
 
 This codechunk performs a spatial join between `MPSZ` and \`Population forecast data, with data cleaning to handle missing values. The first section creates cleaned versions of both datasets by adding a standardised join key - `mpsz_clean` takes the subzone geometry data and creates a `join_key` by converting the subzone names to uppercase and removing any whitespace using `str_trim()` and `str_to_upper()`. Similarly, `pivoted_clean` processes the population forecast data by creating the same type of standardised join key from the `sz` column, ensuring consistent formatting for matching between the two datasets. The main join operation uses `left_join()` to combine the subzone geometries with the population data based on the matching join keys, preserving all subzones even if they don't have corresponding population data. After joining, the temporary `join_key` column is removed using `select(-join_key)` to clean up the final dataset. The final step uses `mutate(across(where(is.numeric), ~replace_na(.x, 0)))` to identify all numeric columns in the joined dataset and replace any NA values with 0, ensuring that subzones without population forecasts display as having zero population rather than missing data.
 
@@ -1026,16 +1056,39 @@ unique(mpsz_land$LU_DESC)
 mpsz_land <- st_buffer(mpsz_land, dist = 1)
 ```
 
+### Filtering to Residential Use
+
+In the code chunk below, we use the `select()`function to pick the columns that are required for the anlaysis. Additionally, `filter()` the column `LU_DESC` for those words containing 'residential'. Regular expression was used alongside ignoring captital letters.
+
+```{r}
+mpsz_res <- mpsz_land %>%
+  select(LU_DESC, geometry) %>%
+  filter(str_detect(LU_DESC, regex("residential", ignore_case = TRUE)))
+```
+
 ```{r}
 #| echo: false
 #| eval: false
-write_rds(mpsz_land, "data/rds/mpsz/mpsz_land.rds")
+write_rds(mpsz_res, "data/rds/mpsz/mpsz_res.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+mpsz_res = read_rds("data/rds/mpsz/mpsz_res.rds")
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
 mpsz_land = read_rds("data/rds/mpsz/mpsz_land.rds")
+```
+
+```{r}
+tmap_mode("plot")
+tmap_options(check.and.fix = TRUE)
+tm_shape(mpsz_res) +
+  tm_polygons()
 ```
 
 ### Sampling Grid
@@ -1055,7 +1108,7 @@ tm_shape(mpsz_res) +
 In the HealthierSG White Paper 2022, the Ministry of Health has indicated its intention to "expand the network \["care centres"\] to 220 by 2025". Furthermore, through the Ministry's estimation, 8 in 10 seniors will have a care centre in the vicinity of their homes (Ministry of Health, 2022). Hence, we will assume that the maximum distance to the care centres are 100 metres. Hence, in the code chunk below, `st_make_grid` from `sf` package constructed hexagonal grids encompassing the Singapore Master Plan 2019 Planning Subzone Boundary using `cellsize` that defines the radius of 100 metres and `square` to be false to generate a hexagonal grid.
 
 ```{r}
-hexagon <- st_make_grid(mpsz_popforecast,
+hexagon <- st_make_grid(mpsz_res,
                          cellsize = 100,
                          what = "polygon",
                          square = FALSE) %>%
@@ -1063,8 +1116,20 @@ hexagon <- st_make_grid(mpsz_popforecast,
 ```
 
 ```{r}
-hexagon$hex_id <- sprintf("H%04d", seq_len(nrow(hexagon))) %>% as.factor()
-head(hexagon)
+tmap_mode("plot")
+tmap_options(check.and.fix = TRUE)
+tm_shape(hex_res) +
+  tm_polygons()
+```
+
+```{r}
+hex_res <- hexagon[st_intersects(hexagon, mpsz_res, sparse = FALSE) %>% apply(1, any), ]
+#sparse = exclude zone without any intersection
+```
+
+```{r}
+hex_res$hex_id <- sprintf("H%04d", seq_len(nrow(hex_res))) %>% as.factor()
+head(hex_res)
 ```
 
 #### Step 2: Calculate the Area of Each Subzone
@@ -1072,7 +1137,7 @@ head(hexagon)
 Next, the code below will computer the area of each polygon in `mpsz_`.
 
 ```{r}
-mpsz_popforecast <- mpsz_popforecast %>%
+mpsz <- mpsz %>%
   mutate(mpsz_area = st_area(geometry))
 ```
 
@@ -1081,7 +1146,30 @@ mpsz_popforecast <- mpsz_popforecast %>%
 The code chunk below derive the overlapping geometry between hexagons and subzones.
 
 ```{r}
-hex_mpsz_intersection <- st_intersection(hexagon, mpsz_popforecast)
+hex_mpsz_intersection <- st_intersection(hex_res, mpsz)
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(hex_mpsz_intersection, "data/rds/mpsz/hex_mpsz_intersection.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+mpsz_res = read_rds("data/rds/mpsz/mpsz_res.rds")
+```
+
+# hex_res should be less than 97920
+
+there is slightly increase as there are hex that have more than 2 SZ
+
+```{r}
+tmap_mode("plot")
+tmap_options(check.and.fix = TRUE)
+tm_shape(hex_mpsz_intersection) +
+  tm_polygons()
 ```
 
 #### Step 4: Calculate Area of Each Intersection
@@ -1092,41 +1180,44 @@ hex_mpsz_intersection <- hex_mpsz_intersection %>%
            st_area(geometry))
 ```
 
-### Filtering to Residential Use
+#LEFT JOIN hex_mpsz_intersection & mpsz_popforecast
 
-In the code chunk below, we use the `select()`function to pick the columns that are required for the anlaysis. Additionally, `filter()` the column `LU_DESC` for those words containing 'residential'. Regular expression was used alongside ignoring captital letters.
+```{R}
 
-```{r}
-mpsz_res <- mpsz_land %>%
-  select(LU_DESC, geometry) %>%
-  filter(str_detect(LU_DESC, regex("residential", ignore_case = TRUE)))
+
 ```
 
 #### Step 5: Estimate Hexagon Population
 
 Assume uniform population density within each subzone. So, the hexagon’s share of the population is:
 
+DO IT 5 TIMES (2025-2029)
+
 ```{r}
 hex_mpsz_intersection <-
   hex_mpsz_intersection %>%
-  mutate(mpsz_popforecast = as.numeric(
+  mutate(aged_2025 = as.numeric(
     intersection_area / mpsz_area * 
-      pop))
+      pop_2025))
 ```
 
-## ?OD MATRIx
-
-```{r}
-#| echo: false
-#| eval: false
-write_rds(hex_res, "data/rds/mpsz/hex_res.rds")
-```
+*hexagon_final* now includes a new column *estimated_population*, which is the area-weighted population estimate for each hexagon.
 
 ```{r}
 #| echo: false
 #| eval: false
-hex_res = read_rds("data/rds/mpsz/hex_res.rds")
+write_rds(hexagon_final, "data/rds/mpsz/hexagon_final.rds")
 ```
+
+```{r}
+#| echo: false
+#| eval: false
+hexagon_final = read_rds("data/rds/mpsz/hexagon_final.rds")
+```
+
+*hexagon_final* now includes a new column *estimated_population*, which is the area-weighted population estimate for each hexagon.e
+
+#EDA plot estimated aged_pop vby hexagon for year 2025
 
 ### Visualing hex_grids & res
 
