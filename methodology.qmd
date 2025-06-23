@@ -18,25 +18,25 @@ editor: source
 
 # Chapter Overview
 
-In this section, we will acquire the data sets from various government open-sources data repository and websites. Thereafter, we will install the necessary R packages and import the data sets. In each data set, we will delve into the necessary checks, issues faced and steps into resolving the issue. Thereafter, exploratory data analysis is done.
+In this section, we will acquire the various data sets required for this research from various government open-sources data repositories and websites. Thereafter, we will install the necessary R packages and import the data sets. In each data set, we will delve into the necessary data checks, issues and transformation. Lastly, exploratory data analysis is done.
 
 # Data Acquisition
 
-In this research, 3 main spectrum of data will be required for this research, namely the Population Data, Master Plan 2019 Subzone boundary and Care Centres. These datasets are gathered from multiple open-source websites which includes Singapore Department of Statistics, Data.gov.sg, and Agency of Integrated Care.
+In this research, 3 main spectrums of data will be required for this research as depicted in Figure 1, namely the Population Data, Master Plan 2019 Subzone boundary and Care Centres. These data sets are gathered from multiple open-source websites which includes Singapore Department of Statistics, Data.gov.sg, and Agency of Integrated Care.
 
 ![Figure 1: Data Overview](/metho_images/data_overview.png){fig-align="center"}
 
 ## Singapore Master Plan 2019 Subzone Boundary
 
-The Singapore Master Plan 2019 Planning Subzone Boundary (No Sea) and Amendment to Master Plan 2019 Land Use Layer are ESRI shapefiles that are downloaded from Data.gov.sg.
+The first spectrum of data sets will be the Singapore Master Plan 2019 Planning Subzone Boundary (No Sea) and Amendment to Master Plan 2019 Land Use Layer are ESRI shapefiles that were downloaded from Data.gov.sg. These will act as a base layer for geographical mapping of the project.
 
 ## Population Data
 
-The population datasets are retrieved from [SingStat.gov.sg](https://www.singstat.gov.sg/find-data/search-by-theme/population/geographic-distribution/latest-data). Specifically, Singapore Resident by Planning Area/Subzone, Single Year of Age and Sex, June 2024, 2023, 2022, 2021, and, 2011-2020 are selected for this research. As the version January 2025 will be not be ready in due time for this research project, thus, the latest available dataset, June 2024 will be used.
+The second spectrum of data sets will be the population datasets that were retrieved from [SingStat.gov.sg](https://www.singstat.gov.sg/find-data/search-by-theme/population/geographic-distribution/latest-data). Specifically, Singapore Resident by Planning Area/Subzone, Single Year of Age and Sex, June 2024, 2023, 2022, 2021, and, 2011-2020 were selected for this research. As the version January 2025 will be not be ready in due time for this research project, thus, the latest available dataset, June 2024 will be used. This data sets are used to project the older adults populations in Singapore.
 
 ## WebScraping of Care Centres
 
-Due to the lack of a centralised data of all care centres, web scraping is warranted in retrieving the geographical information of the care centres. The geographical locations of the Care Centres alongside the centre names such as Active Ageing Centre, Day Care, Community Rehabilitation Centre, Centre-based Nursing were extracted using a web scraping tool, Web Scraper, available in Chrome web store as Seen in Figure x. As there is no centralised file that consist of the centre names and their locations, the location of each centre has to be manually extracted, filtered by each centre type, from the [Care Services](https://www.aic.sg/care-services/) webpage of the Agency of Integrated Care as seen in Figure x.
+The third spectrum of dataset is the Care Centre. Due to the lack of a centralised data of all care centres, web scraping is warranted in retrieving the geographical information of the care centres. The geographical locations of the Care Centres alongside the centre names such as Active Ageing Centre, Day Care, Community Rehabilitation Centre, Centre-based Nursing were extracted using a web scraping tool, Web Scraper, available in Chrome web store as Seen in Figure 2. As there is no centralised file that consist of the centre names and their locations, the location of each centre has to be manually extracted, filtered by each centre type, from the [Care Services](https://www.aic.sg/care-services/) webpage of the Agency of Integrated Care in the following figures. The steps of data scraping will be laid out in details in the next paragraph.
 
 Step 0: Download Web Scraper from Chrome web store
 
@@ -167,7 +167,7 @@ In this section, a total of 4 population datasets from year 2020 to year 2024 wi
 In importing data, `read_csv()` and `rename_with()` of tidyverse package are used to perform column name standardisation by converting all variable names in the respective datasets to lowercase.
 
 :::: panel-tabset
-### Population Data 2024
+#### Population Data 2024
 
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2024](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2024.ashx)
 
@@ -176,7 +176,7 @@ popdata24 <- read_csv("data/popdata/respopagesex2024.csv") %>%
   rename_with(tolower)
 ```
 
-### Population Data 2023
+#### Population Data 2023
 
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2023](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2023.ashx)
 
@@ -185,7 +185,7 @@ popdata23 <- read_csv("data/popdata/respopagesex2023.csv") %>%
   rename_with(tolower)
 ```
 
-### Population Data 2022
+#### Population Data 2022
 
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2022](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2022.ashx) 
 
@@ -204,7 +204,7 @@ Warning: One or more parsing issues, call `problems()` on your data frame for de
 ```
 :::
 
-### Population Data 2021
+#### Population Data 2021
 
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2021](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2021.ashx)
 
@@ -213,7 +213,7 @@ popdata21 <- read_csv("data/popdata/respopagesex2021.csv") %>%
   rename_with(tolower)
 ```
 
-### Population Data 2020
+#### Population Data 2020
 
 [Singapore Residents by Planning Area / Subzone, Single Year of Age and Sex, June 2011-2020](https://www.singstat.gov.sg/-/media/files/find_data/population/statistical_tables/respopagesex2011to2020.ashx)
 
@@ -490,7 +490,7 @@ pop24_geri <- popdata24_c %>%
 
 #### Introduction
 
-In this section, the population data spanning from 2020 to 2024 will undergo cleaning and transformation processes to prepare it for advanced analytical modeling. Following this data preparation phase, survival analysis methodologies will be employed to predict the older adult population demographics from 2025 to 2029. The primary objective of this analytical approach is to calculate survival rates, where death serves as the event of interest in our survival framework. Given the nature of the population data being utilised, we adopt a non-parametric analytical stance, implementing the Kaplan-Meier estimator as our core statistical method for survival probability estimation. A fundamental assumption underlying this analysis is that residents maintain residential stability within their respective subzones throughout the entire study period. Under this assumption, any observed decrease in population within a given subzone can be reasonably attributed to mortality events, as migration and relocation factors are held constant. This methodological framework allows for a more accurate assessment of demographic changes driven primarily by natural population dynamics rather than residential mobility patterns.
+In this section, the population data spanning from 2020 to 2024 will undergo cleaning and transformation processes to prepare it for advanced analytical modeling. This is necessary as it projects the demand (older adults) population from 2025 to 2029 using historical data from 2020 to 2024. In the next few chapters, the supply (care centres) will be populated against the forecast older adults population. Following this data preparation phase, survival analysis methodologies will be employed to predict the older adult population demographics from 2025 to 2029. The primary objective of this analytical approach is to calculate survival rates, where death serves as the event of interest in our survival framework. Given the nature of the population data being utilised, we adopt a non-parametric analytical stance, implementing the Kaplan-Meier estimator as our core statistical method for survival probability estimation. A fundamental assumption underlying this analysis is that residents maintain residential stability within their respective subzones throughout the entire study period. Under this assumption, any observed decrease in population within a given subzone can be reasonably attributed to mortality events, as migration and relocation factors are held constant. This methodological framework allows for a more accurate assessment of demographic changes driven primarily by natural population dynamics rather than residential mobility patterns.
 
 #### Step 0: Defining `clean_age_column`Function
 
@@ -698,13 +698,13 @@ The `forecast_year` function defines a vector of required column names (age, sex
 
 Next, the function creates a cleaned version of the base population data by first converting the population column to numeric format using `as.numeric()`. It then removes any rows where the population value is NA (missing), as these would create errors in subsequent calculations. The `select(all_of(required_cols))` ensures that only the necessary columns are retained, reducing memory usage and eliminating potential conflicts from extraneous variables.
 
-In step 3, the aggregation step addresses the possibility of duplicate records or multiple entries for the same demographic-geographic combination. By grouping the data by age, sex, planning area, and subzone, then summing the population values, the function ensures that each unique combination has a single, consolidated population count. This is particularly important in demographic data where the same group might appear multiple times due to data collection methods or administrative boundaries. The `.groups = "drop"` parameter automatically ungroups the data after summarization, preventing issues in subsequent operations.
+In part 3, the aggregation step addresses the possibility of duplicate records or multiple entries for the same demographic-geographic combination. By grouping the data by age, sex, planning area, and subzone, then summing the population values, the function ensures that each unique combination has a single, consolidated population count. This is particularly important in demographic data where the same group might appear multiple times due to data collection methods or administrative boundaries. The `.groups = "drop"` parameter automatically ungroups the data after summarization, preventing issues in subsequent operations.
 
-In step 4 of the code chunk, for individuals aged 55-88, the function implements a cohort-component method where each age group advances by one year (age + 1), simulating the passage of time. The function then performs a left join with the survival rates dataset to match each demographic-geographic group with their appropriate survival rate. This join operation is critical because survival rates typically vary by age, sex, and location due to factors like healthcare access, socioeconomic conditions, and environmental factors. When survival rates are missing for specific groups, the function implements a robust fallback mechanism using `coalesce()` combined with the median survival rate from the entire rates dataset. This approach prevents data loss while providing a reasonable estimate based on the overall population's survival characteristics. The population projection is then calculated by multiplying the current population by the survival rate, effectively reducing each cohort based on expected mortality.
+In part 4 of the code chunk, for individuals aged 55-88, the function implements a cohort-component method where each age group advances by one year (age + 1), simulating the passage of time. The function then performs a left join with the survival rates dataset to match each demographic-geographic group with their appropriate survival rate. This join operation is critical because survival rates typically vary by age, sex, and location due to factors like healthcare access, socioeconomic conditions, and environmental factors. When survival rates are missing for specific groups, the function implements a robust fallback mechanism using `coalesce()` combined with the median survival rate from the entire rates dataset. This approach prevents data loss while providing a reasonable estimate based on the overall population's survival characteristics. The population projection is then calculated by multiplying the current population by the survival rate, effectively reducing each cohort based on expected mortality.
 
-In step 5, The treatment of individuals aged 89 and above reflects demographic modeling conventions where very elderly populations are often grouped together due to small sample sizes and similar demographic characteristics. The function consolidates all individuals aged 89 and above into a single age category (90), recognizing that survival patterns become more uniform at advanced ages. This approach uses survival rates specific to age 90, and when these rates are unavailable, it applies the median survival rate specifically calculated from age-90 data rather than the entire dataset, providing a more age-appropriate estimate.
+In part 5, The treatment of individuals aged 89 and above reflects demographic modeling conventions where very elderly populations are often grouped together due to small sample sizes and similar demographic characteristics. The function consolidates all individuals aged 89 and above into a single age category (90), recognizing that survival patterns become more uniform at advanced ages. This approach uses survival rates specific to age 90, and when these rates are unavailable, it applies the median survival rate specifically calculated from age-90 data rather than the entire dataset, providing a more age-appropriate estimate.
 
-In step 6, the function combines the forecasted populations from both the main aging process (ages 60-89) and the elderly category (90+) using `bind_rows()`, creating a comprehensive forecast dataset. It adds the forecast year as a new column, enabling tracking of temporal changes across multiple projection periods. The final aggregation step groups by all relevant variables including the year and sums any duplicate combinations that might have emerged from the separate processing of different age ranges, ensuring data consistency and preventing double-counting.
+In part 6, the function combines the forecasted populations from both the main aging process (ages 60-89) and the elderly category (90+) using `bind_rows()`, creating a comprehensive forecast dataset. It adds the forecast year as a new column, enabling tracking of temporal changes across multiple projection periods. The final aggregation step groups by all relevant variables including the year and sums any duplicate combinations that might have emerged from the separate processing of different age ranges, ensuring data consistency and preventing double-counting.
 
 In the second code chunk, the forecasting loop implements a cohort-component projection method where each year's forecast becomes the foundation for the next year's projection. This approach captures the cumulative effects of demographic change over time, as population structure evolves with each iteration. The loop begins with 2024 population data (`pop24`) as the baseline, representing the most recent observed population distribution. The `tryCatch()` mechanism provides comprehensive error handling that prevents the entire forecasting process from failing due to issues with individual years. When errors occur, the system captures detailed debugging information including the data structure of the current population using `str()`, which reveals variable types, dimensions, and sample values. Each successful forecast year produces a new dataset that replaces the current population for the next iteration, creating a sequential chain of demographic projections.
 
@@ -900,7 +900,7 @@ In this section, two datsets will be imported namely Master Plan 2019 Subzone Bo
 
 ### Importing Data
 
-Using `st_read` of the \`sf\` package, the ESRI shapefile was imported and it contains 323 data entries and 15 fields. Each of the data entry consists of a multi-polygon shape, with geospatial coordinates with a geographic coordinate system (GCS) of WGS84. The features of GCS include using a 3D spherical model of earth with coordinates of longitude, latitude and altitude whereas PCS uses a 2D plane model with linear measurements (i.e. metres). However, the file doesn't churn the full details of the Master Plan Boundary. Therefore, the dataset was adjusted using QGIS and downloaded for this project with the assistance of Prof Kam.
+Using `st_read` of the \`sf\` package, the ESRI shapefile was imported and it contains 323 data entries and 15 fields. Each of the data entry consists of a multi-polygon shape, with geospatial coordinates with a geographic coordinate system (GCS) of World Geodetic System (WGS) 84. The features of GCS include using a 3D spherical model of earth with coordinates of longitude, latitude and altitude whereas PCS uses a 2D plane model with linear measurements (i.e. metres). However, the file doesn't churn the full details of the Master Plan Boundary. Therefore, the dataset was adjusted using QGIS and downloaded for this project with the assistance of Prof Kam.
 
 ```{r}
 mpsz = st_read(dsn = "data/planningarea/",
@@ -945,7 +945,7 @@ The below codechunk uses `st_is_valid` in assessing if there are shared boundari
 st_is_valid(mpsz, reason = TRUE)
 ```
 
-This code chunk visualises the boundaries that are affected such as the smaller islands outside of Singapore Main Island: P. Ubin, P. Tekong, Sentosa Island
+This code chunk visualises the boundaries that are affected such as the smaller islands outside of Singapore Main Island: P. Ubin, P. Tekong, Sentosa Island.
 
 ```{r}
 invalid_polygons <- mpsz[!st_is_valid(mpsz),]
@@ -970,11 +970,9 @@ write_rds(mpsz, "data/rds/mpsz/mpsz.rds")
 mpsz = read_rds("data/rds/mpsz/mpsz.rds")
 ```
 
-### Combining MPSZ & Population Forecast - correct
+### Combining MPSZ & Population Forecast
 
-This codechunk performs a spatial join between `MPSZ` and \`Population forecast data, with data cleaning to handle missing values. The first section creates cleaned versions of both datasets by adding a standardised join key - `mpsz_clean` takes the subzone geometry data and creates a `join_key` by converting the subzone names to uppercase and removing any whitespace using `str_trim()` and `str_to_upper()`. Similarly, `pivoted_clean` processes the population forecast data by creating the same type of standardised join key from the `sz` column, ensuring consistent formatting for matching between the two datasets. The main join operation uses `left_join()` to combine the subzone geometries with the population data based on the matching join keys, preserving all subzones even if they don't have corresponding population data. After joining, the temporary `join_key` column is removed using `select(-join_key)` to clean up the final dataset. The final step uses `mutate(across(where(is.numeric), ~replace_na(.x, 0)))` to identify all numeric columns in the joined dataset and replace any NA values with 0, ensuring that subzones without population forecasts display as having zero population rather than missing data.
-
-correct
+This codechunk performs a spatial join between `MPSZ` and population forecast data, `pivoted_clean` using similar column: subzone and with data cleaning to handle missing values. The first section creates cleaned versions of both datasets by adding a standardised join key - `mpsz_clean` takes the subzone geometry data and creates a `join_key` by converting the subzone names to uppercase and removing any whitespace using `str_trim()` and `str_to_upper()`. Similarly, `pivoted_clean` processes the population forecast data by creating the same type of standardised join key from the `sz` column, ensuring consistent formatting for matching between the two datasets. The main join operation uses `left_join()` to combine the subzone geometries with the population data based on the matching join keys, preserving all subzones even if they don't have corresponding population data. After joining, the temporary `join_key` column is removed using `select(-join_key)` to clean up the final dataset. The final step uses `mutate(across(where(is.numeric), ~replace_na(.x, 0)))` to identify all numeric columns in the joined dataset and replace any NA values with 0, ensuring that subzones without population forecasts display as having zero population rather than missing data.
 
 ```{r}
 # Create temporary cleaned versions for joining
@@ -989,27 +987,7 @@ mpsz_popforecast <- mpsz_clean %>%
   left_join(pivoted_clean, by = "join_key") %>%
   select(-join_key) %>%
   mutate(across(where(is.numeric), ~replace_na(.x, 0))) #replace NA with 0
-```
 
-try
-
-```{r}
-combined_original_case <- mpsz %>%
-  distinct(SUBZONE_N) %>%
-  mutate(join_key = toupper(SUBZONE_N)) %>%
-  full_join(
-    pivoted_data %>%
-      distinct(sz) %>%
-      mutate(join_key = toupper(sz)),
-    by = "join_key"
-  ) %>%
-  select(SUBZONE_N, sz) %>%
-  arrange(SUBZONE_N, sz)
-```
-
-###Combining MPSZ & Population Forecast
-
-```{r}
 mpsz_forecast <- mpsz %>%
   left_join(pivoted_clean, by = c("SUBZONE_N" = "sz"))
 ```
@@ -1026,7 +1004,7 @@ write_rds(mpsz_popforecast, "data/rds/mpsz/mpsz_popforecast.rds")
 mpsz_popforecast = read_rds("data/rds/mpsz/mpsz_popforecast.rds")
 ```
 
-## MPSZ Land Use
+## Master Plan 2019 Subzone Boundary (Land Use)
 
 ### Importing Data
 
@@ -1058,7 +1036,7 @@ mpsz_land <- st_buffer(mpsz_land, dist = 1)
 
 ### Filtering to Residential Use
 
-In the code chunk below, we use the `select()`function to pick the columns that are required for the anlaysis. Additionally, `filter()` the column `LU_DESC` for those words containing 'residential'. Regular expression was used alongside ignoring captital letters.
+In the code chunk below, we use the `select()`function to pick the columns that are required for the analysis. Additionally, `filter() -ing` the column `LU_DESC` for those words containing 'residential': Regular expression was used alongside, ignoring capital letters.
 
 ```{r}
 mpsz_res <- mpsz_land %>%
@@ -1084,6 +1062,8 @@ mpsz_res = read_rds("data/rds/mpsz/mpsz_res.rds")
 mpsz_land = read_rds("data/rds/mpsz/mpsz_land.rds")
 ```
 
+Using `tmap`, we are able to plot all residential areas. Noticeably, there are major regions that are filled with white spaces such as the North-West as it is the central water catchment area and militarily installations and North-East due to the presence of Paya Lebar Airbase and Seletar Airport.
+
 ```{r}
 tmap_mode("plot")
 tmap_options(check.and.fix = TRUE)
@@ -1093,7 +1073,7 @@ tm_shape(mpsz_res) +
 
 ### Sampling Grid
 
-In measuring spatial accessibility, analytical grids of the sampling fields is used to standardise the means of measurement (Kam, 2022). These analytical grids can be comprised of equilateral triangles, squares or hexagon due to its ability to tessellate (ESRI, 2025). From the code output below, we noticed that the sampling fields in the `mpsz_res` are not equal for measurement. Therefore, it is imperative to select an appropriate analytical grid in measuring spatial accessibility. Hexagons grids is chosen over triangles and squares due to several factors. Firstly, the shape of a hexagon has a low-perimeter-to-area ratio, hence the edge effect of the grid shape reduces sampling bias. Secondly, when comparing equal area, any point inside a hexagon is closer to the centriod than any given point in an equal-area square or triangle due to the more acute angles of square and triangle versus the hexagon (Burdziej, 2018; ESRI, 2025). This is particular important in this research as we are using the centroid as a proxy in comparing accessibility to the various care centres. The centre of each hexagon is an Origin, additionally, acting as a starting point in ascertaining the shortest distance to the care centres.
+In measuring spatial accessibility, analytical grids of the sampling fields is used to standardise the means of measurement (Kam, 2022). These analytical grids can be comprised of equilateral triangles, squares or hexagon due to its ability to tessellate (ESRI, 2025). From the code output above, we noticed that the sampling fields in the `mpsz_res` are not equal for measurement. Therefore, it is imperative to select an appropriate analytical grid in measuring spatial accessibility. Hexagons grids is chosen over triangles and squares due to several factors. Firstly, the shape of a hexagon has a low-perimeter-to-area ratio, hence the edge effect of the grid shape reduces sampling bias. Secondly, when comparing equal area, any point inside a hexagon is closer to the centriod than any given point in an equal-area square or triangle due to the more acute angles of square and triangle versus the hexagon (Burdziej, 2018; ESRI, 2025). This is particular important in this research as we are using the centroid as a proxy in comparing accessibility to the various care centres. The centre of each hexagon is an Origin, additionally, acting as a starting point in ascertaining the shortest distance to the care centres.
 
 ```{r}
 tmap_mode("plot")
@@ -1115,6 +1095,8 @@ hexagon <- st_make_grid(mpsz_res,
   st_sf()
 ```
 
+In the plot below, we are able to see mulitple hexagons overlaying the residential areas. Upon closer inspection, there are no hexagons that are cut off which translates to successfully creating hexagons of the residential areas.
+
 ```{r}
 tmap_mode("plot")
 tmap_options(check.and.fix = TRUE)
@@ -1122,31 +1104,61 @@ tm_shape(hex_res) +
   tm_polygons()
 ```
 
+#### Step 2: Intersection of Hexagons & MPSZ_RES
+
+The `st_intersects()` function was used to identify geometric intersections between the hexagon grid and the `mpsz_res` sf dataset, with the `sparse = FALSE` parameter ensuring that the result was returned as a dense logical matrix rather than a sparse list format. The `apply(1, any)` function was then applied row-wise to this intersection matrix to determine which hexagon cells had at least one intersection with any planning area boundary. Finally, this logical vector was used to subset the original hexagon dataset, retaining only those hexagonal cells that spatially overlapped with the study area boundaries. This spatial filtering step is crucial for focusing the accessibility analysis on areas where elderly populations actually reside. By removing hexagons that don't intersect with residential areas, the analysis excludes industrial zones, water bodies, nature reserves, airports, and other non-residential land uses where elderly care accessibility is irrelevant.
+
 ```{r}
 hex_res <- hexagon[st_intersects(hexagon, mpsz_res, sparse = FALSE) %>% apply(1, any), ]
 #sparse = exclude zone without any intersection
 ```
+
+#### Step 3: Assigning Unique Identifier to Hexagon
+
+In the below code, we assign each hexagon with a unique identifier using `Hxxx` for accessibility analysis and results reporting.
 
 ```{r}
 hex_res$hex_id <- sprintf("H%04d", seq_len(nrow(hex_res))) %>% as.factor()
 head(hex_res)
 ```
 
-#### Step 2: Calculate the Area of Each Subzone
+```{r}
+#| echo: false
+#| eval: false
+write_rds(hex_res, "data/rds/mpsz/hex_res.rds")
+```
 
-Next, the code below will computer the area of each polygon in `mpsz_`.
+```{r}
+#| echo: false
+#| eval: false
+hex_res = read_rds("data/rds/mpsz/hex_res.rds")
+```
+
+#### Step 4: Calculate the Area of Each Subzone
+
+Next, the code below will compute the area of each polygon in `mpsz`. This step is essential for population density calculations, enabling the proportional allocation of the population data to hexagon intersections based on their size within each subzone.
 
 ```{r}
 mpsz <- mpsz %>%
   mutate(mpsz_area = st_area(geometry))
 ```
 
-#### Step 3: Intersect Hexagons with Subzones
+#### Step 5: Intersect Hexagons with Subzones
 
-The code chunk below derive the overlapping geometry between hexagons and subzones.
+This step creates intersection geometries between hexagons and subzones using `st_intersection()`, resulting in polygon fragments that represent the overlapping portions of hexagons and subzone boundaries. These intersection polygons provide the geometric foundation for accurate population disaggregation, ensuring that elderly population estimates at the hexagon level reflect the actual administrative boundaries where demographic data is collected and reported.
 
 ```{r}
 hex_mpsz_intersection <- st_intersection(hex_res, mpsz)
+```
+
+#### Step 6: Calculate Area of Each Intersection
+
+The below code chunk calculates the area of each intersection polygon, representing the precise spatial extent of hexagon-subzone overlaps, which is essential for proportional population allocation.
+
+```{r}
+hex_mpsz_intersection <- hex_mpsz_intersection %>% 
+  mutate(intersection_area =
+           st_area(geometry))
 ```
 
 ```{r}
@@ -1161,112 +1173,118 @@ write_rds(hex_mpsz_intersection, "data/rds/mpsz/hex_mpsz_intersection.rds")
 mpsz_res = read_rds("data/rds/mpsz/mpsz_res.rds")
 ```
 
-# hex_res should be less than 97920
+#### Step 7: Data Integration
 
-there is slightly increase as there are hex that have more than 2 SZ
-
-```{r}
-tmap_mode("plot")
-tmap_options(check.and.fix = TRUE)
-tm_shape(hex_mpsz_intersection) +
-  tm_polygons()
-```
-
-#### Step 4: Calculate Area of Each Intersection
-
-```{r}
-hex_mpsz_intersection <- hex_mpsz_intersection %>% 
-  mutate(intersection_area =
-           st_area(geometry))
-```
-
-#LEFT JOIN hex_mpsz_intersection & mpsz_popforecast
+The below code chunk joins the spatial intersection data with geriatric population forecasts by creating standardized join keys that handle inconsistencies in text formatting (case, whitespace) between the spatial and demographic datasets. This integration step combines spatial analysis infrastructure with demographic projections, creating the analytical foundation for accessibility research.
 
 ```{R}
-
-
+joined_data <- hex_mpsz_intersection %>%
+  mutate(join_key = str_to_upper(str_trim(str_squish(SUBZONE_N)))) %>%
+  left_join(
+    geri_forecast %>% 
+      mutate(join_key = str_to_upper(str_trim(str_squish(sz)))),
+    by = "join_key"
+  ) %>%
+  select(-join_key)
 ```
 
-#### Step 5: Estimate Hexagon Population
-
-Assume uniform population density within each subzone. So, the hexagon’s share of the population is:
-
-DO IT 5 TIMES (2025-2029)
+```{r}
+#| echo: false
+#| eval: false
+write_rds(joined_data, "data/rds/mpsz/joined_data.rds")
+```
 
 ```{r}
-hex_mpsz_intersection <-
-  hex_mpsz_intersection %>%
-  mutate(aged_2025 = as.numeric(
+#| echo: false
+#| eval: false
+joined_data = read_rds("data/rds/mpsz/joined_data")
+```
+
+#### Step 8: Area Weighted Population Estimation in Each Hexagon
+
+In each of the code chunk below, it estimates the elderly population within each hexagon intersection using a proportional allocation formula: `(intersection_area / mpsz_area) * aged_population`, which distributes subzone-level elderly population projections to hexagon fragments based on their relative area coverage. This population disaggregation methodology transforms coarse administrative-level demographic data into fine-grained spatial estimates suitable for accessibility analysis. Each hexagon will ultimately represent a specific elderly population that needs access to care centers, enabling the research to identify areas with high demand but potentially poor accessibility. The temporal dimension (2025-2029 projections) allows for forward-looking accessibility planning, helping policymakers anticipate where new care centers might be needed as Singapore's elderly population grows and concentrates in different areas. This approach ensures that accessibility analysis reflects realistic population distributions rather than treating each hexagon as having equal elderly population, providing more accurate insights for healthcare infrastructure planning.
+
+```{r}
+geriesti_hex_2025 <-
+  joined_data %>%
+  mutate(pop_2025 = as.numeric(
     intersection_area / mpsz_area * 
-      pop_2025))
+      aged_2025))
 ```
 
-*hexagon_final* now includes a new column *estimated_population*, which is the area-weighted population estimate for each hexagon.
+```{r}
+geriesti_hex_2026 <-
+  joined_data %>%
+  mutate(pop_2026 = as.numeric(
+    intersection_area / mpsz_area * 
+      aged_2026))
+```
+
+```{r}
+geriesti_hex_2027 <-
+  joined_data %>%
+  mutate(pop_2027 = as.numeric(
+    intersection_area / mpsz_area * 
+      aged_2027))
+```
+
+```{r}
+geriesti_hex_2028 <-
+  joined_data %>%
+  mutate(pop_2028 = as.numeric(
+    intersection_area / mpsz_area * 
+      aged_2028))
+```
+
+```{r}
+geriesti_hex_2029 <-
+  joined_data %>%
+  mutate(pop_2029 = as.numeric(
+    intersection_area / mpsz_area * 
+      aged_2029))
+```
 
 ```{r}
 #| echo: false
 #| eval: false
-write_rds(hexagon_final, "data/rds/mpsz/hexagon_final.rds")
+write_rds(geriesti_hex_2025, "data/rds/mpsz/geriesti_hex_2025.rds")
+write_rds(geriesti_hex_2026, "data/rds/mpsz/geriesti_hex_2026.rds")
+write_rds(geriesti_hex_2027, "data/rds/mpsz/geriesti_hex_2027.rds")
+write_rds(geriesti_hex_2028, "data/rds/mpsz/geriesti_hex_2028.rds")
+write_rds(geriesti_hex_2029, "data/rds/mpsz/geriesti_hex_2029.rds")
 ```
 
 ```{r}
 #| echo: false
 #| eval: false
-hexagon_final = read_rds("data/rds/mpsz/hexagon_final.rds")
+geriesti_hex_2025 = read_rds("data/rds/mpsz/geriesti_hex_2025")
+geriesti_hex_2026 = read_rds("data/rds/mpsz/geriesti_hex_2026")
+geriesti_hex_2027 = read_rds("data/rds/mpsz/geriesti_hex_2027")
+geriesti_hex_2028 = read_rds("data/rds/mpsz/geriesti_hex_2028")
+geriesti_hex_2029 = read_rds("data/rds/mpsz/geriesti_hex_2029")
 ```
 
 *hexagon_final* now includes a new column *estimated_population*, which is the area-weighted population estimate for each hexagon.e
 
-#EDA plot estimated aged_pop vby hexagon for year 2025
-
-### Visualing hex_grids & res
-
-```{r}
-# Set tmap mode and options
-tmap_mode("plot")  # Use "view" for interactive map
-tmap_options(check.and.fix = TRUE)
-tmap_options(max.categories = n_distinct(mpsz_res$LU_DESC))
-```
-
-```{r}
-# Create the base map with land use
-base_map <- tm_shape(mpsz_res) +
-  tm_shape(hex_grid) +
-  tm_polygons("LU_DESC",
-              palette = "Set3",
-              title = "Land Use Type",
-              alpha = 0.7,
-              border.col = "gray30",
-              lwd = 0.3) +
-  tm_layout(legend.outside = TRUE,
-            frame = FALSE)
-```
-
-```{r}
-base_map
-```
-
-```{r}
-# Add hexagon grid overlay
-final_map <- base_map +
-  tm_shape(hex_grid) +
-  tm_borders(col = "black",
-             lwd = 0.5,
-             alpha = 0.5) +
-  tm_text("hex_id",
-          size = 0.5,
-          col = "black",
-          alpha = 0.7)
-```
-
-```{r}
-# Display the map
-final_map
-```
-
-## Care Centre
+## Care Centres
 
 ### Overview
+
+In this section, multiple types of care centres datasets will be imported, cleaned and transformed. Care Centres entails Active Ageing Centre (`aac`), counselling centres for seniors (`counselling`), senior day care (`daycare`), dementia day care (`dementia`), hospice day care (`hospice`), maintenance centres (`maintenance`), Nursing Home Respites (`nhrespite`), nursing-based centres (`nursing`) and rehabilitation centres (`rehab`). The services for each type of centre is provided below. All of these centres will open during office hours and thereafter, seniors are able to head home.
+
+| Care Centres | Services |
+|----|----|
+| [Active Ageing Centres](https://supportgowhere.life.gov.sg/services/SVC-AACAAACHASACS/active-ageing-centres-aac) | A go-to point for seniors to build strong social connections, take part in recreational activities, access community health services, and contribute to the community. |
+| [Counselling (Seniors)](https://supportgowhere.life.gov.sg/services/ceeJSWE0/counselling-seniors) | Provides counselling to older persons aged 50 and above and/or their caregivers, to improve their mental well-being and resilience to cope with life’s challenges. |
+| [Senior Day Care](https://supportgowhere.life.gov.sg/services/SVC-SDC/senior-day-care) | Provides a full day programme for seniors who are suitable for centre-based care setting. Supports seniors to maintain and/or improve their general, physical and social well-being. |
+| [Dementia Day Care](https://supportgowhere.life.gov.sg/services/SVC-DDC/dementia-day-care) | Mind stimulating activities, exercises and personal care for seniors with dementia. |
+| [Day Hospice Care](https://supportgowhere.life.gov.sg/services/SVC-PDC/day-hospice-care) | A safe and supportive environment for patients with life-limiting illnesses and their caregivers. |
+| [Maintenance Day Care Centre](https://supportgowhere.life.gov.sg/services/SVC-MDCC/maintenance-day-care-centre) | Full day programme of engaging activities, exercises and personal care for seniors. |
+| [Nursing Home Respite Care](https://supportgowhere.life.gov.sg/services/SVC-NHRC/nursing-home-respite-care) | A stay-in, subsidised care option with healthcare services for seniors with high care needs if caregivers need a short break on an ad hoc basis during the day. |
+| [Centre-based Nursing](https://supportgowhere.life.gov.sg/services/SVC-CBN/centre-based-nursing) | Basic nursing care for seniors at a centre near their homes. |
+| [Community Rehabilitation Centre](https://supportgowhere.life.gov.sg/services/SVC-CRC/community-rehabilitation-centre) | Therapy sessions to help seniors regain their ability to carry out daily activities. |
+
+### Importing Data
 
 ```{r}
 aac <- read_csv("data/carecentre/activeageingcentre.csv")
@@ -1615,9 +1633,9 @@ nursing = read_rds("data/rds/carecentre/refined/nursing.rds")
 rehab = read_rds("data/rds/carecentre/refined/rehab.rds")
 ```
 
-### Append all Care Centres into one dataset
+### Append all Care Centres into One Dataset
 
-The code combines multiple datasets (aac, counselling, daycare, dementia, hospice, maintenance, nhrespite, nursing, and rehab) into a single dataset named c_data using the bind_rows() function. This function appends the rows of each dataset, stacking them vertically, to create one consolidated dataset. The resulting c_data will contain all the rows from the individual datasets, assuming they have the same column structure.
+The code combines multiple datasets (aac, counselling, daycare, dementia, hospice, maintenance, nhrespite, nursing, and rehab) into a single dataset named `cc_data` using the `bind_rows()` function. This function appends the rows of each dataset, stacking them vertically, to create one consolidated dataset. The resulting `cc_data` will contain all the rows from the individual datasets.
 
 ```{r}
 cc_data <- bind_rows(
@@ -1666,7 +1684,7 @@ pivoted_cc_data <- cc_data %>%
   )
 ```
 
-using arrange(0, we are able to see that that the centres are arranged in alphabetically order and they are similar ones.
+Using arrange(0, we are able to see that that the centres are arranged in alphabetically order and they are similar ones.
 
 ```{r}
 arrange(pivoted_cc_data)
