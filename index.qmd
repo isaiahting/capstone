@@ -1,5 +1,5 @@
 ---
-title: "Accessibility of Eldercare Service In Singapore: A Geospatial Analysis"
+title: "Accessibility of Eldercare Centres: A Geospatial Analysis"
 listing:
   sort: "date desc"
   type: grid
@@ -15,7 +15,7 @@ This website is crafted in Partial Fulfillment of the Requirements for the Capst
 
 Inspired by the pioneering work of John Snow in epidemiology, whose spatial mapping of cholera outbreaks in the 1850s revolutionized disease tracking, I aim to apply geospatial principles to contemporary challenges, using spatial data to analyze patterns, uncover insights, and contribute to more informed decision-making in fields like public health and beyond, especially with the rise of infectious diseases.
 
-In this capstone project, I aimed at ascertaining the accessibility of elderly care services in Singapore.
+In this capstone project, I aimed in ascertaining the accessibility of elderly care services in Singapore.
 
 Looking forward to your opinions too via Linkedin.
 
