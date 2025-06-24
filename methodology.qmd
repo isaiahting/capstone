@@ -1,17 +1,17 @@
 ---
-title: "Data Preview"
+title: "Methodology"
 date: "21st Feb, 2025"
 date-modified: "last-modified"
 format:
-  html:
+ html:
     code-fold: false
     code-summary: "Code Chunk"
     number-sections: true
 execute: 
   eval: true #r will run through all codes
   echo: true #r will display all code chunk
-  warning: false #for mark down
-  freeze: true #r will not render all existing  html files
+  warning: false #for markdown
+  freeze: true #r will not render all existing html files
   message: false #avoid printing warning message
 editor: source
 ---
@@ -1928,54 +1928,11 @@ tm_shape(cc_sf) +
   tm_dots() #change to name
 ```
 
-
 # Exploratory Data Analysis
 
-## Population
+## Population Pyramid of Historical Data Year 2020 to 2024
 
-### EDA of Population Data
-
-```{r}
-
-### Step 1: Define a function to filter and aggregate age distribution data
-get_age_distribution <- function(data, min_age = 60, max_age = 90) {
-  data %>%
-    filter(age >= min_age & age <= max_age) %>%
-    group_by(time, age, sex) %>%
-    summarise(total_pop = sum(pop), .groups = "drop")
-}
-```
-
-```{r}
-### Step 2: Use the function to process data
-age_dist <- get_age_distribution(popdata20_c)  # Default: ages 60-90
-
-### Step 3: Plot age distributions by year and sex
-plot_age_distribution <- function(age_data) {
-  ggplot(age_data, aes(x = age, y = total_pop, fill = sex)) +
-    geom_bar(stat = "identity", position = "dodge") +
-    facet_wrap(~time, scales = "free_y") +
-    labs(
-      title = "Age Distribution (60-90 Years) by Sex and Year",
-      x = "Age",
-      y = "Total Population",
-      fill = "Sex"
-    ) +
-    scale_x_continuous(breaks = seq(60, 90, by = 5)) +
-    theme_minimal() +
-    theme(legend.position = "bottom")
-}
-
-# Generate the plot
-plot_age_distribution(age_dist)
-```
-
-```{r}
-#| echo: false #not show code
-#| eval: false
-```
-
-In generating the population pyramid, the below oko
+In generating the population pyramid, we will load a function called `get_age_distribution`.
 
 ```{r}
 #load data
@@ -1991,8 +1948,10 @@ get_age_distribution <- function(data, min_age = 60, max_age = 90) {
 }
 ```
 
+From the population pyramid below, there is a steady decline of population from age 60 to 75 for both male and female and there is a large number of population for age 90. This is due to the aggregation of the population of age 90 and above. Hence the data presented is not a true representation of the population of age 90.
+
 ```{r}
-#2020
+# year 2020
 age_dist <- get_age_distribution(popdata20_c)
 # 3. Create population pyramid plot function 
 plot_population_pyramid <- function(age_data, plot_year = max(age_data$time)) {
@@ -2215,15 +2174,12 @@ final_plot <- plot_population_pyramid(age_dist)
 print(final_plot)
 ```
 
-![Figure x: Population Pyramid 2020](/metho_images/2020.png) ![Figure x: Population Pyramid 2021](/metho_images/2021.png) ![Figure x: Population Pyramid 2022](/metho_images/2022.png) ![Figure x: Population Pyramid 2023](/metho_images/2023.png) ![Figure x: Population Pyramid 2024](/metho_images/2024.png) \### Survival Analysis from 2025 - 2030
+## Population Forecast from Year 2025 to 2029 with Active Ageing Centre (AAC)
 
-
-## Density of Care Centre in Each Subzone
-
-data with aac
+In this population forecast for Year 2025, we are able to see concentrated (areas in red) older adults population against the backdrop of Active Ageing Centre (AAC)
 
 ```{r}
-tmap_mode("plot")
+tmap_mode("view")
 tm_shape(geri_forecast) +
   tm_fill("aged_2025",
           title = "Population 2025",
@@ -2246,9 +2202,16 @@ tm_shape(cc_sf[cc_sf$aac == 1, ]) +
   tm_scale_bar(position = c("left", "bottom"))
 ```
 
+## Population Growth from Year 2025 to 2029 with AAC
+
+In the interactive map below, the population growth of Age 60 and above from Year 2025 to Year 2029 has been plotted. The darker colour indicates increase of population. Active Ageing Centres has been overlaid onto the population growth of the older adults.
+
+Observation 1: One subzone that will be facing an increase of older adult population is Tampines East. However, there is only 6 Active Ageing Centres available in the subzone.
+
+Observation 2: In the subzone of Holland Road, there is an increase of population of 287 older adults from 2025 to 2029. However, there is no Active Ageing Centre in this subzone. Local context is important here as Holland Road is an affluent residential area, predominantly filled with landed properties and condominiums. Accessibility is likely to be poor in this subzone Hence, Active Ageing Centre may not be established in this region as most residents drive and they can commute using their own transport to the nearest AAC.
+
 ```{r}
 tmap_mode("view")
-
 # Reshape data to long format for faceting
 geri_long <- geri_forecast %>%
   pivot_longer(cols = c(aged_2025, aged_2026, aged_2027, aged_2028, aged_2029),
@@ -2256,7 +2219,7 @@ geri_long <- geri_forecast %>%
                values_to = "population") %>%
   mutate(year = gsub("aged_", "", year))
 
-# Create faceted heatmap
+# Create faceted heatmap with AAC overlay
 tm_shape(geri_long) +
   tm_fill("population",
           title = "Population",
@@ -2264,8 +2227,13 @@ tm_shape(geri_long) +
           style = "cont") +
   tm_borders(col = "white", lwd = 0.3) +
   tm_facets(by = "year", ncol = 3) +
+tm_shape(cc_sf[cc_sf$aac == 1, ]) +
+  tm_dots(col = "black",
+          size = 0.1,
+          alpha = 0.8,
+          title = "Active Ageing Centres") +
   tm_layout(
-    title = "Population Forecast by Year",
+    title = "Population Forecast by Year with Active Ageing Centres",
     legend.position = c("right", "bottom"),
     panel.labels = c("2025", "2026", "2027", "2028", "2029"),
     frame = FALSE
@@ -2282,7 +2250,7 @@ geri_forecast <- geri_forecast %>%
     percent_change = ((aged_2029 - aged_2025) / aged_2025) * 100
   )
 
-# Heatmap of total change (2025 to 2029)
+# Heatmap of total change (2025 to 2029) with AAC overlay
 tm_shape(geri_forecast) +
   tm_fill("total_change",
           title = "Population Change\n(2025-2029)",
@@ -2290,8 +2258,13 @@ tm_shape(geri_forecast) +
           style = "cont",
           midpoint = 0) +
   tm_borders(col = "white", lwd = 0.3) +
+tm_shape(cc_sf[cc_sf$aac == 1, ]) +
+  tm_dots(col = "black",
+          size = 0.1,
+          alpha = 0.8,
+          title = "Active Ageing Centres") +
   tm_layout(
-    title = "Total Population Change 2025-2029",
+    title = "Total Population Change 2025-2029 with Active Ageing Centres",
     legend.position = c("left", "bottom"),
     frame = FALSE
   )
