@@ -2,7 +2,7 @@ project:
   type: website
 
 website:
-  title: "Accessibility of Eldercare Services in Singapore"
+  title: "Accessibility of Eldercare Services"
   navbar:
     left:
       - text: "Content"
@@ -12,7 +12,7 @@ website:
       - text: "Methodology"
         menu:
           - text: "Methods"
-            href: "methodology/data_preview.html"
+            href: "methodology/methodology.html"
             
       - text: "Results"
         menu: 
