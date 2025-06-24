@@ -8,7 +8,7 @@ format:
     code-summary: "Code Chunk"
     number-sections: true
 execute: 
-  eval: false #r will run through all codes
+  eval: true #r will run through all codes
   echo: true #r will display all code chunk
   warning: false #for mark down
   freeze: true #r will not render all existing  html files
@@ -16,7 +16,7 @@ execute:
 editor: source
 ---
 
-# Chapter Overview
+# Methodology Overview
 
 In this section, we will acquire the various data sets required for this research from various government open-sources data repositories and websites. Thereafter, we will install the necessary R packages and import the data sets. In each data set, we will delve into the necessary data checks, issues and transformation. Lastly, exploratory data analysis is done.
 
@@ -136,23 +136,24 @@ The following packages are required for this section:
 | [**tidyverse**](https://www.tidyverse.org/) | For non-spatial data wrangling that includes dplyr, tibble, ggplot2, readr, tidyr, stringr, forcats, lubridate and purr |
 | [**sf**](https://r-spatial.github.io/sf/) | For importing, managing, and handling geospatial data |
 | [**jsonlite**](https://cran.r-project.org/web/packages/jsonlite/index.html) | For interacting with a web API |
-| [**rvest**](https://cran.r-project.org/web/packages/rvest/index.html) | A wrapper around xml2 and httr packages |
+| [**rvest**](https://cran.r-project.org/web/packages/rvest/index.html) | Wrapper around xml2 and httr packages |
 | [**sfdep**](https://sfdep.josiahparry.com/) | Used to compute spatial weights, global and local spatial autocorrelation statistics |
-| [**tmap**](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) | for creating elegent and cartographic quality thematic maps |
+| [**tmap**](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) | For creating elegent and cartographic quality thematic maps |
 | [**knitr**](https://cran.r-project.org/web/packages/knitr/index.html) | For dynamic report generation |
 | [**patchwork**](https://patchwork.data-imaginist.com/) | For plot manipulation |
 | [**leaflet**](https://rstudio.github.io/leaflet/) | For interactive maps |
 | [**scales**](https://scales.r-lib.org/) | For scaling graphs |
 | [**lubridate**](https://lubridate.tidyverse.org/) | For date-time manipulation |
 | [**tmap**](https://r-graph-gallery.com/package/tmap.html) | For creating interactive maps |
-| [**DT**](https://rstudio.github.io/DT/) | provides an R interface to the JavaScript library DataTables. R data objects (matrices or data frames) can be displayed as tables on HTML pages, and DataTables provides filtering, pagination, sorting, and many other features in the tables. |
+| [**DT**](https://rstudio.github.io/DT/) | Provides an R interface to the JavaScript library DataTables. R data objects (matrices or data frames) can be displayed as tables on HTML pages, and DataTables provides filtering, pagination, sorting, and many other features in the tables. |
+| [httr](https://cran.r-project.org/web/packages/httr/index.html) | Tools for working with URLs and HTTP |
 
 The code chunk below, using `p_load` function of the [**pacman**](https://cran.r-project.org/web/packages/pacman/pacman.pdf) package, ensures that packages required are installed and loaded in R.
 
 ```{r}
 pacman::p_load(tidyverse, sf,
                jsonlite, rvest, knitr, patchwork,
-               leaflet, scales, lubridate, tmap)
+               leaflet, scales, lubridate, tmap, DT, httr)
 ```
 :::
 
@@ -316,6 +317,12 @@ As previously stated, commas are present in the 'pop' column, hence, `mutate()`
 ```{r}
 popdata22 <- popdata22 %>%
   mutate(pop = as.numeric(str_replace_all(pop, ",", "")))
+```
+
+```{r}
+#| echo: false
+#| eval: false
+popdata22 = read_rds("data/rds/popdata/original/popdata22.rds")
 ```
 
 ```{r}
@@ -690,6 +697,7 @@ write_rds(avg_survival_rates, "data/rds/popdata/avg_survival_rates.rds")
 #| echo: false
 #| eval: false
 avg_survival_rates = read_rds("data/rds/popdata/avg_survival_rates.rds”)
+
 ```
 
 #### Step 4: Forecast each year 2025 to 2029
@@ -797,7 +805,7 @@ write_rds(forecast_year, "data/rds/popdata/forecast_year.rds")
 ```{r}
 #| echo: false
 #| eval: false
-forecast_year = read_rds("data/rds/popdata/forecast_year.rds)
+forecast_year = read_rds("data/rds/popdata/forecast_year.rds")
 ```
 
 #### Step 5: Loop over the years
@@ -878,18 +886,6 @@ geri_forecast <- pivoted_data %>%
     .groups = 'drop'
   )
 
-```
-
-```{r}
-#| echo: false
-#| eval: false
-write_rds(geri_forecast, "data/rds/popdata/geri_forecast.rds")
-```
-
-```{r}
-#| echo: false
-#| eval: false
-geri_forecast = read_rds("data/rds/popdata/geri_forecast.rds")
 ```
 
 ## MPSZ: Singapore's Master Plan 2019 Subzone Boundary
@@ -1004,6 +1000,31 @@ write_rds(mpsz_popforecast, "data/rds/mpsz/mpsz_popforecast.rds")
 mpsz_popforecast = read_rds("data/rds/mpsz/mpsz_popforecast.rds")
 ```
 
+```{r}
+# Create cleaned versions for matching
+mpsz_clean <- mpsz %>%
+  mutate(subzone_clean = str_to_upper(str_trim(str_squish(SUBZONE_N))))
+
+geri_clean <- geri_forecast %>%
+  mutate(sz_clean = str_to_upper(str_trim(str_squish(sz))))
+
+# Perform the left join
+geri_forecast <- mpsz_clean %>%
+  left_join(geri_clean, by = c("subzone_clean" = "sz_clean"))
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(geri_forecast, "data/rds/popdata/geri_forecast.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+geri_forecast = read_rds("data/rds/popdata/geri_forecast.rds")
+```
+
 ## Master Plan 2019 Subzone Boundary (Land Use)
 
 ### Importing Data
@@ -1100,7 +1121,7 @@ In the plot below, we are able to see mulitple hexagons overlaying the residenti
 ```{r}
 tmap_mode("plot")
 tmap_options(check.and.fix = TRUE)
-tm_shape(hex_res) +
+tm_shape(hexagon) +
   tm_polygons()
 ```
 
@@ -1170,18 +1191,25 @@ write_rds(hex_mpsz_intersection, "data/rds/mpsz/hex_mpsz_intersection.rds")
 ```{r}
 #| echo: false
 #| eval: false
+hex_mpsz_intersection = read_rds("data/rds/mpsz/hex_mpsz_intersection.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
 mpsz_res = read_rds("data/rds/mpsz/mpsz_res.rds")
 ```
 
 #### Step 7: Data Integration
 
-The below code chunk joins the spatial intersection data with geriatric population forecasts by creating standardized join keys that handle inconsistencies in text formatting (case, whitespace) between the spatial and demographic datasets. This integration step combines spatial analysis infrastructure with demographic projections, creating the analytical foundation for accessibility research.
+The below code chunk joins two datasets by matching subzone names. It starts with `hex_mpsz_intersection` and creates a standardized join key by cleaning the `SUBZONE_N` column (removing whitespace and converting to uppercase). It then performs a left join with `geri_forecast`, first removing the spatial geometry from `geri_forecast` since regular joins can't work with spatial objects. The `geri_forecast` dataset gets the same join key treatment using its sz column. After matching records with identical join keys, the temporary join key column is removed. The result combines the spatial geometry from `hex_mpsz_intersection` with the attribute data from `geri_forecast` based on cleaned subzone name matches.
 
-```{R}
+```{r}
 joined_data <- hex_mpsz_intersection %>%
   mutate(join_key = str_to_upper(str_trim(str_squish(SUBZONE_N)))) %>%
   left_join(
     geri_forecast %>% 
+      st_drop_geometry() %>%  # Add this line to remove geometry
       mutate(join_key = str_to_upper(str_trim(str_squish(sz)))),
     by = "join_key"
   ) %>%
@@ -1273,7 +1301,7 @@ geriesti_hex_2029 = read_rds("data/rds/mpsz/geriesti_hex_2029")
 In this section, multiple types of care centres datasets will be imported, cleaned and transformed. Care Centres entails Active Ageing Centre (`aac`), counselling centres for seniors (`counselling`), senior day care (`daycare`), dementia day care (`dementia`), hospice day care (`hospice`), maintenance centres (`maintenance`), Nursing Home Respites (`nhrespite`), nursing-based centres (`nursing`) and rehabilitation centres (`rehab`). The services for each type of centre is provided below. All of these centres will open during office hours and thereafter, seniors are able to head home.
 
 | Care Centres | Services |
-|----|----|
+|------------------------------------|------------------------------------|
 | [Active Ageing Centres](https://supportgowhere.life.gov.sg/services/SVC-AACAAACHASACS/active-ageing-centres-aac) | A go-to point for seniors to build strong social connections, take part in recreational activities, access community health services, and contribute to the community. |
 | [Counselling (Seniors)](https://supportgowhere.life.gov.sg/services/ceeJSWE0/counselling-seniors) | Provides counselling to older persons aged 50 and above and/or their caregivers, to improve their mental well-being and resilience to cope with life’s challenges. |
 | [Senior Day Care](https://supportgowhere.life.gov.sg/services/SVC-SDC/senior-day-care) | Provides a full day programme for seniors who are suitable for centre-based care setting. Supports seniors to maintain and/or improve their general, physical and social well-being. |
@@ -1900,29 +1928,6 @@ tm_shape(cc_sf) +
   tm_dots() #change to name
 ```
 
-```{r}
-st_crs(cc_sf)
-```
-
-```{r}
-tm_shape(mpsz)+
-  tm_fill("DEPENDENCY", 
-          style = "quantile", 
-          palette = "Blues",
-          title = "Dependency ratio") +
-  tm_layout(main.title = "Distribution of Dependency Ratio by planning subzone",
-            main.title.position = "center",
-            main.title.size = 1.2,
-            legend.height = 0.45, 
-            legend.width = 0.35,
-            frame = TRUE) +
-  tm_borders(alpha = 0.5) +
-  tm_compass(type="8star", size = 2) +
-  tm_scale_bar() +
-  tm_grid(alpha =0.2) +
-  tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS", 
-             position = c("left", "bottom"))
-```
 
 # Exploratory Data Analysis
 
@@ -2212,27 +2217,84 @@ print(final_plot)
 
 ![Figure x: Population Pyramid 2020](/metho_images/2020.png) ![Figure x: Population Pyramid 2021](/metho_images/2021.png) ![Figure x: Population Pyramid 2022](/metho_images/2022.png) ![Figure x: Population Pyramid 2023](/metho_images/2023.png) ![Figure x: Population Pyramid 2024](/metho_images/2024.png) \### Survival Analysis from 2025 - 2030
 
-```{r}
-tmpa_mode("view")
-```
-
-```{r}
-tm_shape(mpsz)+
-  tmap_options(check.and.fix = TRUE) +
-  tm_polygons(alpha = 0.4) +
-tm_shape(condo_resale.res.sf) +  
-  tm_dots(col = "MLR_RES",
-          alpha = 0.6,
-          style="quantile") +
-  tm_view(set.zoom.limits = c(11,14))
-```
 
 ## Density of Care Centre in Each Subzone
 
-refer chapt 1
+data with aac
 
 ```{r}
-mpsz$`CC Count` <- lengths(st_intersects(mpsz, ))
+tmap_mode("plot")
+tm_shape(geri_forecast) +
+  tm_fill("aged_2025",
+          title = "Population 2025",
+          palette = c("white", "#ffcccc", "red"),
+          style = "quantile",
+          n = 7) +
+  tm_borders(col = "white", lwd = 0.5) +
+tm_shape(cc_sf[cc_sf$aac == 1, ]) +
+  tm_dots(col = "black",
+          size = 0.1,
+          alpha = 0.8,
+          title = "Active Ageing Centres") +
+  tm_layout(
+    title = "Population Forecast 2025 with Active Ageing Centres",
+    title.position = c("left", "top"),
+    legend.position = c("left", "bottom"),
+    frame = FALSE
+  ) +
+  tm_compass(position = c("right", "top")) +
+  tm_scale_bar(position = c("left", "bottom"))
+```
+
+```{r}
+tmap_mode("view")
+
+# Reshape data to long format for faceting
+geri_long <- geri_forecast %>%
+  pivot_longer(cols = c(aged_2025, aged_2026, aged_2027, aged_2028, aged_2029),
+               names_to = "year",
+               values_to = "population") %>%
+  mutate(year = gsub("aged_", "", year))
+
+# Create faceted heatmap
+tm_shape(geri_long) +
+  tm_fill("population",
+          title = "Population",
+          palette = c("white", "orange", "red"),
+          style = "cont") +
+  tm_borders(col = "white", lwd = 0.3) +
+  tm_facets(by = "year", ncol = 3) +
+  tm_layout(
+    title = "Population Forecast by Year",
+    legend.position = c("right", "bottom"),
+    panel.labels = c("2025", "2026", "2027", "2028", "2029"),
+    frame = FALSE
+  )
+
+# Method 2: Calculate and show year-over-year changes
+geri_forecast <- geri_forecast %>%
+  mutate(
+    change_2025_2026 = aged_2026 - aged_2025,
+    change_2026_2027 = aged_2027 - aged_2026,
+    change_2027_2028 = aged_2028 - aged_2027,
+    change_2028_2029 = aged_2029 - aged_2028,
+    total_change = aged_2029 - aged_2025,
+    percent_change = ((aged_2029 - aged_2025) / aged_2025) * 100
+  )
+
+# Heatmap of total change (2025 to 2029)
+tm_shape(geri_forecast) +
+  tm_fill("total_change",
+          title = "Population Change\n(2025-2029)",
+          palette = "RdBu",
+          style = "cont",
+          midpoint = 0) +
+  tm_borders(col = "white", lwd = 0.3) +
+  tm_layout(
+    title = "Total Population Change 2025-2029",
+    legend.position = c("left", "bottom"),
+    frame = FALSE
+  )
 ```
 
 # References
