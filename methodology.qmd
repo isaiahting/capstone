@@ -147,13 +147,14 @@ The following packages are required for this section:
 | [**tmap**](https://r-graph-gallery.com/package/tmap.html) | For creating interactive maps |
 | [**DT**](https://rstudio.github.io/DT/) | Provides an R interface to the JavaScript library DataTables. R data objects (matrices or data frames) can be displayed as tables on HTML pages, and DataTables provides filtering, pagination, sorting, and many other features in the tables. |
 | [httr](https://cran.r-project.org/web/packages/httr/index.html) | Tools for working with URLs and HTTP |
+| SpatialAcc |  |
 
 The code chunk below, using `p_load` function of the [**pacman**](https://cran.r-project.org/web/packages/pacman/pacman.pdf) package, ensures that packages required are installed and loaded in R.
 
 ```{r}
 pacman::p_load(tidyverse, sf,
                jsonlite, rvest, knitr, patchwork,
-               leaflet, scales, lubridate, tmap, DT, httr)
+               leaflet, scales, lubridate, tmap, DT, httr,SpatialAcc)
 ```
 :::
 
@@ -2269,6 +2270,8 @@ tm_shape(cc_sf[cc_sf$aac == 1, ]) +
     frame = FALSE
   )
 ```
+
+## Modelling and Visualising Accessibility using Hansen Method
 
 # References
 

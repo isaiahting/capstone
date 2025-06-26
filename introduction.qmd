@@ -16,6 +16,166 @@ execute:
 editor: source
 ---
 
+# Introduction
 
-Background
-Singapore is an aged society where 1 in 4 of the population are above 65 years of age.
+## Background
+
+Singapore’s population is ageing at an accelerated rate. By 2030, 1 in 4 Singaporeans will be aged 65 or above, a substantial increase from 1 in 10 in 2010 (Ministry of Health, 2023). In ensuring the ageing population can age in place and successfully, the Agency of Integrated Care (“AIC”) under the umbrella of Ministry of Health has introduced a network of elderly centres, termed as ‘Care Centres’ such as Active Ageing Centre (“AAC”) Senior Activity Centre (“SAC”), Senior Care Centre (“SCC”), Day Care Centre, Day Rehabilitation Centre, Dementia Day Care. These centres provide services, such as physical rehabilitation, social interaction, medical support, while allowing older adults to return home in the evening. These strings of services are imperative as it empowers the older adults to take charge of their well-being through programmes and care services, alongside fostering connectedness within an inclusive built environment (MOH, 2023). This initiative aligns with the Ministry of Health’s strategic policy “3 Beyonds” in keeping healthcare affordable, in particular, Beyond Healthcare to Health where it promotes healthy and active ageing through social connections, aged-friendly homes and communities prevention of chronic disease and illness, disease control, rehabilitation, and quality healthcare (Asian Development Bank, n.d.).
+
+In its Action Plan for Successful Ageing, one of the aims MOH is to increase the number of Active Ageing Centres to 220 by 2025 from 119 (MOH, 2023).
+
+However, despite these efforts, the adequacy of the distribution and accessibility of care centres to meet current and future demand of Singapore’s ageing population remain uncertain. Accessibility is a pertinent issue as older adults may not be physical abled and as they age, the usage of health services increases (Liu et al., 2022).
+
+Therefore, this project seeks to analyse the accessibility of Care Centres in Singapore from a geospatial perspective, leveraging geospatial analytical tool in evaluating the current and future demand for these facilities. By identifying the underserved area and projecting ageing demographic trend, this research will provide insights in steering Singapore’s ageing policies and urban planning strategies for a sustainable elderly care and ageing population.
+
+## Problem Statement and Objectives
+
+### **Problem Statement**
+
+The rapid increase of the ageing population in Singapore poses significant challenges to urban planning and healthcare systems. Despite the planting of Care Centres, disparities in their distribution and accessibility persists where some planning areas might be deprived of these facilities. This issue is compounded by transportation barriers, uneven population growth, and the rising demand for care services that is expected to surge over the next five to ten years. Additionally, current infrastructure planning does not sufficiently account for demographic shifts, morality rates, and the long-term capacity required to support an ageing population.
+
+Consequently, elderly individuals residing in underserved planning areas may face difficulties accessing essential care services, leading to care adverse health and reduced quality of life. Addressing these accessibility gaps is critical to fostering an equitable and inclusive urban development. This research excludes nursing homes, inpatient hospice palliative care services, home-related services such as home medical, home nursing, meals on wheels as it does not focus on the accessibility of institutionalised care.
+
+## **Research Question**
+
+1.     How spatially accessible are Care Centres across Singapore’s planning areas?
+
+2.     Will the current capacity of Care Centres in Singapore be sufficient to meet current and projected demand in 2030 and 2035, considering demographic changes and mortality rates?
+
+3.     Which regions in Singapore are underserved by Care Centres, based on travel time thresholds and population density?
+
+## **Objectives:**
+
+The project aims to:
+
+1.     Assess current accessibility: Evaluate the spatial accessibility of Care Centres across Singapore’s planning areas using geospatial methods.
+
+2.     Project future demand: Model the adequacy of Care Centres capacity in 2030 and 2035, accounting for demographic changes and mortality rates.
+
+3.     Identify underserved areas: Highlight regions with inadequate access to care centres based on travel time thresholds and population density.
+
+4.     Provide policy recommendations: Offer data-driven insights for optimizing the spatial distribution and capacity planning of care centres to meet future needs.
+
+By achieving these objectives, the research will contribute to more equitable access to elderly care services and support evidence-based decision-making for sustainable urban planning.
+
+# Literature Review
+
+### Introduction
+
+Singapore's rapidly aging demographic presents unprecedented challenges for elderly care service planning and distribution. With one of the fastest aging populations globally, Singapore requires sophisticated analytical frameworks that can simultaneously assess the spatial distribution of elderly populations (demand) and evaluate accessibility to elderly care centers (supply). The Two-Step Floating Catchment Area (2SFCA) method provides a robust analytical framework specifically designed to address supply-demand dynamics in spatial accessibility analysis, making it particularly suitable for elderly care accessibility assessment in Singapore's unique urban context (Chen & Jia, 2019; Luo & Wang, 2003).
+
+Conceptual Framework: Supply, Demand, and Spatial Interaction
+
+The 2SFCA method's fundamental strength lies in its explicit treatment of both supply and demand components within a unified analytical framework. Unlike traditional accessibility measures that focus solely on proximity to facilities, the 2SFCA method recognizes that true accessibility emerges from the interaction between service supply (elderly care centers) and demand (elderly population distribution) within defined catchment areas (Chen & Jia, 2019).
+
+This conceptual approach aligns with spatial interaction theory's core principles, particularly the concept of "complementarity" between origins and destinations (Haynes & Fotheringham, 1984). In the context of elderly care accessibility, complementarity manifests as the relationship between elderly populations requiring care services and the availability of appropriate facilities within reasonable travel distances. The 2SFCA method operationalizes this relationship through its two-step process: first calculating supply-to-demand ratios within catchments around each facility, then aggregating accessibility scores for each demand location based on all accessible facilities (Luo & Wang, 2003).
+
+Limitations of Supply-Only or Demand-Only Approaches
+
+Traditional accessibility analyses often examine either supply distribution (facility locations) or demand patterns (population distribution) in isolation, failing to capture the dynamic interaction between these components. Chen and Jia (2019) emphasize that place-based accessibility measures that focus exclusively on facility proximity "invariably overlook the demand side of the spatial interaction," leading to potentially misleading assessments of service accessibility.
+
+This limitation is particularly problematic in elderly care contexts, where facility capacity constraints and varying levels of care intensity create complex supply-demand relationships. A high concentration of elderly care centers in an area does not necessarily indicate good accessibility if the elderly population in that area overwhelms available capacity. Conversely, areas with fewer facilities may provide adequate accessibility if demand is correspondingly low (Delamater, 2013).
+
+Hansen's (1959) foundational accessibility model, while influential, treats all opportunities within a service area as equally accessible without considering competition from other users. This approach fails to account for what McGrail (2012) describes as the "competitive effect," where multiple demand points compete for limited service capacity, effectively reducing accessibility for all users within the catchment.
+
+The 2SFCA Method: Integrating Supply and Demand Dynamics
+
+The 2SFCA method addresses these limitations through its innovative two-step process that explicitly incorporates both supply and demand considerations. In the first step, the method calculates a supply-to-demand ratio for each elderly care facility by dividing the facility's capacity by the total elderly population within its catchment area. This ratio (Rⱼ) represents the facility's ability to serve its catchment population and forms the foundation for accessibility calculations (Chen & Jia, 2019).
+
+The mathematical formulation of this first step, as presented by Chen and Jia (2019), is:
+
+Rⱼ = Sⱼ / Σₖ∈{dₖⱼ≤d₀} Pₖ
+
+where Sⱼ represents the supply (capacity) of facility j, and Pₖ represents the demand (elderly population) at location k within the catchment distance d₀.
+
+The second step aggregates these supply-to-demand ratios across all accessible facilities for each demand location, creating a comprehensive accessibility index that reflects both the availability of services and the competition for those services from other elderly populations in the area (Luo & Wang, 2003).
+
+Distance Decay and Catchment Area Considerations in Elderly Care
+
+The 2SFCA method's sophisticated treatment of distance decay functions provides crucial advantages for elderly care accessibility analysis, where mobility constraints significantly influence travel patterns. Chen and Jia's (2019) comprehensive evaluation of distance decay functions revealed that different formulations—including exponential, Gaussian, and inverse power functions—capture varying assumptions about elderly travel behavior and accessibility.
+
+The Enhanced 2SFCA (E2SFCA) method further refines this approach by incorporating distance weights that recognize that accessibility decreases with distance, even within defined catchments (Luo & Qi, 2009). This enhancement is particularly relevant for elderly populations, who may face mobility limitations that make distance sensitivity more pronounced than for general populations.
+
+Chen and Jia (2019) demonstrated that catchment size selection significantly influences analytical outcomes, particularly at small geographic scales. For Singapore's compact urban environment, this finding suggests the need for careful calibration of catchment sizes to reflect realistic travel patterns among elderly populations while accounting for the city-state's efficient transportation infrastructure.
+
+Urban Context and Multi-Modal Accessibility in Singapore
+
+Singapore's unique urban characteristics—high population density, extensive public transportation networks, and compact geography—create a complex accessibility landscape that requires sophisticated analytical approaches. The 2SFCA method's flexibility in accommodating different transportation modes and travel patterns makes it particularly suitable for Singapore's mixed mobility environment, where elderly populations may access care centers through walking, public transit, private vehicles, or specialized elderly transport services (Langford et al., 2012).
+
+The method's ability to incorporate modal split considerations enables researchers to model accessibility patterns that reflect Singapore's transportation realities. Langford et al. (2012) demonstrated how modified 2SFCA approaches can integrate public transit accessibility, accounting for network effects and service frequency variations that significantly influence elderly care accessibility in urban environments.
+
+Capacity Constraints and Service Competition
+
+Elderly care facilities often operate with strict capacity constraints, making the 2SFCA method's explicit treatment of supply limitations particularly valuable. Unlike other healthcare services where patients may seek alternatives when their preferred facility is unavailable, elderly care often involves long-term relationships and specialized services that limit substitution possibilities (Delamater, 2013).
+
+The Modified 2SFCA (M2SFCA) method addresses scenarios where facilities may be underutilized due to suboptimal configuration or limited demand in their immediate vicinity, while the Variable 2SFCA (V2SFCA) method accounts for situations where catchment sizes should vary based on facility capacity and local demand patterns (Chen & Jia, 2019). These methodological refinements are particularly relevant for Singapore's elderly care landscape, where facility types range from day care centers to residential facilities with varying capacity constraints.
+
+Scale Sensitivity and Methodological Robustness
+
+Chen and Jia's (2019) analysis revealed that the 2SFCA method's performance varies significantly with analytical scale, with catchment size emerging as the most critical parameter at small scales and distance decay function selection becoming more important at larger scales. This finding has direct implications for Singapore's elderly care accessibility analysis, where neighborhood-level variations in accessibility may be as important as city-wide patterns for policy development.
+
+The authors' correlation analysis of twenty-four 2SFCA model variants demonstrated that models with the same catchment size show high correlations (r ≥ 0.80), while models with different catchment sizes but the same distance decay function show significantly lower correlations. This finding emphasizes the importance of empirically grounded catchment size selection based on local travel behavior and service utilization patterns among elderly populations.
+
+Policy Applications and Spatial Equity Assessment
+
+The 2SFCA method's capacity to identify spatial inequities in elderly care accessibility provides crucial information for policy development and resource allocation decisions. Chen and Jia (2019) noted that the method can reveal "local clusters of extreme values" in accessibility patterns, enabling targeted interventions in underserved areas. This capability aligns with Singapore's policy objectives of ensuring equitable access to elderly care services across different neighborhoods and socioeconomic groups.
+
+The method's sensitivity analysis capabilities, as demonstrated by McGrail (2012), enable policymakers to evaluate the robustness of accessibility assessments and understand how different assumptions about travel behavior and facility utilization affect analytical outcomes. This methodological transparency is essential for evidence-based policy development in Singapore's elderly care sector.
+
+Validation and Empirical Grounding
+
+The 2SFCA method's development has been accompanied by extensive validation studies that demonstrate its superiority over traditional accessibility measures in capturing real-world accessibility patterns. Chen and Jia (2019) emphasized the importance of "justification of model parameters through empirical evidence (e.g., field surveys about local travel activities) and model validation through sensitivity analysis" for ensuring methodological rigor.
+
+For Singapore's elderly care accessibility analysis, this emphasis on empirical validation suggests the need for local data collection on elderly travel patterns, facility utilization rates, and service preferences to calibrate model parameters appropriately. Such validation ensures that analytical results reflect genuine accessibility patterns rather than methodological artifacts.
+
+Integration with Demographic Analysis
+
+The 2SFCA method's explicit incorporation of population data (elderly population distribution) as a demand variable enables integrated analysis of demographic trends and service accessibility. This integration is particularly valuable for Singapore, where rapid demographic changes require coordinated planning for both population aging and service infrastructure development.
+
+The method's ability to accommodate different population weightings—such as distinguishing between different elderly age groups or dependency levels—enables nuanced accessibility analysis that reflects the heterogeneous nature of elderly care demand (Chen & Jia, 2019). This capability supports more targeted policy interventions and resource allocation strategies.
+
+Conclusion
+
+The implementation of 2SFCA methodology for analyzing elderly care center accessibility while simultaneously examining elderly population distribution in Singapore is justified by several compelling factors. The method's explicit integration of supply-demand dynamics, sophisticated treatment of distance decay effects, accommodation of urban transportation complexities, and proven methodological robustness make it superior to traditional accessibility measures for elderly care planning.
+
+Chen and Jia's (2019) comprehensive comparative analysis provides essential guidance for parameter selection and model validation, ensuring that 2SFCA applications to Singapore's elderly care accessibility can build upon established methodological foundations while addressing local demographic and geographic contexts. As Singapore continues to experience rapid population aging and urban development, the 2SFCA method offers a sophisticated analytical framework for evidence-based elderly care planning that simultaneously considers service supply, population demand, and spatial accessibility dynamics.
+
+The method's capacity to reveal spatial inequities and support sensitivity analysis makes it an indispensable tool for developing equitable and efficient elderly care service networks in Singapore's evolving urban landscape.
+
+# References
+
+Burdziej, J. (2019). Using hexagonal grids and network analysis for spatial accessibility assessment in urban environments-A case study of public amenities in Toruń. Miscellanea Geographica. Regional Studies on Development, 23(2), 99-110.
+
+ESRI. (2025). Why hexagons?. Retrieved on May, 2025 from https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/h-whyhexagons.htm
+
+Kam, T. S. (2024). R for Geospatial Data Science and Analytics. Retrieved on April 2, 2, 2025 from https://r4gdsa.netlify.app/
+
+Kam, T. S. (2022). GIS for Urban PlanningL QGIS methods. Retrieved on May 2, 2025 from https://gis4urbplan.netlify.app/
+
+Tan, K. (2023). Take-home Exercise 1: Geospatial Analytics for Public Good. Retrieved from <https://isss624-kytjy.netlify.app/take-home_ex/take-home_ex1/the1#background>
+
+Ministry of Health Singapore. (2022). Healthier SG White Paper. Retrieved from <https://file.go.gov.sg/healthiersg-whitepaper-pdf.pdf>
+
+Asian Development Bank. (n.d.). Singapore’s Long-Term Care System Adapting to Population Ageing. Retrieved from https://www.adb.org/sites/default/files/publication/637416/singapore-care-system-population-aging.pdf
+
+Cho, H., Choi, J., No, W., Oh, M., & Kim, Y. (2021). Accessibility of welfare facilities for elderly people in Daejeon, South Korea considering public transportation accessibility. *Transportation research interdisciplinary perspectives*, *12*, 100514.
+
+Liu, Z., Zhao, H., Li, S., Chen, Y., & Yao, E. (2022). Understanding evolution process of community-embedded elderly care facilities with big data: A spatiotemporal analytical framework. Transactions in Urban Data, Science, and Technology, 1(3-4), 142-163. https://doi.org/10.1177/27541231221136406
+
+Luo, J., Chen, G., Li, C., Xia, B., Sun, X., & Chen, S. (2018). Use of an E2SFCA method to measure and analyse spatial accessibility to medical services for elderly people in Wuhan, China. *International Journal of Environmental Research and Public Health*, *15*(7), 1503.
+
+Ministry of Health. (2023). Action Plan for Successful Ageing 2023. Retrieved from https://www.moh.gov.sg/others/resources-and-statistics/action-plan-for-successful-ageing
+
+Singapore Department of Statistics. (n.d.). National Statistical Standards. Recommendations on Definition and Classification of Age. Retrieved from https://www.singstat.gov.sg/-/media/files/standards_and_classifications/nsa.ashx 
+
+Wei, L., Fang, Y., & Zhang, L. (2024). Identifying Accessibility and Equity Defects of Elderly Care Services in Developing Countries: Insights From Xiamen City. *Journal of Nursing Management*, *2024*(1), 9340456.
+
+Urban Redevelopment Authority. (2023). Master Plan 2019 Planning Area Boundary (No Sea) (2024) \[Dataset\]. data.gov.sg. Retrieved February 23, 2025 from <https://data.gov.sg/datasets/d_6c6d7361dd826d97b91bac914ca6b2ac/view>
+
+Chen, X., & Jia, P. (2019). A comparative analysis of accessibility measures by the two-step floating catchment area (2SFCA) method. *International Journal of Geographical Information Science*, *33*(9), 1739-1758. [[https://doi.org/10.1080/13658816.2019.1591415]{.underline}](https://doi.org/10.1080/13658816.2019.1591415)
+
+Delamater, P. L. (2013). Spatial accessibility in suboptimally configured health care systems: A modified two-step floating catchment area (M2SFCA) metric. *Health & Place*, *24*, 30-43. [[https://doi.org/10.1016/j.healthplace.2013.07.012]{.underline}](https://doi.org/10.1016/j.healthplace.2013.07.012)
+
+Hansen, W. G. (1959). How accessibility shapes land use. *Journal of the American Institute of Planners*, *25*(2), 73-76. [[https://doi.org/10.1080/01944365908978307]{.underline}](https://doi.org/10.1080/01944365908978307)
+
+Haynes, K. E., & Fotheringham, A. S. (1984). *Gravity and spatial interaction models* (Vol. 2). Sage Publications.
