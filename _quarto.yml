@@ -4,19 +4,20 @@ project:
 website:
   title: "Accessibility of Eldercare Services"
   navbar:
+    logo: "about_images/dance.gif"
+    title: false
+    collapse-below: lg
+    search: true
+    height: 100px
     left:
-      - text: "Content"
-        menu:
-          - text: "Introduction"
+      - text: "Introduction"
+        href: "introduction.html"
             
       - text: "Methodology"
-        menu:
-          - text: "Methods"
-            href: "methodology/methodology.html"
+        href: "methodology.html"
             
-      - text: "Results"
-        menu: 
-          - text: "Discussion"
+      - text: "Analysis"
+        href: "analysis.html"
 
       - text: "Poster"
         href: nothing.html

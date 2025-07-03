@@ -1,0 +1,17 @@
+---
+title: "Analysis"
+date: "July 1, 2025"
+date-modified: "last-modified"
+format:
+ html:
+    code-fold: false
+    code-summary: "Code Chunk"
+    number-sections: true
+execute: 
+  eval: true #r will run through all codes
+  echo: true #r will display all code chunk
+  warning: false #for markdown
+  freeze: true #r will not render all existing html files
+  message: false #avoid printing warning message
+editor: source
+---
