@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2025-07-01">
 
-<title>Analysis – Accessibility of Eldercare Services</title>
+<title>Accessibility Analysis – Accessibility of Eldercare Services</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -79,8 +113,8 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Accessibility of Eldercare Services</span>
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <img src="./about_images/dance.gif" alt="" class="navbar-logo">
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -89,19 +123,12 @@ ul.task-list li input[type="checkbox"] {
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-content" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Content</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-content">    
-        <li>
-    <a class="dropdown-item" href="./introduction.html">
- <span class="dropdown-text">Introduction</span></a>
-  </li>  
-    </ul>
-  </li>
   <li class="nav-item">
-    <a class="nav-link" href="./methodology/methodology.html"> 
+    <a class="nav-link" href="./introduction.html"> 
+<span class="menu-text">Introduction</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./methodology.html"> 
 <span class="menu-text">Methodology</span></a>
   </li>  
   <li class="nav-item">
@@ -133,15 +160,37 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#analysis" id="toc-analysis" class="nav-link active" data-scroll-target="#analysis"><span class="header-section-number">1</span> Analysis</a>
+  <ul class="collapse">
+  <li><a href="#preparation" id="toc-preparation" class="nav-link" data-scroll-target="#preparation"><span class="header-section-number">1.1</span> Preparation</a>
+  <ul class="collapse">
+  <li><a href="#installing-packages" id="toc-installing-packages" class="nav-link" data-scroll-target="#installing-packages"><span class="header-section-number">1.1.1</span> Installing Packages</a></li>
+  <li><a href="#importing-data" id="toc-importing-data" class="nav-link" data-scroll-target="#importing-data"><span class="header-section-number">1.1.2</span> Importing Data</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#calculating-distance-matrix" id="toc-calculating-distance-matrix" class="nav-link" data-scroll-target="#calculating-distance-matrix"><span class="header-section-number">2</span> Calculating Distance Matrix</a>
+  <ul class="collapse">
+  <li><a href="#origin-is-the-centroid-of-the-hexagon-hexagon-id" id="toc-origin-is-the-centroid-of-the-hexagon-hexagon-id" class="nav-link" data-scroll-target="#origin-is-the-centroid-of-the-hexagon-hexagon-id"><span class="header-section-number">2.1</span> Origin is the centroid of the hexagon (hexagon id)</a></li>
+  <li><a href="#ensures-same-crs" id="toc-ensures-same-crs" class="nav-link" data-scroll-target="#ensures-same-crs"><span class="header-section-number">2.2</span> Ensures Same CRS</a></li>
+  <li><a href="#destination-will-be-cc-postal-codename-of-centre" id="toc-destination-will-be-cc-postal-codename-of-centre" class="nav-link" data-scroll-target="#destination-will-be-cc-postal-codename-of-centre"><span class="header-section-number">2.3</span> destination will be CC (postal code/name of centre)</a></li>
+  <li><a href="#calculating-distance-cost" id="toc-calculating-distance-cost" class="nav-link" data-scroll-target="#calculating-distance-cost"><span class="header-section-number">2.4</span> Calculating Distance (Cost)</a></li>
+  <li><a href="#converting-to-matrix" id="toc-converting-to-matrix" class="nav-link" data-scroll-target="#converting-to-matrix"><span class="header-section-number">2.5</span> Converting to Matrix</a></li>
+  <li><a href="#modelling-and-visualising-accessibility-using-hansen-method" id="toc-modelling-and-visualising-accessibility-using-hansen-method" class="nav-link" data-scroll-target="#modelling-and-visualising-accessibility-using-hansen-method"><span class="header-section-number">2.6</span> Modelling and Visualising Accessibility using Hansen Method</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Analysis</h1>
+<h1 class="title">Accessibility Analysis</h1>
 </div>
 
 
@@ -159,7 +208,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">July 3, 2025</p>
+      <p class="date-modified">July 5, 2025</p>
     </div>
   </div>
     
@@ -170,8 +219,93 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="analysis" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Analysis</h1>
+<section id="preparation" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="preparation"><span class="header-section-number">1.1</span> Preparation</h2>
+<section id="installing-packages" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="installing-packages"><span class="header-section-number">1.1.1</span> Installing Packages</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="importing-data" class="level3" data-number="1.1.2">
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="importing-data"><span class="header-section-number">1.1.2</span> Importing Data</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>geriesti_hex_2025 <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/mpsz/geriesti_hex_2025.rds"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>geriesti_hex_2026 <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/mpsz/geriesti_hex_2026.rds"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>geriesti_hex_2027 <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/mpsz/geriesti_hex_2027.rds"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>geriesti_hex_2028 <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/mpsz/geriesti_hex_2028.rds"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>geriesti_hex_2029 <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/mpsz/geriesti_hex_2029.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cc_sf <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/carecentre/refined/cc_sf.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="calculating-distance-matrix" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Calculating Distance Matrix</h1>
+<section id="origin-is-the-centroid-of-the-hexagon-hexagon-id" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="origin-is-the-centroid-of-the-hexagon-hexagon-id"><span class="header-section-number">2.1</span> Origin is the centroid of the hexagon (hexagon id)</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Create centroids for the origin hexagons</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>origin_centroids <span class="ot">&lt;-</span> geriesti_hex_2025 <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">geometry =</span> <span class="fu">st_centroid</span>(geometry)  <span class="co"># convert to centroids</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(hex_id, geometry)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="ensures-same-crs" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="ensures-same-crs"><span class="header-section-number">2.2</span> Ensures Same CRS</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Ensure both datasets have the same CRS</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>origin_centroids <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(origin_centroids, <span class="fu">st_crs</span>(cc_sf))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="destination-will-be-cc-postal-codename-of-centre" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="destination-will-be-cc-postal-codename-of-centre"><span class="header-section-number">2.3</span> destination will be CC (postal code/name of centre)</h2>
+</section>
+<section id="calculating-distance-cost" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="calculating-distance-cost"><span class="header-section-number">2.4</span> Calculating Distance (Cost)</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>distance_matrix <span class="ot">&lt;-</span> <span class="fu">st_distance</span>(origin_centroids, cc_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="converting-to-matrix" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="converting-to-matrix"><span class="header-section-number">2.5</span> Converting to Matrix</h2>
+<p>use this</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>od_matrix <span class="ot">&lt;-</span> distance_matrix <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.numeric</span>() <span class="sc">%&gt;%</span>  <span class="co"># Remove units</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">matrix</span>(<span class="at">nrow =</span> <span class="fu">nrow</span>(origin_centroids), <span class="at">ncol =</span> <span class="fu">nrow</span>(cc_sf)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">rownames&lt;-</span><span class="st">`</span>(origin_centroids<span class="sc">$</span>hex_id) <span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">colnames&lt;-</span><span class="st">`</span>(cc_sf<span class="sc">$</span>name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This code converts distance values from meters to kilometers and formats them to 2 decimal places. It starts by taking the existing <code>od_matrix</code> and dividing all values by 1000 to convert from meters to kilometers. The <code>as.matrix()</code> function ensures the result maintains the matrix format. Finally, the <code>round()</code> function with the parameter <code>2</code> rounds all the distance values to exactly 2 decimal places for cleaner presentation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>od_km <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">as.matrix</span>(od_matrix<span class="sc">/</span><span class="dv">1000</span>), <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="modelling-and-visualising-accessibility-using-hansen-method" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="modelling-and-visualising-accessibility-using-hansen-method"><span class="header-section-number">2.6</span> Modelling and Visualising Accessibility using Hansen Method</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                            od_km, </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">5</span>, <span class="co">#max distance people willing to travel</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, <span class="co">#put higher weigh to nearer distance</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA) <span class="ot">&lt;-</span> <span class="st">"accKD2SFCA"</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">tbl_df</span>(acc_KD2SFCA)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>hexagon_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_KD2SFCA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

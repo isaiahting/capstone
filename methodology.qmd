@@ -1,6 +1,6 @@
 ---
 title: "Methodology"
-date: "21st Feb, 2025"
+date: "February 21, 2025"
 date-modified: "last-modified"
 format:
  html:
@@ -697,8 +697,7 @@ write_rds(avg_survival_rates, "data/rds/popdata/avg_survival_rates.rds")
 ```{r}
 #| echo: false
 #| eval: false
-avg_survival_rates = read_rds("data/rds/popdata/avg_survival_rates.rds”)
-
+avg_survival_rates = read_rds("data/rds/popdata/avg_survival_rates.rds")
 ```
 
 #### Step 4: Forecast each year 2025 to 2029
@@ -1226,7 +1225,7 @@ write_rds(joined_data, "data/rds/mpsz/joined_data.rds")
 ```{r}
 #| echo: false
 #| eval: false
-joined_data = read_rds("data/rds/mpsz/joined_data")
+joined_data = read_rds("data/rds/mpsz/joined_data.rds")
 ```
 
 #### Step 8: Area Weighted Population Estimation in Each Hexagon
@@ -1286,11 +1285,11 @@ write_rds(geriesti_hex_2029, "data/rds/mpsz/geriesti_hex_2029.rds")
 ```{r}
 #| echo: false
 #| eval: false
-geriesti_hex_2025 = read_rds("data/rds/mpsz/geriesti_hex_2025")
-geriesti_hex_2026 = read_rds("data/rds/mpsz/geriesti_hex_2026")
-geriesti_hex_2027 = read_rds("data/rds/mpsz/geriesti_hex_2027")
-geriesti_hex_2028 = read_rds("data/rds/mpsz/geriesti_hex_2028")
-geriesti_hex_2029 = read_rds("data/rds/mpsz/geriesti_hex_2029")
+geriesti_hex_2025 = read_rds("data/rds/mpsz/geriesti_hex_2025.rds")
+geriesti_hex_2026 = read_rds("data/rds/mpsz/geriesti_hex_2026.rds")
+geriesti_hex_2027 = read_rds("data/rds/mpsz/geriesti_hex_2027.rds")
+geriesti_hex_2028 = read_rds("data/rds/mpsz/geriesti_hex_2028.rds")
+geriesti_hex_2029 = read_rds("data/rds/mpsz/geriesti_hex_2029.rds")
 ```
 
 *hexagon_final* now includes a new column *estimated_population*, which is the area-weighted population estimate for each hexagon.e
@@ -1872,6 +1871,8 @@ The code `coords <- get_coords(add_list)` calls the previously defined `get_coor
 coords <- get_coords(add_list)
 ```
 
+### Final Dataset of CC
+
 The below code chunk merges the original dataset (`pivoted_cc_data`) with the geocoded coordinates (`coords`) using a left join operation, which preserves all records from the primary dataset while matching and appending geographic data where available using the properties of `postal_code` in both dataframes.
 
 ```{r}
@@ -2271,7 +2272,7 @@ tm_shape(cc_sf[cc_sf$aac == 1, ]) +
   )
 ```
 
-## Modelling and Visualising Accessibility using Hansen Method
+
 
 # References
 

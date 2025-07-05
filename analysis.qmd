@@ -1,5 +1,5 @@
 ---
-title: "Analysis"
+title: "Accessibility Analysis"
 date: "July 1, 2025"
 date-modified: "last-modified"
 format:
@@ -8,10 +8,154 @@ format:
     code-summary: "Code Chunk"
     number-sections: true
 execute: 
-  eval: true #r will run through all codes
+  eval: false #r will run through all codes
   echo: true #r will display all code chunk
   warning: false #for markdown
   freeze: true #r will not render all existing html files
   message: false #avoid printing warning message
 editor: source
 ---
+
+# Analysis
+
+## Preparation
+
+### Installing Packages
+
+```{r}
+pacman::p_load(sf, tidyverse)
+```
+
+### Importing Data
+
+```{r}
+geriesti_hex_2025 = read_rds("data/rds/mpsz/geriesti_hex_2025.rds")
+geriesti_hex_2026 = read_rds("data/rds/mpsz/geriesti_hex_2026.rds")
+geriesti_hex_2027 = read_rds("data/rds/mpsz/geriesti_hex_2027.rds")
+geriesti_hex_2028 = read_rds("data/rds/mpsz/geriesti_hex_2028.rds")
+geriesti_hex_2029 = read_rds("data/rds/mpsz/geriesti_hex_2029.rds")
+
+```
+
+```{r}
+cc_sf = read_rds("data/rds/carecentre/refined/cc_sf.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+cc_data_final = read_rds("data/rds/carecentre/refined/cc_data_final.rds")
+```
+
+# Calculating Distance Matrix
+
+## Origin is the centroid of the hexagon (hexagon id)
+
+```{r}
+# Step 1: Create centroids for the origin hexagons
+origin_centroids <- geriesti_hex_2025 %>%
+  mutate(
+    geometry = st_centroid(geometry)  # convert to centroids
+  ) %>%
+  select(hex_id, geometry)
+```
+
+## Ensures Same CRS
+
+```{r}
+# Step 2: Ensure both datasets have the same CRS
+origin_centroids <- st_transform(origin_centroids, st_crs(cc_sf))
+```
+
+## destination will be CC (postal code/name of centre)
+
+## Calculating Distance (Cost)
+
+```{r}
+distance_matrix <- st_distance(origin_centroids, cc_sf)
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(distance_matrix, "data/rds/analysis/od/distance_matrix.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+distance_matrix = read_rds("data/rds/analysis/od/distance_matrix.rds")
+```
+
+## Converting to Matrix
+
+```{r}
+#| echo: false
+#| eval: false
+# Step 4: Convert to long format OD matrix
+od_matrix <- expand.grid(
+  origin_idx = 1:nrow(origin_centroids),
+  dest_idx = 1:nrow(cc_sf)
+) %>%
+  mutate(
+    hex_id = origin_centroids$hex_id[origin_idx],
+    name = cc_sf$name[dest_idx],
+    cost = as.numeric(distance_matrix[cbind(origin_idx, dest_idx)])
+  ) %>%
+  select(hex_id, name, cost)
+```
+
+use this
+
+```{r}
+od_matrix <- distance_matrix %>%
+  as.numeric() %>%  # Remove units
+  matrix(nrow = nrow(origin_centroids), ncol = nrow(cc_sf)) %>%
+  `rownames<-`(origin_centroids$hex_id) %>%
+  `colnames<-`(cc_sf$name)
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(od_matrix, "data/rds/analysis/od/od_matrix.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+od_matrix = read_rds("data/rds/analysis/od/od_matrix.rds")
+```
+
+This code converts distance values from meters to kilometers and formats them to 2 decimal places. It starts by taking the existing `od_matrix` and dividing all values by 1000 to convert from meters to kilometers. The `as.matrix()` function ensures the result maintains the matrix format. Finally, the `round()` function with the parameter `2` rounds all the distance values to exactly 2 decimal places for cleaner presentation.
+
+```{r}
+od_km <- round(as.matrix(od_matrix/1000), 2)
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(od_km, "data/rds/analysis/od/od_km.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+od_km = read_rds("data/rds/analysis/od/od_km.rds")
+```
+
+## Modelling and Visualising Accessibility using Hansen Method
+
+```{R}
+acc_KD2SFCA <- data.frame(ac(hexagons$demand,
+                            eldercare$capacity,
+                            od_km, 
+                            d0 = 5, #max distance people willing to travel
+                            power = 2, #put higher weigh to nearer distance
+                            family = "KD2SFCA"))
+
+colnames(acc_KD2SFCA) <- "accKD2SFCA"
+acc_KD2SFCA <- tbl_df(acc_KD2SFCA)
+hexagon_KD2SFCA <- bind_cols(hexagons, acc_KD2SFCA)
+```
