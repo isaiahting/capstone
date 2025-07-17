@@ -132,7 +132,7 @@ The above steps were repeated for each type of care centre. All of the Care Cent
 The following packages are required for this section:
 
 | Package | Description |
-|-------------------------------------|-----------------------------------|
+|----|----|
 | [**tidyverse**](https://www.tidyverse.org/) | For non-spatial data wrangling that includes dplyr, tibble, ggplot2, readr, tidyr, stringr, forcats, lubridate and purr |
 | [**sf**](https://r-spatial.github.io/sf/) | For importing, managing, and handling geospatial data |
 | [**jsonlite**](https://cran.r-project.org/web/packages/jsonlite/index.html) | For interacting with a web API |
@@ -147,7 +147,6 @@ The following packages are required for this section:
 | [**tmap**](https://r-graph-gallery.com/package/tmap.html) | For creating interactive maps |
 | [**DT**](https://rstudio.github.io/DT/) | Provides an R interface to the JavaScript library DataTables. R data objects (matrices or data frames) can be displayed as tables on HTML pages, and DataTables provides filtering, pagination, sorting, and many other features in the tables. |
 | [httr](https://cran.r-project.org/web/packages/httr/index.html) | Tools for working with URLs and HTTP |
-| SpatialAcc |  |
 
 The code chunk below, using `p_load` function of the [**pacman**](https://cran.r-project.org/web/packages/pacman/pacman.pdf) package, ensures that packages required are installed and loaded in R.
 
@@ -162,7 +161,7 @@ pacman::p_load(tidyverse, sf,
 
 ### Overview
 
-In this section, a total of 4 population datasets from year 2020 to year 2024 will be used in the analysis. The datasets will be cleaned and transformed. Following which, survival analysis will be done in estimating the population for age 60 and above for the period 2025 to 2029.
+In this section, a total of 5 population datasets from year 2020 to year 2024 will be used in the analysis. The datasets will be cleaned and transformed. Following which, survival analysis will be done in estimating the population for age 60 and above for the period 2025 to 2029.
 
 ### Importing Data
 
@@ -1301,7 +1300,7 @@ geriesti_hex_2029 = read_rds("data/rds/mpsz/geriesti_hex_2029.rds")
 In this section, multiple types of care centres datasets will be imported, cleaned and transformed. Care Centres entails Active Ageing Centre (`aac`), counselling centres for seniors (`counselling`), senior day care (`daycare`), dementia day care (`dementia`), hospice day care (`hospice`), maintenance centres (`maintenance`), Nursing Home Respites (`nhrespite`), nursing-based centres (`nursing`) and rehabilitation centres (`rehab`). The services for each type of centre is provided below. All of these centres will open during office hours and thereafter, seniors are able to head home.
 
 | Care Centres | Services |
-|------------------------------------|------------------------------------|
+|----|----|
 | [Active Ageing Centres](https://supportgowhere.life.gov.sg/services/SVC-AACAAACHASACS/active-ageing-centres-aac) | A go-to point for seniors to build strong social connections, take part in recreational activities, access community health services, and contribute to the community. |
 | [Counselling (Seniors)](https://supportgowhere.life.gov.sg/services/ceeJSWE0/counselling-seniors) | Provides counselling to older persons aged 50 and above and/or their caregivers, to improve their mental well-being and resilience to cope with life’s challenges. |
 | [Senior Day Care](https://supportgowhere.life.gov.sg/services/SVC-SDC/senior-day-care) | Provides a full day programme for seniors who are suitable for centre-based care setting. Supports seniors to maintain and/or improve their general, physical and social well-being. |
@@ -1696,7 +1695,6 @@ cc_data = read_rds("data/rds/carecentre/refined/cc_data.rds")
 This code transforms the dataset `cc_data` from a long format to a wide format by pivoting on the categorical values in the `label` column, effectively converting them into binary indicator columns. The process begins by removing the `address` column using `select(-address)` to exclude it from the transformation. Next, a new column called `present` is created using `mutate(present = 1)`, where every row is assigned a value of 1 to indicate the presence of a label. The key reshaping operation is performed using `pivot_wider()`, which spreads the unique values from the `label` column into separate columns. The `names_from = label` argument specifies that the new column names should be derived from the distinct categories in `label`, while `values_from = present` fills these new columns with the corresponding 1s from the `present` column. Any missing combinations (where a particular label does not appear for a given record) are automatically filled with 0s due to the `values_fill = list(0)` argument. The final output, stored in `pivoted_cc_data`, is a wider dataframe where each original row now has binary flags (1 or 0) indicating the presence or absence of each label category, making it suitable for analyses that require a one-hot encoded or dummy variable representation of categorical data.
 
 ```{r}
-
 pivoted_cc_data <- cc_data %>%
   select(-address) %>%
 
@@ -1712,32 +1710,266 @@ pivoted_cc_data <- cc_data %>%
   )
 ```
 
-Using arrange(0, we are able to see that that the centres are arranged in alphabetically order and they are similar ones.
+### Checking for Duplicates
 
 ```{r}
-arrange(pivoted_cc_data)
+duplicates <- pivoted_cc_data %>%
+  
+  group_by(postal_code) %>%
+  filter(n() > 1) %>%
+  arrange(postal_code)
 ```
 
 ```{r}
-pivoted_cc_data$name[duplicated(pivoted_cc_data$name)]
-```
+# Method 1: Unnest all list columns at once
+service_columns <- c("aac", "counselling", "daycare", "dementia", "hospice", 
+                    "maintenance", "nhrespite", "nursing", "rehab")
 
-```{r}
-duplicate_rows <- pivoted_cc_data %>%
-  # Count occurrences of each name
-  add_count(name) %>%
-  # Filter for names that appear more than once
-  filter(n > 1) %>%
-  # Remove the count column
-  select(-n) %>%
-  # Arrange by name for better readability
-  arrange(name)
+# Find which service columns are actually lists
+list_service_cols <- names(duplicates)[sapply(duplicates, is.list) & names(duplicates) %in% service_columns]
 
-if (nrow(duplicate_rows) > 0) {
-  print(duplicate_rows)
+cat("List columns to unnest:", paste(list_service_cols, collapse = ", "), "\n")
+
+# Unnest the list columns
+if (length(list_service_cols) > 0) {
+  duplicates_unnested <- duplicates %>%
+    unnest(cols = all_of(list_service_cols))
 } else {
-  message("No duplicates found in the 'name' column.")
+  duplicates_unnested <- duplicates
 }
+```
+
+```{r}
+#Function to merge center names
+merge_center_names <- function(names) {
+  if (length(names) == 1) return(names)
+  
+  names <- unique(names)
+  if (length(names) == 1) return(names)
+  
+  # Extract location pattern
+  location_pattern <- "\\(([^)]+)\\)$"
+  locations <- str_extract(names, location_pattern)
+  common_location <- locations[!is.na(locations)][1]
+  
+  # Remove location from names
+  main_names <- str_remove(names, location_pattern) %>% str_trim()
+  
+  # Find common prefix
+  words_matrix <- str_split(main_names, "\\s+", simplify = TRUE)
+  common_prefix_words <- c()
+  
+  if (nrow(words_matrix) > 1) {
+    max_cols <- ncol(words_matrix)
+    for (i in 1:max_cols) {
+      if (i <= ncol(words_matrix)) {
+        current_column <- words_matrix[, i]
+        current_column <- current_column[current_column != ""]
+        
+        if (length(unique(current_column)) == 1 && length(current_column) > 1) {
+          common_prefix_words <- c(common_prefix_words, current_column[1])
+        } else {
+          break
+        }
+      }
+    }
+  }
+  
+  # Build merged name
+  if (length(common_prefix_words) > 0) {
+    common_prefix <- paste(common_prefix_words, collapse = " ")
+    remaining_parts <- str_remove(main_names, paste0("^", str_escape(common_prefix), "\\s*")) %>%
+      str_trim() %>%
+      .[. != ""]
+    
+    remaining_parts <- unique(remaining_parts)
+    
+    if (length(remaining_parts) > 0) {
+      merged_main <- paste0(common_prefix, " ", paste(remaining_parts, collapse = " & "))
+    } else {
+      merged_main <- common_prefix
+    }
+  } else {
+    merged_main <- paste(main_names, collapse = " & ")
+  }
+  
+  final_name <- if (!is.na(common_location)) {
+    paste0(merged_main, " ", common_location)
+  } else {
+    merged_main
+  }
+  
+  return(str_trim(final_name))
+}
+```
+
+```{r}
+# Now merge the centers with unnested columns
+pivoted_cc_data <- duplicates_unnested %>%
+  group_by(postal_code) %>%
+  summarise(
+    name = merge_center_names(name),
+    aac = max(aac, na.rm = TRUE),
+    counselling = max(counselling, na.rm = TRUE),
+    daycare = max(daycare, na.rm = TRUE),
+    dementia = max(dementia, na.rm = TRUE),
+    hospice = max(hospice, na.rm = TRUE),
+    maintenance = max(maintenance, na.rm = TRUE),
+    nhrespite = max(nhrespite, na.rm = TRUE),
+    nursing = max(nursing, na.rm = TRUE),
+    rehab = max(rehab, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+```{r}
+# Show before and after
+cat("BEFORE MERGING (unnested):\n")
+print(duplicates_unnested %>% 
+      arrange(postal_code, name) %>%
+      select(postal_code, name, aac, daycare, nursing, rehab))
+
+cat("\nAFTER MERGING:\n")
+print(merged_duplicates %>% 
+      arrange(postal_code) %>%
+      select(postal_code, name, aac, daycare, nursing, rehab))
+```
+
+# method 2
+
+```{r}
+# Step 1: Extract duplicates from main dataframe
+duplicates <- pivoted_cc_data %>%
+  group_by(postal_code) %>%
+  filter(n() > 1) %>%
+  arrange(postal_code)
+```
+
+```{r}
+non_duplicates <- pivoted_cc_data %>%
+  group_by(postal_code) %>%
+  filter(n() == 1) %>%
+  ungroup() %>%
+  # Convert list columns to numeric for consistency
+  mutate(
+    aac = as.numeric(aac),
+    counselling = as.numeric(counselling),
+    daycare = as.numeric(daycare),
+    dementia = as.numeric(dementia),
+    hospice = as.numeric(hospice),
+    maintenance = as.numeric(maintenance),
+    nhrespite = as.numeric(nhrespite),
+    nursing = as.numeric(nursing),
+    rehab = as.numeric(rehab)
+  )
+```
+
+```{r}
+# Step 3: Process duplicates - unnest list columns
+service_columns <- c("aac", "counselling", "daycare", "dementia", "hospice", 
+                    "maintenance", "nhrespite", "nursing", "rehab")
+
+# Find which service columns are actually lists
+list_service_cols <- names(duplicates)[sapply(duplicates, is.list) & names(duplicates) %in% service_columns]
+cat("List columns to unnest:", paste(list_service_cols, collapse = ", "), "\n")
+
+# Unnest the list columns
+if (length(list_service_cols) > 0) {
+  duplicates_unnested <- duplicates %>%
+    unnest(cols = all_of(list_service_cols))
+} else {
+  duplicates_unnested <- duplicates
+}
+```
+
+```{r}
+# Step 4: Function to merge center names (your existing function)
+merge_center_names <- function(names) {
+  if (length(names) == 1) return(names)
+  
+  names <- unique(names)
+  if (length(names) == 1) return(names)
+  
+  # Extract location pattern
+  location_pattern <- "\\(([^)]+)\\)$"
+  locations <- str_extract(names, location_pattern)
+  common_location <- locations[!is.na(locations)][1]
+  
+  # Remove location from names
+  main_names <- str_remove(names, location_pattern) %>% str_trim()
+  
+  # Find common prefix
+  words_matrix <- str_split(main_names, "\\s+", simplify = TRUE)
+  common_prefix_words <- c()
+  
+  if (nrow(words_matrix) > 1) {
+    max_cols <- ncol(words_matrix)
+    for (i in 1:max_cols) {
+      if (i <= ncol(words_matrix)) {
+        current_column <- words_matrix[, i]
+        current_column <- current_column[current_column != ""]
+        
+        if (length(unique(current_column)) == 1 && length(current_column) > 1) {
+          common_prefix_words <- c(common_prefix_words, current_column[1])
+        } else {
+          break
+        }
+      }
+    }
+  }
+  
+  # Build merged name
+  if (length(common_prefix_words) > 0) {
+    common_prefix <- paste(common_prefix_words, collapse = " ")
+    remaining_parts <- str_remove(main_names, paste0("^", str_escape(common_prefix), "\\s*")) %>%
+      str_trim() %>%
+      .[. != ""]
+    
+    remaining_parts <- unique(remaining_parts)
+    
+    if (length(remaining_parts) > 0) {
+      merged_main <- paste0(common_prefix, " ", paste(remaining_parts, collapse = " & "))
+    } else {
+      merged_main <- common_prefix
+    }
+  } else {
+    merged_main <- paste(main_names, collapse = " & ")
+  }
+  
+  final_name <- if (!is.na(common_location)) {
+    paste0(merged_main, " ", common_location)
+  } else {
+    merged_main
+  }
+  
+  return(str_trim(final_name))
+}
+```
+
+```{r}
+
+# Step 5: Merge the duplicates with amendments
+merged_duplicates <- duplicates_unnested %>%
+  group_by(postal_code) %>%
+  summarise(
+    name = merge_center_names(name),
+    aac = max(aac, na.rm = TRUE),
+    counselling = max(counselling, na.rm = TRUE),
+    daycare = max(daycare, na.rm = TRUE),
+    dementia = max(dementia, na.rm = TRUE),
+    hospice = max(hospice, na.rm = TRUE),
+    maintenance = max(maintenance, na.rm = TRUE),
+    nhrespite = max(nhrespite, na.rm = TRUE),
+    nursing = max(nursing, na.rm = TRUE),
+    rehab = max(rehab, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+```{r}
+# Step 6: Combine back with non-duplicates to recreate the main dataframe
+pivoted_cc_data <- bind_rows(non_duplicates, merged_duplicates) %>%
+  arrange(postal_code)
 ```
 
 ```{r}
@@ -2271,8 +2503,6 @@ tm_shape(cc_sf[cc_sf$aac == 1, ]) +
     frame = FALSE
   )
 ```
-
-
 
 # References
 

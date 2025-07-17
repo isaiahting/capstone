@@ -1,5 +1,5 @@
 ---
-title: "Accessibility Analysis"
+title: "Accessibility of Active Ageing Centre"
 date: "July 1, 2025"
 date-modified: "last-modified"
 format:
@@ -16,63 +16,315 @@ execute:
 editor: source
 ---
 
-# Analysis
+# Active Ageing Centre
+
+## Overview
+
+This chapter covers pre-requisite preparation prior to the analysis alongside the analysis and its results.
 
 ## Preparation
 
 ### Installing Packages
 
++--------------+-------------------------------------------------------------------------------------------------------------------------+
+| **Package**  | **Description**                                                                                                         |
++==============+=========================================================================================================================+
+| sf           | For importing, managing, and handling geospatial data                                                                   |
++--------------+-------------------------------------------------------------------------------------------------------------------------+
+| tidyverse    | For non-spatial data wrangling that includes dplyr, tibble, ggplot2, readr, tidyr, stringr, forcats, lubridate and purr |
++--------------+-------------------------------------------------------------------------------------------------------------------------+
+| SpatialAcc   | For modelling spatial accessibility                                                                                     |
++--------------+-------------------------------------------------------------------------------------------------------------------------+
+| tmap         | For creating elegent and cartographic quality thematic maps                                                             |
++--------------+-------------------------------------------------------------------------------------------------------------------------+
+| ggstatsplot  | For statistical analysis and plotting                                                                                   |
++--------------+-------------------------------------------------------------------------------------------------------------------------+
+
+: Table 1: *Files Preparation for QGIS*
+
+The below code chunk installs and loads the abovementioned packages for this analysis.
+
 ```{r}
-pacman::p_load(sf, tidyverse)
+pacman::p_load(sf, tidyverse, SpatialAcc, reshape2, tmap, ggstatsplot)
 ```
 
 ### Importing Data
 
-```{r}
-geriesti_hex_2025 = read_rds("data/rds/mpsz/geriesti_hex_2025.rds")
-geriesti_hex_2026 = read_rds("data/rds/mpsz/geriesti_hex_2026.rds")
-geriesti_hex_2027 = read_rds("data/rds/mpsz/geriesti_hex_2027.rds")
-geriesti_hex_2028 = read_rds("data/rds/mpsz/geriesti_hex_2028.rds")
-geriesti_hex_2029 = read_rds("data/rds/mpsz/geriesti_hex_2029.rds")
+The file of the estimated population from 2025 to 2029 together with the hexagon layer is imported.
 
++----------------+------------------------------------------------------------------------------------------------------------------+
+| **Name**       | **Details**                                                                                                      |
++----------------+------------------------------------------------------------------------------------------------------------------+
+| `geriesti_hex` | -   Projected population of seniors above 60 years of age from Year 2025 to 2029                                 |
+|                |                                                                                                                  |
+|                | -   Hexagons ID                                                                                                  |
+|                |                                                                                                                  |
+|                | -   Geometies                                                                                                    |
++----------------+------------------------------------------------------------------------------------------------------------------+
+| `cc_sf`        | -   Care Centres                                                                                                 |
+|                |                                                                                                                  |
+|                | -   Postal Codes of Care Centres                                                                                 |
+|                |                                                                                                                  |
+|                | -   Geometries of Care Centres                                                                                   |
++----------------+------------------------------------------------------------------------------------------------------------------+
+| `mpsz`         | Singapore Master Plan 2019 Planning Subzone Boundary                                                             |
++----------------+------------------------------------------------------------------------------------------------------------------+
+| `roadnetwork`  | [Road network of Singapore, Malaysia, Brunei](https://download.geofabrik.de/asia/malaysia-singapore-brunei.html) |
+|                |                                                                                                                  |
+|                | chosen over as data.giv has only road centre line                                                                |
++----------------+------------------------------------------------------------------------------------------------------------------+
+
+: Table 2: *Files Preparation for QGIS*
+
+#### Estimated Senior Population with Hexagons Spatial Dataset
+
+For the below code chunk, we will first read the spatial dataset, `geriesti_hex` and dropped the irrelevant columns.
+
+```{r}
+geriesti_hex = read_rds("data/rds/mpsz/geriesti_hex_2025.rds") %>%
+  select(-c('SUBZONE_N.x', 'SUBZONE_N.y', 'subzone_clean'))
 ```
 
-```{r}
-cc_sf = read_rds("data/rds/carecentre/refined/cc_sf.rds")
-```
+Following, we use `st_write()` function from the package `sf` to save `geriesti_hex` to a file. it writes into "data/qgis" directory, creating a layer named "geriesti_hex", and saving it in the ESRI Shapefile format for QGIS later on.
 
 ```{r}
-#| echo: false
 #| eval: false
-cc_data_final = read_rds("data/rds/carecentre/refined/cc_data_final.rds")
+st_write(geriesti_hex, dsn = "data/qgis", layer = "geriesti_hex", driver = "ESRI Shapefile")
 ```
 
-# Calculating Distance Matrix
+#### Active Ageing Centre (AAC) Spatial Dataset
 
-## Origin is the centroid of the hexagon (hexagon id)
+Similar to the above code chunk, we will read the spatial dataset, `cc_sf` , then we will filter to AACs only. We will add a new column `capacity` where we will set the demand to 3000 seniors per AAC. Following which dropped the irrelevant columns in addition we use `unnest()` from the `tidyverse` package to convert the care centres column from list to column.
+
+```{r}
+aac_sf = read_rds("data/rds/carecentre/refined/cc_sf.rds") %>%
+  filter(aac == 1) %>%
+  mutate(capacity = 3000) %>%
+  select(-c(postal_found, latitude_wgs84, longitude_wgs84)) %>%
+  unnest(3:11) #converts from list to column
+```
+
+Thereafter, we will save `cc_sf` to a file for QGIS analysis.
+
+```{r}
+#| eval: false
+st_write(aac_sf, dsn = "data/qgis", layer = "aac", driver = "ESRI Shapefile")
+```
+
+#### Singapore Master Plan 2019 Planning Subzone Boundary
+
+```{r}
+mpsz = st_read(dsn = "data/planningarea/",
+               layer = "mpsz2019")
+```
+
+### Road Network
+
+```{r}
+roadnetwork = st_read(dsn = "data/roadnetwork/roadnetwork.shp/",
+               layer = "gis_osm_roads_free_1")
+```
+
+### Data Preparation using QGIS
+
+#### Step 1: Adding `geriesti_hex` layer
+
+Firstly, locate the file to be be added as a layer. Then, drag and drop the file into the empty white space. The layer will appear as shown below.
+
+![Figure 1: *Adding `geriesti_hex` layer*](analysis_images/1.png)
+
+#### Step 2: Ensuring Correct CRS
+
+We will right click on the `geriesti_hex` layer and click onto `Properties`.
+
+![Figure 2: Properties Panel](analysis_images/2.png)
+
+In the below picture, we can see that the correct CRS (EPSG: 3414 - SVY21 / Singapore TM) is assigned.
+
+![Figure 3: Checking CRS](analysis_images/3.png)
+
+#### Step 3: Adding Road Network Layer
+
+Similar to Step 1, we will drag and drop the `gis_osm_roads_free_1.shp` into the layer.
+
+![Figure 4: *Adding Road Network Layer*](analysis_images/4.png)
+
+#### Step 4: Adding Master Plan Subzone Boundary
+
+Similar to Step 1, we will drag and drop the `mpsz2019.shp` into the layer.
+
+![Figure 5: *Adding `mpsz2019`* *Layer*](analysis_images/5.png)
+
+#### Step 5: Clipping Road Network
+
+As the road network layer consists of the Singapore, Malaysia and Brunei, we would need to clip it to only Singapore's roads. We select `Vector -> Geoprocessing Tools -> Clip`.
+
+![Figure 6: *Clipping Function*](analysis_images/6.png)
+
+The input layer will be `gis_osm_roads_free_1` while the overlay layer is `mpsz2019`. This ensures that the `gis_osm_roads_free_1` is trimmed according to the boundaries of Singapore, alias `mpsz2019`. We will click onto the tool button.
+
+![Figure 7: *Parameters of Clipping*](analysis_images/7.png)
+
+Under invalid feature filtering, we will choose "Do Not Filter'.
+
+![Figure 8: *Do Not Filter Parameter*](analysis_images/8.png)
+
+The below is the output of the clipped road network named as `Clipped`.
+
+![Figure 9: *Output of Road Network*](analysis_images/9.png)
+
+#### Step 6: Exporting Road Network
+
+We will right clicked onto the layer `Clipped`, select `Export -> Save Feature As...`.
+
+![Figure 10: *Exporting Road Network*](analysis_images/10.png)
+
+In the format, we will select `GeoPackage`, selecting the appropriate location and naming the file.
+
+![Figure 11: *Saving Road Layer Layer*](analysis_images/11.png)
+
+Final output of `roadnetwork` of Singapore is seen below.
+
+![Figure 12: *Final Output of Road Network of Singapore*](analysis_images/12.png)
+
+Lastly, we will remove the `Clipped` layer as it is redundant. We will right clicked and select `Remove Layer`.
+
+![Figure 13: *Removing `Clipped` Layer*](analysis_images/13.png)
+
+#### Step 7: Adding AAC Layer
+
+First, Drag and drop the `cc.shp` into the map.
+
+![Figure 14: *Adding AAC Layer*](analysis_images/14.png)
+
+#### Step 8: Creating Centroids
+
+Next, we will select `Vector -> Geometry Tools -> Centroids` in creating the centroids of the AAC.
+
+![Figure 15: *Creating Centroids*](analysis_images/15.png)
+
+For the parameters, ensure the layer with the hexagons is chosen, in this instance, `geriesti_hex`.
+
+![Figure 16: *Parameters of Creating Centroids*](analysis_images/16.png)
+
+#### Step 9: Exporting Centroids as Shapefile
+
+After running the previous step, you will be able to see the `Centroids`. Next, we will export the layer as a ShapeFile and save it.
+
+![Figure 17: *Exporting Centroids as Shape File*](analysis_images/17.png)
+
+In this step, ensure that the file's format is set to ESRI Shapefile and the CRS is correct, then click onto OK to export. The file will be saved in the desired destination.
+
+![Figure 18: *Exporting Parameters*](analysis_images/18.png)
+
+## Computing Distance Matrix
+
+This section will cover two different approaches in computing the distance matrix of centroids of the hexagons and AAC. The first approach uses the Manhanttan distance while the latter consists of using Euclidean Distance. The Manhatten distance utilises the road network of Singapore to compute while the Euclidean distance is a fly-by distance from the centroid to the AAC.
+
+### Manhattan Distance
+
+In this subsection, the distance matrix was computed using QGIS. QGIS is much sophisticated in its computational abilities in relation to geospatial analysis as compared to using R Studio. The steps are laid in this section.
+
+#### Step 1: Selecting Distance Matrix
+
+Using the same project from the above steps, click `Vector -> Analysis Tools -> Distance Matrix`.
+
+![Figure 19: *Selecting Distance Matrix*](analysis_images/19.png)
+
+#### Step 2: Selecting Parameters
+
+The input point layer will be the `centroid_hex` while the input unique ID filed is the `hex_id`.
+
+![Figure 20: Selecting Parameters](analysis_images/20.png)
+
+The target point layer will be the Active Ageing Centre (`cc`) and the unique ID field will be the `name`. We will then set the output matrix to be `Standard (N x T) Distance Matrix` and run it.
+
+![Figure 21: *Selecting Parameters Cont.*](analysis_images/21.png)
+
+#### Step 3: Checking Distance Matrix Table
+
+After running it, the new layer "`Distance_matrix`" will appear. Right click and `Open Attritube Table` in ensuring that there are no errors or missing values.
+
+![Figure 22: *Open Attribute Table*](analysis_images/22.png)
+
+The attribute layer appears appropriate. The columns are the names of the Active Ageing Centres while the rows are the Hexagons IDs.
+
+![Figure 23: *Attribute Table*](analysis_images/23.png)
+
+#### Step 4: Exporting Distance Matrix
+
+As we would like to the distance matrix table as a CSV file, we would need to right click the `Distance_matrix` layer and select `Export-> Save Features As...`.
+
+![Figure 24: *Exporting Distance Matrix*](analysis_images/24.png)
+
+#### Step 7: Saving as CSV File
+
+Ensure that the format is in Comma Separated Value (CSV) before selecting the directory to save.
+
+![Figure 25: *Exporting Parameters*](analysis_images/25.png)
+
+#### Step 8: Importing CSV
+
+```{r}
+aac_distmatrix_manhatten <- read.csv("data/qgis/distancematrix_aac.csv")
+```
+
+This code converts the distance matrix from meters to kilometers and rounds the values to 2 decimal places for better readability. It first removes the non-numeric ID column using `select(-ID)` because the previous division operation failed when trying to perform mathematical operations on mixed data types (the ID column contains character data while the distance columns contain numeric data). After removing the ID column, it converts the remaining data to a proper numeric matrix with `as.matrix()`, divides all values by 1000 to convert from meters to kilometers, and rounds the results to 2 decimal places.
+
+```{r}
+aac_distmatrix_manhatten <- aac_distmatrix_manhatten %>%
+  select(-ID) %>%  # Remove the ID column
+  as.matrix() %>%  # Convert to matrix
+  `/`(1000) %>%    # Divide by 1000
+  round(2)         # Round to 2 decimal places
+```
+
+### Euclidean Distance
+
+#### Step 1: Creating Centroids in Hexagons
+
+This code uses the `mutate` function to replace the original polygon geometry with point geometry representing the cent43 of each hexagon using the `st_centroid` function. Then, it selects only the `hex_id` column and the new centroid geometry, storing the result in a new object called `origin_centroids`.
 
 ```{r}
 # Step 1: Create centroids for the origin hexagons
-origin_centroids <- geriesti_hex_2025 %>%
+origin_centroids <- geriesti_hex %>%
   mutate(
     geometry = st_centroid(geometry)  # convert to centroids
   ) %>%
   select(hex_id, geometry)
 ```
 
-## Ensures Same CRS
+```{r}
+#| echo: false
+#| eval: false
+write_rds(origin_centroids, "data/rds/analysis/od/origin_centroids.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+origin_centroids = read_rds("data/rds/analysis/od/origin_centroids.rds")
+```
+
+#### Step 2: Ensures Same Coordinate Reference System (CRS)
+
+This code transforms the CRS of `origin_centroids` to match the CRS of `aac_sf`. It uses the `st_transform` function to reproject the centroid points and `st_crs` to extract the CRS from the `aac_sf` object, ensuring both datasets use the same spatial reference system for accurate spatial operations.
 
 ```{r}
 # Step 2: Ensure both datasets have the same CRS
-origin_centroids <- st_transform(origin_centroids, st_crs(cc_sf))
+origin_centroids <- st_transform(origin_centroids, st_crs(aac_sf))
 ```
 
-## destination will be CC (postal code/name of centre)
+#### Step 3: Computing Distance Matrix
 
-## Calculating Distance (Cost)
+The below codechunk calculates the distances between every point in `origin_centroids` and every AAC in the `aac_sf` dataset, storing the results in a distance matrix called `distance_matrix`. The `st_distance` function computes the spatial distances between all combinations of features from the two datasets, creating a matrix where each row represents a centroid point and each column represents a feature from the `aac_sf` dataset.
 
 ```{r}
-distance_matrix <- st_distance(origin_centroids, cc_sf)
+distance_matrix <- st_distance(origin_centroids, aac_sf)
+```
+
+```{r}
+view(distance_matrix)
 ```
 
 ```{r}
@@ -87,32 +339,16 @@ write_rds(distance_matrix, "data/rds/analysis/od/distance_matrix.rds")
 distance_matrix = read_rds("data/rds/analysis/od/distance_matrix.rds")
 ```
 
-## Converting to Matrix
+#### Step 4: Converting to Matrix
 
-```{r}
-#| echo: false
-#| eval: false
-# Step 4: Convert to long format OD matrix
-od_matrix <- expand.grid(
-  origin_idx = 1:nrow(origin_centroids),
-  dest_idx = 1:nrow(cc_sf)
-) %>%
-  mutate(
-    hex_id = origin_centroids$hex_id[origin_idx],
-    name = cc_sf$name[dest_idx],
-    cost = as.numeric(distance_matrix[cbind(origin_idx, dest_idx)])
-  ) %>%
-  select(hex_id, name, cost)
-```
-
-use this
+This code converts the distance matrix into a more usable format by first removing the measurement units with `as.numeric()`, then reshaping it into a proper matrix with rows equal to the number of origin centroids and columns equal to the number of features in the `aac_sf` dataset. It then assigns row names using the hexagon IDs from `origin_centroids` and column names using the names from the `aac_sf` dataset, creating an origin-destination matrix called `od_matrix` where you can easily look up distances between specific hexagons and destinations by name.
 
 ```{r}
 od_matrix <- distance_matrix %>%
   as.numeric() %>%  # Remove units
-  matrix(nrow = nrow(origin_centroids), ncol = nrow(cc_sf)) %>%
+  matrix(nrow = nrow(origin_centroids), ncol = nrow(aac_sf)) %>%
   `rownames<-`(origin_centroids$hex_id) %>%
-  `colnames<-`(cc_sf$name)
+  `colnames<-`(aac_sf$name)
 ```
 
 ```{r}
@@ -145,17 +381,639 @@ write_rds(od_km, "data/rds/analysis/od/od_km.rds")
 od_km = read_rds("data/rds/analysis/od/od_km.rds")
 ```
 
-## Modelling and Visualising Accessibility using Hansen Method
+### Grouping into Regions
 
 ```{R}
-acc_KD2SFCA <- data.frame(ac(hexagons$demand,
-                            eldercare$capacity,
+
+```
+
+## Modelling Accessibility using KD2SFCA Method
+
+This calls the `ac()` function to calculate accessibility scores. The `geriesti_hex$aged_2025` provides the demand (elderly population in each hexagon), `aac_sf$capacity` provides the supply (how many people each care center can serve), and `od_km` is the distance matrix between all hexagons and care centers. The `d0 = 5` sets the maximum travel distance to 5 kilometers, `power = 2` means closer centers get exponentially more weight, and `family = "KD2SFCA"` specifies which accessibility method to use. The `data.frame()` wrapper converts the results into a data frame format.
+
+::: panel-tabset
+## 2025
+
+```{r}
+acc_KD2SFCA_2025 <- data.frame(ac(geriesti_hex$aged_2025,
+                            aac_sf$capacity,
                             od_km, 
                             d0 = 5, #max distance people willing to travel
                             power = 2, #put higher weigh to nearer distance
                             family = "KD2SFCA"))
-
-colnames(acc_KD2SFCA) <- "accKD2SFCA"
-acc_KD2SFCA <- tbl_df(acc_KD2SFCA)
-hexagon_KD2SFCA <- bind_cols(hexagons, acc_KD2SFCA)
+colnames(acc_KD2SFCA_2025) <- "acc_KD2SFCA_2025"
+acc_KD2SFCA_2025  <- as_tibble(acc_KD2SFCA_2025)
+hex_KD2SFCA_2025 <- bind_cols(geriesti_hex, acc_KD2SFCA_2025)
 ```
+
+## 2026
+
+```{r}
+acc_KD2SFCA_2026 <- data.frame(ac(geriesti_hex$aged_2026,
+                            aac_sf$capacity,
+                            od_km, 
+                            d0 = 5, #max distance people willing to travel
+                            power = 2, #put higher weigh to nearer distance
+                            family = "KD2SFCA"))
+colnames(acc_KD2SFCA_2026) <- "acc_KD2SFCA_2026"
+acc_KD2SFCA_2026  <- as_tibble(acc_KD2SFCA_2026)
+hex_KD2SFCA_2026 <- bind_cols(geriesti_hex, acc_KD2SFCA_2026)
+```
+
+## 2027
+
+```{r}
+acc_KD2SFCA_2027 <- data.frame(ac(geriesti_hex$aged_2027,
+                            aac_sf$capacity,
+                            od_km, 
+                            d0 = 5, #max distance people willing to travel
+                            power = 2, #put higher weigh to nearer distance
+                            family = "KD2SFCA"))
+colnames(acc_KD2SFCA_2027) <- "acc_KD2SFCA_2027"
+acc_KD2SFCA_2027  <- as_tibble(acc_KD2SFCA_2027)
+hex_KD2SFCA_2027 <- bind_cols(geriesti_hex, acc_KD2SFCA_2027)
+```
+
+## 2028
+
+```{r}
+acc_KD2SFCA_2028 <- data.frame(ac(geriesti_hex$aged_2028,
+                            aac_sf$capacity,
+                            od_km, 
+                            d0 = 5, #max distance people willing to travel
+                            power = 2, #put higher weigh to nearer distance
+                            family = "KD2SFCA"))
+colnames(acc_KD2SFCA_2028) <- "acc_KD2SFCA_2028"
+acc_KD2SFCA_2028  <- as_tibble(acc_KD2SFCA_2028)
+hex_KD2SFCA_2028 <- bind_cols(geriesti_hex, acc_KD2SFCA_2028)
+```
+
+## 2029
+
+```{r}
+acc_KD2SFCA_2029 <- data.frame(ac(geriesti_hex$aged_2029,
+                            aac_sf$capacity,
+                            od_km, 
+                            d0 = 5, #max distance people willing to travel
+                            power = 2, #put higher weigh to nearer distance
+                            family = "KD2SFCA"))
+colnames(acc_KD2SFCA_2029) <- "acc_KD2SFCA_2029"
+acc_KD2SFCA_2029  <- as_tibble(acc_KD2SFCA_2029)
+hex_KD2SFCA_2029 <- bind_cols(geriesti_hex, acc_KD2SFCA_2029)
+```
+:::
+
+```{r}
+# 2025
+#| echo: false
+#| eval: false
+write_rds(acc_KD2SFCA_2025, "data/rds/analysis/aac/acc_KD2SFCA_2025.rds")
+write_rds(hex_KD2SFCA_2025, "data/rds/analysis/aac/hex_KD2SFCA_2025.rds")
+```
+
+```{r}
+# 2026
+#| echo: false
+#| eval: false
+write_rds(acc_KD2SFCA_2026, "data/rds/analysis/aac/acc_KD2SFCA_2026.rds")
+write_rds(hex_KD2SFCA_2026, "data/rds/analysis/aac/hex_KD2SFCA_2026.rds")
+```
+
+```{r}
+# 2027
+#| echo: false
+#| eval: false
+write_rds(acc_KD2SFCA_2027, "data/rds/analysis/aac/acc_KD2SFCA_2027.rds")
+write_rds(hex_KD2SFCA_2027, "data/rds/analysis/aac/hex_KD2SFCA_2027.rds")
+```
+
+```{r}
+# 2028
+#| echo: false
+#| eval: false
+write_rds(acc_KD2SFCA_2028, "data/rds/analysis/aac/acc_KD2SFCA_2028.rds")
+write_rds(hex_KD2SFCA_2028, "data/rds/analysis/aac/hex_KD2SFCA_2028.rds")
+```
+
+```{r}
+# 2029
+#| echo: false
+#| eval: false
+write_rds(acc_KD2SFCA_2029, "data/rds/analysis/aac/acc_KD2SFCA_2029.rds")
+write_rds(hex_KD2SFCA_2029, "data/rds/analysis/aac/hex_KD2SFCA_2029.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+acc_KD2SFCA_2025 = read_rds("data/rds/analysis/aac/acc_KD2SFCA_2025.rds")
+hex_KD2SFCA_2025 = read_rds("data/rds/analysis/aac/hex_kd2SFCA_2025.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+acc_KD2SFCA_2026 = read_rds("data/rds/analysis/aac/acc_KD2SFCA_2026.rds")
+hex_KD2SFCA_2026 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_2026.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+acc_KD2SFCA_2027 = read_rds("data/rds/analysis/aac/acc_KD2SFCA_2027.rds")
+hex_KD2SFCA_2027 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_2027.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+acc_KD2SFCA_2028 = read_rds("data/rds/analysis/aac/acc_KD2SFCA_2028.rds")
+hex_KD2SFCA_2028 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_2028.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+acc_KD2SFCA_2029 = read_rds("data/rds/analysis/aac/acc_KD2SFCA_2029.rds")
+hex_KD2SFCA_2029 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_2029.rds")
+```
+
+Quantiles
+
+```{r}
+quantile(hex_KD2SFCA_2025$acc_KD2SFCA_2025, 
+         probs = seq(0, 1, 0.1), 
+         na.rm = TRUE)
+```
+
+## Modelling Accessibility using KD2SFCA Method (Manhanttan Distance)
+
+This calls the `ac()` function to calculate accessibility scores. The `geriesti_hex$aged_2025` provides the demand (elderly population in each hexagon), `aac_sf$capacity` provides the supply (how many people each care center can serve), and `od_km` is the distance matrix between all hexagons and care centers. The `d0 = 5` sets the maximum travel distance to 5 kilometers, `power = 2` means closer centers get exponentially more weight, and `family = "KD2SFCA"` specifies which accessibility method to use. The `data.frame()` wrapper converts the results into a data frame format.
+
+::: panel-tabset
+## 2025
+
+```{r}
+acc_KD2SFCA_2025_m <- data.frame(ac(geriesti_hex$aged_2025,
+                            aac_sf$capacity,
+                            aac_distmatrix_manhatten, 
+                            d0 = 5, #max distance people willing to travel
+                            power = 2, #put higher weigh to nearer distance
+                            family = "KD2SFCA"))
+colnames(acc_KD2SFCA_2025_m) <- "acc_KD2SFCA_2025_m"
+acc_KD2SFCA_2025_m  <- as_tibble(acc_KD2SFCA_2025_m)
+hex_KD2SFCA_2025_m <- bind_cols(geriesti_hex, acc_KD2SFCA_2025_m)
+```
+
+```{r}
+acc_KD2SFCA_2025 <- data.frame(ac(geriesti_hex$aged_2025,
+                            aac_sf$capacity,
+                            od_km, 
+                            d0 = 5, #max distance people willing to travel
+                            power = 2, #put higher weigh to nearer distance
+                            family = "KD2SFCA"))
+colnames(acc_KD2SFCA_2025) <- "acc_KD2SFCA_2025"
+acc_KD2SFCA_2025  <- as_tibble(acc_KD2SFCA_2025)
+hex_KD2SFCA_2025 <- bind_cols(geriesti_hex, acc_KD2SFCA_2025)
+```
+
+## 2026
+
+```{r}
+acc_KD2SFCA_2026 <- data.frame(ac(geriesti_hex$aged_2026,
+                            aac_sf$capacity,
+                            od_km, 
+                            d0 = 5, #max distance people willing to travel
+                            power = 2, #put higher weigh to nearer distance
+                            family = "KD2SFCA"))
+colnames(acc_KD2SFCA_2026) <- "acc_KD2SFCA_2026"
+acc_KD2SFCA_2026  <- as_tibble(acc_KD2SFCA_2026)
+hex_KD2SFCA_2026 <- bind_cols(geriesti_hex, acc_KD2SFCA_2026)
+```
+
+## 2027
+
+```{r}
+acc_KD2SFCA_2027 <- data.frame(ac(geriesti_hex$aged_2027,
+                            aac_sf$capacity,
+                            od_km, 
+                            d0 = 5, #max distance people willing to travel
+                            power = 2, #put higher weigh to nearer distance
+                            family = "KD2SFCA"))
+colnames(acc_KD2SFCA_2027) <- "acc_KD2SFCA_2027"
+acc_KD2SFCA_2027  <- as_tibble(acc_KD2SFCA_2027)
+hex_KD2SFCA_2027 <- bind_cols(geriesti_hex, acc_KD2SFCA_2027)
+```
+
+## 2028
+
+```{r}
+acc_KD2SFCA_2028 <- data.frame(ac(geriesti_hex$aged_2028,
+                            aac_sf$capacity,
+                            od_km, 
+                            d0 = 5, #max distance people willing to travel
+                            power = 2, #put higher weigh to nearer distance
+                            family = "KD2SFCA"))
+colnames(acc_KD2SFCA_2028) <- "acc_KD2SFCA_2028"
+acc_KD2SFCA_2028  <- as_tibble(acc_KD2SFCA_2028)
+hex_KD2SFCA_2028 <- bind_cols(geriesti_hex, acc_KD2SFCA_2028)
+```
+
+## 2029
+
+```{r}
+acc_KD2SFCA_2029 <- data.frame(ac(geriesti_hex$aged_2029,
+                            aac_sf$capacity,
+                            od_km, 
+                            d0 = 5, #max distance people willing to travel
+                            power = 2, #put higher weigh to nearer distance
+                            family = "KD2SFCA"))
+colnames(acc_KD2SFCA_2029) <- "acc_KD2SFCA_2029"
+acc_KD2SFCA_2029  <- as_tibble(acc_KD2SFCA_2029)
+hex_KD2SFCA_2029 <- bind_cols(geriesti_hex, acc_KD2SFCA_2029)
+```
+:::
+
+```{r}
+# 2025
+#| echo: false
+#| eval: false
+write_rds(acc_KD2SFCA_2025, "data/rds/analysis/aac/acc_KD2SFCA_2025.rds")
+write_rds(hex_KD2SFCA_2025, "data/rds/analysis/aac/hex_KD2SFCA_2025.rds")
+```
+
+```{r}
+# 2026
+#| echo: false
+#| eval: false
+write_rds(acc_KD2SFCA_2026, "data/rds/analysis/aac/acc_KD2SFCA_2026.rds")
+write_rds(hex_KD2SFCA_2026, "data/rds/analysis/aac/hex_KD2SFCA_2026.rds")
+```
+
+```{r}
+# 2027
+#| echo: false
+#| eval: false
+write_rds(acc_KD2SFCA_2027, "data/rds/analysis/aac/acc_KD2SFCA_2027.rds")
+write_rds(hex_KD2SFCA_2027, "data/rds/analysis/aac/hex_KD2SFCA_2027.rds")
+```
+
+```{r}
+# 2028
+#| echo: false
+#| eval: false
+write_rds(acc_KD2SFCA_2028, "data/rds/analysis/aac/acc_KD2SFCA_2028.rds")
+write_rds(hex_KD2SFCA_2028, "data/rds/analysis/aac/hex_KD2SFCA_2028.rds")
+```
+
+```{r}
+# 2029
+#| echo: false
+#| eval: false
+write_rds(acc_KD2SFCA_2029, "data/rds/analysis/aac/acc_KD2SFCA_2029.rds")
+write_rds(hex_KD2SFCA_2029, "data/rds/analysis/aac/hex_KD2SFCA_2029.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+acc_KD2SFCA_2025 = read_rds("data/rds/analysis/aac/acc_KD2SFCA_2025.rds")
+hex_KD2SFCA_2025 = read_rds("data/rds/analysis/aac/hex_kd2SFCA_2025.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+acc_KD2SFCA_2026 = read_rds("data/rds/analysis/aac/acc_KD2SFCA_2026.rds")
+hex_KD2SFCA_2026 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_2026.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+acc_KD2SFCA_2027 = read_rds("data/rds/analysis/aac/acc_KD2SFCA_2027.rds")
+hex_KD2SFCA_2027 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_2027.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+acc_KD2SFCA_2028 = read_rds("data/rds/analysis/aac/acc_KD2SFCA_2028.rds")
+hex_KD2SFCA_2028 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_2028.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+acc_KD2SFCA_2029 = read_rds("data/rds/analysis/aac/acc_KD2SFCA_2029.rds")
+hex_KD2SFCA_2029 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_2029.rds")
+```
+
+## Visualising Accessibility using 2SFCA Method
+
+### Extract Map Extend
+
+```{R}
+map_ex <- st_bbox(geriesti_hex)
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(map_ex, "data/rds/analysis/od/map_ex.rds")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+map_ex = read_rds("data/rds/analysis/od/map_ex.rds")
+```
+
+## Adding into Region
+
+```{r}
+# Method 1: Using left_join (recommended) with case insensitivity
+hex_KD2SFCA_2025 <- hex_KD2SFCA_2025 %>%
+  mutate(sz_upper = toupper(sz)) %>%  # Create uppercase version of sz
+  left_join(
+    mpsz %>% 
+      st_drop_geometry() %>%  # Remove geometry to avoid conflicts
+      select(SUBZONE_N, REGION_N) %>%
+      mutate(SUBZONE_N_upper = toupper(SUBZONE_N)),  # Create uppercase version of SUBZONE_N
+    by = c("sz_upper" = "SUBZONE_N_upper")
+  ) %>%
+  select(-sz_upper)  # Remove the temporary column
+```
+
+### 2025
+
+manhatten distance
+
+```{r}
+#change to ro 
+tmap_mode("plot")
+tm_shape(hex_KD2SFCA_2025_m,
+         bbox = map_ex) + 
+  tm_fill(col = "acc_KD2SFCA_2025_m",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(aac_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Active Ageing Centre in 2025",
+            main.title.position = "center",
+            main.title.size = 0.5,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+euclidean
+
+```{r}
+tmap_mode("plot")
+tm_shape(hex_KD2SFCA_2025,
+         bbox = map_ex) + 
+  tm_fill(col = "acc_KD2SFCA_2025",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(aac_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Active Ageing Centre in 2025",
+            main.title.position = "center",
+            main.title.size = 0.5,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 2026
+
+```{r}
+tmap_mode("plot")
+tm_shape(hex_KD2SFCA_2026,
+         bbox = map_ex) + 
+  tm_fill(col = "acc_KD2SFCA_2026",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(aac_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Active Ageing Centre in 2026",
+            main.title.position = "center",
+            main.title.size = 0.5,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 2027
+
+```{r}
+tmap_mode("plot")
+tm_shape(hex_KD2SFCA_2027,
+         bbox = map_ex) + 
+  tm_fill(col = "acc_KD2SFCA_2027",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(aac_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Active Ageing Centre in 2027",
+            main.title.position = "center",
+            main.title.size = 0.5,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 2028
+
+```{r}
+tmap_mode("plot")
+tm_shape(hex_KD2SFCA_2028,
+         bbox = map_ex) + 
+  tm_fill(col = "acc_KD2SFCA_2028",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(aac_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Active Ageing Centre in 2028",
+            main.title.position = "center",
+            main.title.size = 0.5,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 2029
+
+```{r}
+tmap_mode("plot")
+tm_shape(hex_KD2SFCA_2029,
+         bbox = map_ex) + 
+  tm_fill(col = "acc_KD2SFCA_2029",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(aac_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Active Ageing Centre in 2029",
+            main.title.position = "center",
+            main.title.size = 0.5,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+Statistical Graphic Visualisation
+
+## 2025
+
+```{r}
+hex_KD2SFCA_2025 <- st_join(hex_KD2SFCA_2025, mpsz, 
+                          join = st_intersects)
+```
+
+```{r}
+ggplot(data=hex_KD2SFCA_2025, 
+       aes(y = log(acc_KD2SFCA_2025), 
+           x= REGION_N)) +
+  geom_boxplot() +
+  geom_point(stat="summary", 
+             fun.y="mean", 
+             colour ="red", 
+             size=2)
+```
+
+## 2026
+
+```{r}
+hex_KD2SFCA_2026 <- st_join(hex_KD2SFCA_2026, mpsz, 
+                          join = st_intersects)
+```
+
+```{r}
+ggplot(data=hex_KD2SFCA_2026, 
+       aes(y = log(acc_KD2SFCA_2026), 
+           x= REGION_N)) +
+  geom_boxplot() +
+  geom_point(stat="summary", 
+             fun.y="mean", 
+             colour ="red", 
+             size=2)
+```
+
+## 2027
+
+```{r}
+hex_KD2SFCA_2027 <- st_join(hex_KD2SFCA_2027, mpsz, 
+                          join = st_intersects)
+```
+
+```{r}
+ggplot(data=hex_KD2SFCA_2027, 
+       aes(y = log(acc_KD2SFCA_2027), 
+           x= REGION_N)) +
+  geom_boxplot() +
+  geom_point(stat="summary", 
+             fun.y="mean", 
+             colour ="red", 
+             size=2)
+```
+
+## 2028
+
+```{r}
+hex_KD2SFCA_2028 <- st_join(hex_KD2SFCA_2028, mpsz, 
+                          join = st_intersects)
+```
+
+```{r}
+ggplot(data=hex_KD2SFCA_2028, 
+       aes(y = log(acc_KD2SFCA_2028), 
+           x= REGION_N)) +
+  geom_boxplot() +
+  geom_point(stat="summary", 
+             fun.y="mean", 
+             colour ="red", 
+             size=2)
+```
+
+## 2029
+
+```{r}
+hex_KD2SFCA_2029 <- st_join(hex_KD2SFCA_2029, mpsz, 
+                          join = st_intersects)
+```
+
+```{r}
+ggplot(data=hex_KD2SFCA_2029, 
+       aes(y = log(acc_KD2SFCA_2029), 
+           x= REGION_N)) +
+  geom_boxplot() +
+  geom_point(stat="summary", 
+             fun.y="mean", 
+             colour ="red", 
+             size=2)
+```
+
+## Sensemaking
+
+Enquiries:
+
+1.  2SFCA + KD2SFCA (REVISED) - compartive and take base year such as 2025 only.
+    -   know the difference between them
+
+    -   2sfca: doesnt doesnt take into accounta distance fraction smoothly
+
+    -   
+2.  why od_km is in Nan B?
+3.  how to categorise in regions
+4.  populate both manhatten and eucldean distance? if yes, max dist change?
+
+request: 1. final report 2. poster samples

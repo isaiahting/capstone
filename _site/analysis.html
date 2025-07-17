@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2025-07-01">
 
-<title>Accessibility Analysis – Accessibility of Eldercare Services</title>
+<title>Accessibility of Active Ageing Centre – Accessibility of Eldercare Services</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -165,22 +165,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#analysis" id="toc-analysis" class="nav-link active" data-scroll-target="#analysis"><span class="header-section-number">1</span> Analysis</a>
+  <li><a href="#active-ageing-centre" id="toc-active-ageing-centre" class="nav-link active" data-scroll-target="#active-ageing-centre"><span class="header-section-number">1</span> Active Ageing Centre</a>
   <ul class="collapse">
-  <li><a href="#preparation" id="toc-preparation" class="nav-link" data-scroll-target="#preparation"><span class="header-section-number">1.1</span> Preparation</a>
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview"><span class="header-section-number">1.1</span> Overview</a></li>
+  <li><a href="#preparation" id="toc-preparation" class="nav-link" data-scroll-target="#preparation"><span class="header-section-number">1.2</span> Preparation</a>
   <ul class="collapse">
-  <li><a href="#installing-packages" id="toc-installing-packages" class="nav-link" data-scroll-target="#installing-packages"><span class="header-section-number">1.1.1</span> Installing Packages</a></li>
-  <li><a href="#importing-data" id="toc-importing-data" class="nav-link" data-scroll-target="#importing-data"><span class="header-section-number">1.1.2</span> Importing Data</a></li>
+  <li><a href="#installing-packages" id="toc-installing-packages" class="nav-link" data-scroll-target="#installing-packages"><span class="header-section-number">1.2.1</span> Installing Packages</a></li>
+  <li><a href="#importing-data" id="toc-importing-data" class="nav-link" data-scroll-target="#importing-data"><span class="header-section-number">1.2.2</span> Importing Data</a></li>
+  <li><a href="#road-network" id="toc-road-network" class="nav-link" data-scroll-target="#road-network"><span class="header-section-number">1.2.3</span> Road Network</a></li>
+  <li><a href="#data-preparation-using-qgis" id="toc-data-preparation-using-qgis" class="nav-link" data-scroll-target="#data-preparation-using-qgis"><span class="header-section-number">1.2.4</span> Data Preparation using QGIS</a></li>
   </ul></li>
-  </ul></li>
-  <li><a href="#calculating-distance-matrix" id="toc-calculating-distance-matrix" class="nav-link" data-scroll-target="#calculating-distance-matrix"><span class="header-section-number">2</span> Calculating Distance Matrix</a>
+  <li><a href="#computing-distance-matrix" id="toc-computing-distance-matrix" class="nav-link" data-scroll-target="#computing-distance-matrix"><span class="header-section-number">1.3</span> Computing Distance Matrix</a>
   <ul class="collapse">
-  <li><a href="#origin-is-the-centroid-of-the-hexagon-hexagon-id" id="toc-origin-is-the-centroid-of-the-hexagon-hexagon-id" class="nav-link" data-scroll-target="#origin-is-the-centroid-of-the-hexagon-hexagon-id"><span class="header-section-number">2.1</span> Origin is the centroid of the hexagon (hexagon id)</a></li>
-  <li><a href="#ensures-same-crs" id="toc-ensures-same-crs" class="nav-link" data-scroll-target="#ensures-same-crs"><span class="header-section-number">2.2</span> Ensures Same CRS</a></li>
-  <li><a href="#destination-will-be-cc-postal-codename-of-centre" id="toc-destination-will-be-cc-postal-codename-of-centre" class="nav-link" data-scroll-target="#destination-will-be-cc-postal-codename-of-centre"><span class="header-section-number">2.3</span> destination will be CC (postal code/name of centre)</a></li>
-  <li><a href="#calculating-distance-cost" id="toc-calculating-distance-cost" class="nav-link" data-scroll-target="#calculating-distance-cost"><span class="header-section-number">2.4</span> Calculating Distance (Cost)</a></li>
-  <li><a href="#converting-to-matrix" id="toc-converting-to-matrix" class="nav-link" data-scroll-target="#converting-to-matrix"><span class="header-section-number">2.5</span> Converting to Matrix</a></li>
-  <li><a href="#modelling-and-visualising-accessibility-using-hansen-method" id="toc-modelling-and-visualising-accessibility-using-hansen-method" class="nav-link" data-scroll-target="#modelling-and-visualising-accessibility-using-hansen-method"><span class="header-section-number">2.6</span> Modelling and Visualising Accessibility using Hansen Method</a></li>
+  <li><a href="#manhattan-distance" id="toc-manhattan-distance" class="nav-link" data-scroll-target="#manhattan-distance"><span class="header-section-number">1.3.1</span> Manhattan Distance</a></li>
+  <li><a href="#euclidean-distance" id="toc-euclidean-distance" class="nav-link" data-scroll-target="#euclidean-distance"><span class="header-section-number">1.3.2</span> Euclidean Distance</a></li>
+  <li><a href="#grouping-into-regions" id="toc-grouping-into-regions" class="nav-link" data-scroll-target="#grouping-into-regions"><span class="header-section-number">1.3.3</span> Grouping into Regions</a></li>
+  </ul></li>
+  <li><a href="#modelling-accessibility-using-kd2sfca-method" id="toc-modelling-accessibility-using-kd2sfca-method" class="nav-link" data-scroll-target="#modelling-accessibility-using-kd2sfca-method"><span class="header-section-number">1.4</span> Modelling Accessibility using KD2SFCA Method</a></li>
+  <li><a href="#modelling-accessibility-using-kd2sfca-method-manhanttan-distance" id="toc-modelling-accessibility-using-kd2sfca-method-manhanttan-distance" class="nav-link" data-scroll-target="#modelling-accessibility-using-kd2sfca-method-manhanttan-distance"><span class="header-section-number">1.5</span> Modelling Accessibility using KD2SFCA Method (Manhanttan Distance)</a></li>
+  <li><a href="#visualising-accessibility-using-2sfca-method" id="toc-visualising-accessibility-using-2sfca-method" class="nav-link" data-scroll-target="#visualising-accessibility-using-2sfca-method"><span class="header-section-number">1.6</span> Visualising Accessibility using 2SFCA Method</a>
+  <ul class="collapse">
+  <li><a href="#extract-map-extend" id="toc-extract-map-extend" class="nav-link" data-scroll-target="#extract-map-extend"><span class="header-section-number">1.6.1</span> Extract Map Extend</a></li>
+  </ul></li>
+  <li><a href="#adding-into-region" id="toc-adding-into-region" class="nav-link" data-scroll-target="#adding-into-region"><span class="header-section-number">1.7</span> Adding into Region</a>
+  <ul class="collapse">
+  <li><a href="#section-10" id="toc-section-10" class="nav-link" data-scroll-target="#section-10"><span class="header-section-number">1.7.1</span> 2025</a></li>
+  <li><a href="#section-11" id="toc-section-11" class="nav-link" data-scroll-target="#section-11"><span class="header-section-number">1.7.2</span> 2026</a></li>
+  <li><a href="#section-12" id="toc-section-12" class="nav-link" data-scroll-target="#section-12"><span class="header-section-number">1.7.3</span> 2027</a></li>
+  <li><a href="#section-13" id="toc-section-13" class="nav-link" data-scroll-target="#section-13"><span class="header-section-number">1.7.4</span> 2028</a></li>
+  <li><a href="#section-14" id="toc-section-14" class="nav-link" data-scroll-target="#section-14"><span class="header-section-number">1.7.5</span> 2029</a></li>
+  </ul></li>
+  <li><a href="#section-15" id="toc-section-15" class="nav-link" data-scroll-target="#section-15"><span class="header-section-number">1.8</span> 2025</a></li>
+  <li><a href="#section-16" id="toc-section-16" class="nav-link" data-scroll-target="#section-16"><span class="header-section-number">1.9</span> 2026</a></li>
+  <li><a href="#section-17" id="toc-section-17" class="nav-link" data-scroll-target="#section-17"><span class="header-section-number">1.10</span> 2027</a></li>
+  <li><a href="#section-18" id="toc-section-18" class="nav-link" data-scroll-target="#section-18"><span class="header-section-number">1.11</span> 2028</a></li>
+  <li><a href="#section-19" id="toc-section-19" class="nav-link" data-scroll-target="#section-19"><span class="header-section-number">1.12</span> 2029</a></li>
+  <li><a href="#sensemaking" id="toc-sensemaking" class="nav-link" data-scroll-target="#sensemaking"><span class="header-section-number">1.13</span> Sensemaking</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -190,7 +210,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Accessibility Analysis</h1>
+<h1 class="title">Accessibility of Active Ageing Centre</h1>
 </div>
 
 
@@ -208,7 +228,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">July 5, 2025</p>
+      <p class="date-modified">July 17, 2025</p>
     </div>
   </div>
     
@@ -219,89 +239,952 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="analysis" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Analysis</h1>
-<section id="preparation" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="preparation"><span class="header-section-number">1.1</span> Preparation</h2>
-<section id="installing-packages" class="level3" data-number="1.1.1">
-<h3 data-number="1.1.1" class="anchored" data-anchor-id="installing-packages"><span class="header-section-number">1.1.1</span> Installing Packages</h3>
+<section id="active-ageing-centre" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Active Ageing Centre</h1>
+<section id="overview" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">1.1</span> Overview</h2>
+<p>This chapter covers pre-requisite preparation prior to the analysis alongside the analysis and its results.</p>
+</section>
+<section id="preparation" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="preparation"><span class="header-section-number">1.2</span> Preparation</h2>
+<section id="installing-packages" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="installing-packages"><span class="header-section-number">1.2.1</span> Installing Packages</h3>
+<table class="caption-top table">
+<caption>Table 1: <em>Files Preparation for QGIS</em></caption>
+<colgroup>
+<col style="width: 10%">
+<col style="width: 89%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Package</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>sf</td>
+<td>For importing, managing, and handling geospatial data</td>
+</tr>
+<tr class="even">
+<td>tidyverse</td>
+<td>For non-spatial data wrangling that includes dplyr, tibble, ggplot2, readr, tidyr, stringr, forcats, lubridate and purr</td>
+</tr>
+<tr class="odd">
+<td>SpatialAcc</td>
+<td>For modelling spatial accessibility</td>
+</tr>
+<tr class="even">
+<td>tmap</td>
+<td>For creating elegent and cartographic quality thematic maps</td>
+</tr>
+<tr class="odd">
+<td>ggstatsplot</td>
+<td>For statistical analysis and plotting</td>
+</tr>
+</tbody>
+</table>
+<p>The below code chunk installs and loads the abovementioned packages for this analysis.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tidyverse, SpatialAcc, reshape2, tmap, ggstatsplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="importing-data" class="level3" data-number="1.1.2">
-<h3 data-number="1.1.2" class="anchored" data-anchor-id="importing-data"><span class="header-section-number">1.1.2</span> Importing Data</h3>
+<section id="importing-data" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="importing-data"><span class="header-section-number">1.2.2</span> Importing Data</h3>
+<p>The file of the estimated population from 2025 to 2029 together with the hexagon layer is imported.</p>
+<table class="caption-top table">
+<caption>Table 2: <em>Files Preparation for QGIS</em></caption>
+<tbody>
+<tr class="odd">
+<td><strong>Name</strong></td>
+<td><strong>Details</strong></td>
+</tr>
+<tr class="even">
+<td><code>geriesti_hex</code></td>
+<td><ul>
+<li><p>Projected population of seniors above 60 years of age from Year 2025 to 2029</p></li>
+<li><p>Hexagons ID</p></li>
+<li><p>Geometies</p></li>
+</ul></td>
+</tr>
+<tr class="odd">
+<td><code>cc_sf</code></td>
+<td><ul>
+<li><p>Care Centres</p></li>
+<li><p>Postal Codes of Care Centres</p></li>
+<li><p>Geometries of Care Centres</p></li>
+</ul></td>
+</tr>
+<tr class="even">
+<td><code>mpsz</code></td>
+<td>Singapore Master Plan 2019 Planning Subzone Boundary</td>
+</tr>
+<tr class="odd">
+<td><code>roadnetwork</code></td>
+<td><p><a href="https://download.geofabrik.de/asia/malaysia-singapore-brunei.html">Road network of Singapore, Malaysia, Brunei</a></p>
+<p>chosen over as data.giv has only road centre line</p></td>
+</tr>
+</tbody>
+</table>
+<section id="estimated-senior-population-with-hexagons-spatial-dataset" class="level4" data-number="1.2.2.1">
+<h4 data-number="1.2.2.1" class="anchored" data-anchor-id="estimated-senior-population-with-hexagons-spatial-dataset"><span class="header-section-number">1.2.2.1</span> Estimated Senior Population with Hexagons Spatial Dataset</h4>
+<p>For the below code chunk, we will first read the spatial dataset, <code>geriesti_hex</code> and dropped the irrelevant columns.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>geriesti_hex_2025 <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/mpsz/geriesti_hex_2025.rds"</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>geriesti_hex_2026 <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/mpsz/geriesti_hex_2026.rds"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>geriesti_hex_2027 <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/mpsz/geriesti_hex_2027.rds"</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>geriesti_hex_2028 <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/mpsz/geriesti_hex_2028.rds"</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>geriesti_hex_2029 <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/mpsz/geriesti_hex_2029.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>geriesti_hex <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/mpsz/geriesti_hex_2025.rds"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">'SUBZONE_N.x'</span>, <span class="st">'SUBZONE_N.y'</span>, <span class="st">'subzone_clean'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Following, we use <code>st_write()</code> function from the package <code>sf</code> to save <code>geriesti_hex</code> to a file. it writes into “data/qgis” directory, creating a layer named “geriesti_hex”, and saving it in the ESRI Shapefile format for QGIS later on.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_write</span>(geriesti_hex, <span class="at">dsn =</span> <span class="st">"data/qgis"</span>, <span class="at">layer =</span> <span class="st">"geriesti_hex"</span>, <span class="at">driver =</span> <span class="st">"ESRI Shapefile"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="active-ageing-centre-aac-spatial-dataset" class="level4" data-number="1.2.2.2">
+<h4 data-number="1.2.2.2" class="anchored" data-anchor-id="active-ageing-centre-aac-spatial-dataset"><span class="header-section-number">1.2.2.2</span> Active Ageing Centre (AAC) Spatial Dataset</h4>
+<p>Similar to the above code chunk, we will read the spatial dataset, <code>cc_sf</code> , then we will filter to AACs only. We will add a new column <code>capacity</code> where we will set the demand to 3000 seniors per AAC. Following which dropped the irrelevant columns in addition we use <code>unnest()</code> from the <code>tidyverse</code> package to convert the care centres column from list to column.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>aac_sf <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/carecentre/refined/cc_sf.rds"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(aac <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">capacity =</span> <span class="dv">3000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(postal_found, latitude_wgs84, longitude_wgs84)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">11</span>) <span class="co">#converts from list to column</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Thereafter, we will save <code>cc_sf</code> to a file for QGIS analysis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_write</span>(aac_sf, <span class="at">dsn =</span> <span class="st">"data/qgis"</span>, <span class="at">layer =</span> <span class="st">"aac"</span>, <span class="at">driver =</span> <span class="st">"ESRI Shapefile"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="singapore-master-plan-2019-planning-subzone-boundary" class="level4" data-number="1.2.2.3">
+<h4 data-number="1.2.2.3" class="anchored" data-anchor-id="singapore-master-plan-2019-planning-subzone-boundary"><span class="header-section-number">1.2.2.3</span> Singapore Master Plan 2019 Planning Subzone Boundary</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">=</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/planningarea/"</span>,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">layer =</span> <span class="st">"mpsz2019"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="road-network" class="level3" data-number="1.2.3">
+<h3 data-number="1.2.3" class="anchored" data-anchor-id="road-network"><span class="header-section-number">1.2.3</span> Road Network</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>roadnetwork <span class="ot">=</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/roadnetwork/roadnetwork.shp/"</span>,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">layer =</span> <span class="st">"gis_osm_roads_free_1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-preparation-using-qgis" class="level3" data-number="1.2.4">
+<h3 data-number="1.2.4" class="anchored" data-anchor-id="data-preparation-using-qgis"><span class="header-section-number">1.2.4</span> Data Preparation using QGIS</h3>
+<section id="step-1-adding-geriesti_hex-layer" class="level4" data-number="1.2.4.1">
+<h4 data-number="1.2.4.1" class="anchored" data-anchor-id="step-1-adding-geriesti_hex-layer"><span class="header-section-number">1.2.4.1</span> Step 1: Adding <code>geriesti_hex</code> layer</h4>
+<p>Firstly, locate the file to be be added as a layer. Then, drag and drop the file into the empty white space. The layer will appear as shown below.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/1.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 1: <em>Adding <code>geriesti_hex</code> layer</em></figcaption>
+</figure>
+</div>
+</section>
+<section id="step-2-ensuring-correct-crs" class="level4" data-number="1.2.4.2">
+<h4 data-number="1.2.4.2" class="anchored" data-anchor-id="step-2-ensuring-correct-crs"><span class="header-section-number">1.2.4.2</span> Step 2: Ensuring Correct CRS</h4>
+<p>We will right click on the <code>geriesti_hex</code> layer and click onto <code>Properties</code>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/2.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 2: Properties Panel</figcaption>
+</figure>
+</div>
+<p>In the below picture, we can see that the correct CRS (EPSG: 3414 - SVY21 / Singapore TM) is assigned.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/3.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 3: Checking CRS</figcaption>
+</figure>
+</div>
+</section>
+<section id="step-3-adding-road-network-layer" class="level4" data-number="1.2.4.3">
+<h4 data-number="1.2.4.3" class="anchored" data-anchor-id="step-3-adding-road-network-layer"><span class="header-section-number">1.2.4.3</span> Step 3: Adding Road Network Layer</h4>
+<p>Similar to Step 1, we will drag and drop the <code>gis_osm_roads_free_1.shp</code> into the layer.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/4.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 4: <em>Adding Road Network Layer</em></figcaption>
+</figure>
+</div>
+</section>
+<section id="step-4-adding-master-plan-subzone-boundary" class="level4" data-number="1.2.4.4">
+<h4 data-number="1.2.4.4" class="anchored" data-anchor-id="step-4-adding-master-plan-subzone-boundary"><span class="header-section-number">1.2.4.4</span> Step 4: Adding Master Plan Subzone Boundary</h4>
+<p>Similar to Step 1, we will drag and drop the <code>mpsz2019.shp</code> into the layer.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/5.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 5: <em>Adding <code>mpsz2019</code></em> <em>Layer</em></figcaption>
+</figure>
+</div>
+</section>
+<section id="step-5-clipping-road-network" class="level4" data-number="1.2.4.5">
+<h4 data-number="1.2.4.5" class="anchored" data-anchor-id="step-5-clipping-road-network"><span class="header-section-number">1.2.4.5</span> Step 5: Clipping Road Network</h4>
+<p>As the road network layer consists of the Singapore, Malaysia and Brunei, we would need to clip it to only Singapore’s roads. We select <code>Vector -&gt; Geoprocessing Tools -&gt; Clip</code>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/6.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 6: <em>Clipping Function</em></figcaption>
+</figure>
+</div>
+<p>The input layer will be <code>gis_osm_roads_free_1</code> while the overlay layer is <code>mpsz2019</code>. This ensures that the <code>gis_osm_roads_free_1</code> is trimmed according to the boundaries of Singapore, alias <code>mpsz2019</code>. We will click onto the tool button.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/7.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 7: <em>Parameters of Clipping</em></figcaption>
+</figure>
+</div>
+<p>Under invalid feature filtering, we will choose “Do Not Filter’.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/8.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 8: <em>Do Not Filter Parameter</em></figcaption>
+</figure>
+</div>
+<p>The below is the output of the clipped road network named as <code>Clipped</code>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/9.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 9: <em>Output of Road Network</em></figcaption>
+</figure>
+</div>
+</section>
+<section id="step-6-exporting-road-network" class="level4" data-number="1.2.4.6">
+<h4 data-number="1.2.4.6" class="anchored" data-anchor-id="step-6-exporting-road-network"><span class="header-section-number">1.2.4.6</span> Step 6: Exporting Road Network</h4>
+<p>We will right clicked onto the layer <code>Clipped</code>, select <code>Export -&gt; Save Feature As...</code>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/10.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 10: <em>Exporting Road Network</em></figcaption>
+</figure>
+</div>
+<p>In the format, we will select <code>GeoPackage</code>, selecting the appropriate location and naming the file.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/11.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 11: <em>Saving Road Layer Layer</em></figcaption>
+</figure>
+</div>
+<p>Final output of <code>roadnetwork</code> of Singapore is seen below.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/12.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 12: <em>Final Output of Road Network of Singapore</em></figcaption>
+</figure>
+</div>
+<p>Lastly, we will remove the <code>Clipped</code> layer as it is redundant. We will right clicked and select <code>Remove Layer</code>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/13.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 13: <em>Removing <code>Clipped</code> Layer</em></figcaption>
+</figure>
+</div>
+</section>
+<section id="step-7-adding-aac-layer" class="level4" data-number="1.2.4.7">
+<h4 data-number="1.2.4.7" class="anchored" data-anchor-id="step-7-adding-aac-layer"><span class="header-section-number">1.2.4.7</span> Step 7: Adding AAC Layer</h4>
+<p>First, Drag and drop the <code>cc.shp</code> into the map.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/14.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 14: <em>Adding AAC Layer</em></figcaption>
+</figure>
+</div>
+</section>
+<section id="step-8-creating-centroids" class="level4" data-number="1.2.4.8">
+<h4 data-number="1.2.4.8" class="anchored" data-anchor-id="step-8-creating-centroids"><span class="header-section-number">1.2.4.8</span> Step 8: Creating Centroids</h4>
+<p>Next, we will select <code>Vector -&gt; Geometry Tools -&gt; Centroids</code> in creating the centroids of the AAC.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/15.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 15: <em>Creating Centroids</em></figcaption>
+</figure>
+</div>
+<p>For the parameters, ensure the layer with the hexagons is chosen, in this instance, <code>geriesti_hex</code>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/16.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 16: <em>Parameters of Creating Centroids</em></figcaption>
+</figure>
+</div>
+</section>
+<section id="step-9-exporting-centroids-as-shapefile" class="level4" data-number="1.2.4.9">
+<h4 data-number="1.2.4.9" class="anchored" data-anchor-id="step-9-exporting-centroids-as-shapefile"><span class="header-section-number">1.2.4.9</span> Step 9: Exporting Centroids as Shapefile</h4>
+<p>After running the previous step, you will be able to see the <code>Centroids</code>. Next, we will export the layer as a ShapeFile and save it.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/17.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 17: <em>Exporting Centroids as Shape File</em></figcaption>
+</figure>
+</div>
+<p>In this step, ensure that the file’s format is set to ESRI Shapefile and the CRS is correct, then click onto OK to export. The file will be saved in the desired destination.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/18.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 18: <em>Exporting Parameters</em></figcaption>
+</figure>
+</div>
+</section>
+</section>
+</section>
+<section id="computing-distance-matrix" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="computing-distance-matrix"><span class="header-section-number">1.3</span> Computing Distance Matrix</h2>
+<p>This section will cover two different approaches in computing the distance matrix of centroids of the hexagons and AAC. The first approach uses the Manhanttan distance while the latter consists of using Euclidean Distance. The Manhatten distance utilises the road network of Singapore to compute while the Euclidean distance is a fly-by distance from the centroid to the AAC.</p>
+<section id="manhattan-distance" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="manhattan-distance"><span class="header-section-number">1.3.1</span> Manhattan Distance</h3>
+<p>In this subsection, the distance matrix was computed using QGIS. QGIS is much sophisticated in its computational abilities in relation to geospatial analysis as compared to using R Studio. The steps are laid in this section.</p>
+<section id="step-1-selecting-distance-matrix" class="level4" data-number="1.3.1.1">
+<h4 data-number="1.3.1.1" class="anchored" data-anchor-id="step-1-selecting-distance-matrix"><span class="header-section-number">1.3.1.1</span> Step 1: Selecting Distance Matrix</h4>
+<p>Using the same project from the above steps, click <code>Vector -&gt; Analysis Tools -&gt; Distance Matrix</code>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/19.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 19: <em>Selecting Distance Matrix</em></figcaption>
+</figure>
+</div>
+</section>
+<section id="step-2-selecting-parameters" class="level4" data-number="1.3.1.2">
+<h4 data-number="1.3.1.2" class="anchored" data-anchor-id="step-2-selecting-parameters"><span class="header-section-number">1.3.1.2</span> Step 2: Selecting Parameters</h4>
+<p>The input point layer will be the <code>centroid_hex</code> while the input unique ID filed is the <code>hex_id</code>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/20.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 20: Selecting Parameters</figcaption>
+</figure>
+</div>
+<p>The target point layer will be the Active Ageing Centre (<code>cc</code>) and the unique ID field will be the <code>name</code>. We will then set the output matrix to be <code>Standard (N x T) Distance Matrix</code> and run it.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/21.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 21: <em>Selecting Parameters Cont.</em></figcaption>
+</figure>
+</div>
+</section>
+<section id="step-3-checking-distance-matrix-table" class="level4" data-number="1.3.1.3">
+<h4 data-number="1.3.1.3" class="anchored" data-anchor-id="step-3-checking-distance-matrix-table"><span class="header-section-number">1.3.1.3</span> Step 3: Checking Distance Matrix Table</h4>
+<p>After running it, the new layer “<code>Distance_matrix</code>” will appear. Right click and <code>Open Attritube Table</code> in ensuring that there are no errors or missing values.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/22.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 22: <em>Open Attribute Table</em></figcaption>
+</figure>
+</div>
+<p>The attribute layer appears appropriate. The columns are the names of the Active Ageing Centres while the rows are the Hexagons IDs.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/23.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 23: <em>Attribute Table</em></figcaption>
+</figure>
+</div>
+</section>
+<section id="step-4-exporting-distance-matrix" class="level4" data-number="1.3.1.4">
+<h4 data-number="1.3.1.4" class="anchored" data-anchor-id="step-4-exporting-distance-matrix"><span class="header-section-number">1.3.1.4</span> Step 4: Exporting Distance Matrix</h4>
+<p>As we would like to the distance matrix table as a CSV file, we would need to right click the <code>Distance_matrix</code> layer and select <code>Export-&gt; Save Features As...</code>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/24.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 24: <em>Exporting Distance Matrix</em></figcaption>
+</figure>
+</div>
+</section>
+<section id="step-7-saving-as-csv-file" class="level4" data-number="1.3.1.5">
+<h4 data-number="1.3.1.5" class="anchored" data-anchor-id="step-7-saving-as-csv-file"><span class="header-section-number">1.3.1.5</span> Step 7: Saving as CSV File</h4>
+<p>Ensure that the format is in Comma Separated Value (CSV) before selecting the directory to save.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="analysis_images/25.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 25: <em>Exporting Parameters</em></figcaption>
+</figure>
+</div>
+</section>
+<section id="step-8-importing-csv" class="level4" data-number="1.3.1.6">
+<h4 data-number="1.3.1.6" class="anchored" data-anchor-id="step-8-importing-csv"><span class="header-section-number">1.3.1.6</span> Step 8: Importing CSV</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>aac_distmatrix_manhatten <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/qgis/distancematrix_aac.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This code converts the distance matrix from meters to kilometers and rounds the values to 2 decimal places for better readability. It first removes the non-numeric ID column using <code>select(-ID)</code> because the previous division operation failed when trying to perform mathematical operations on mixed data types (the ID column contains character data while the distance columns contain numeric data). After removing the ID column, it converts the remaining data to a proper numeric matrix with <code>as.matrix()</code>, divides all values by 1000 to convert from meters to kilometers, and rounds the results to 2 decimal places.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>aac_distmatrix_manhatten <span class="ot">&lt;-</span> aac_distmatrix_manhatten <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>ID) <span class="sc">%&gt;%</span>  <span class="co"># Remove the ID column</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span>  <span class="co"># Convert to matrix</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">/</span><span class="st">`</span>(<span class="dv">1000</span>) <span class="sc">%&gt;%</span>    <span class="co"># Divide by 1000</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">2</span>)         <span class="co"># Round to 2 decimal places</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="euclidean-distance" class="level3" data-number="1.3.2">
+<h3 data-number="1.3.2" class="anchored" data-anchor-id="euclidean-distance"><span class="header-section-number">1.3.2</span> Euclidean Distance</h3>
+<section id="step-1-creating-centroids-in-hexagons" class="level4" data-number="1.3.2.1">
+<h4 data-number="1.3.2.1" class="anchored" data-anchor-id="step-1-creating-centroids-in-hexagons"><span class="header-section-number">1.3.2.1</span> Step 1: Creating Centroids in Hexagons</h4>
+<p>This code uses the <code>mutate</code> function to replace the original polygon geometry with point geometry representing the cent43 of each hexagon using the <code>st_centroid</code> function. Then, it selects only the <code>hex_id</code> column and the new centroid geometry, storing the result in a new object called <code>origin_centroids</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Create centroids for the origin hexagons</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>origin_centroids <span class="ot">&lt;-</span> geriesti_hex <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">geometry =</span> <span class="fu">st_centroid</span>(geometry)  <span class="co"># convert to centroids</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(hex_id, geometry)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-2-ensures-same-coordinate-reference-system-crs" class="level4" data-number="1.3.2.2">
+<h4 data-number="1.3.2.2" class="anchored" data-anchor-id="step-2-ensures-same-coordinate-reference-system-crs"><span class="header-section-number">1.3.2.2</span> Step 2: Ensures Same Coordinate Reference System (CRS)</h4>
+<p>This code transforms the CRS of <code>origin_centroids</code> to match the CRS of <code>aac_sf</code>. It uses the <code>st_transform</code> function to reproject the centroid points and <code>st_crs</code> to extract the CRS from the <code>aac_sf</code> object, ensuring both datasets use the same spatial reference system for accurate spatial operations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Ensure both datasets have the same CRS</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>origin_centroids <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(origin_centroids, <span class="fu">st_crs</span>(aac_sf))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-3-computing-distance-matrix" class="level4" data-number="1.3.2.3">
+<h4 data-number="1.3.2.3" class="anchored" data-anchor-id="step-3-computing-distance-matrix"><span class="header-section-number">1.3.2.3</span> Step 3: Computing Distance Matrix</h4>
+<p>The below codechunk calculates the distances between every point in <code>origin_centroids</code> and every AAC in the <code>aac_sf</code> dataset, storing the results in a distance matrix called <code>distance_matrix</code>. The <code>st_distance</code> function computes the spatial distances between all combinations of features from the two datasets, creating a matrix where each row represents a centroid point and each column represents a feature from the <code>aac_sf</code> dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>distance_matrix <span class="ot">&lt;-</span> <span class="fu">st_distance</span>(origin_centroids, aac_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cc_sf <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/carecentre/refined/cc_sf.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(distance_matrix)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-</section>
-</section>
-<section id="calculating-distance-matrix" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Calculating Distance Matrix</h1>
-<section id="origin-is-the-centroid-of-the-hexagon-hexagon-id" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="origin-is-the-centroid-of-the-hexagon-hexagon-id"><span class="header-section-number">2.1</span> Origin is the centroid of the hexagon (hexagon id)</h2>
+<section id="step-4-converting-to-matrix" class="level4" data-number="1.3.2.4">
+<h4 data-number="1.3.2.4" class="anchored" data-anchor-id="step-4-converting-to-matrix"><span class="header-section-number">1.3.2.4</span> Step 4: Converting to Matrix</h4>
+<p>This code converts the distance matrix into a more usable format by first removing the measurement units with <code>as.numeric()</code>, then reshaping it into a proper matrix with rows equal to the number of origin centroids and columns equal to the number of features in the <code>aac_sf</code> dataset. It then assigns row names using the hexagon IDs from <code>origin_centroids</code> and column names using the names from the <code>aac_sf</code> dataset, creating an origin-destination matrix called <code>od_matrix</code> where you can easily look up distances between specific hexagons and destinations by name.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Create centroids for the origin hexagons</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>origin_centroids <span class="ot">&lt;-</span> geriesti_hex_2025 <span class="sc">%&gt;%</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">geometry =</span> <span class="fu">st_centroid</span>(geometry)  <span class="co"># convert to centroids</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(hex_id, geometry)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="ensures-same-crs" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="ensures-same-crs"><span class="header-section-number">2.2</span> Ensures Same CRS</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Ensure both datasets have the same CRS</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>origin_centroids <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(origin_centroids, <span class="fu">st_crs</span>(cc_sf))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="destination-will-be-cc-postal-codename-of-centre" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="destination-will-be-cc-postal-codename-of-centre"><span class="header-section-number">2.3</span> destination will be CC (postal code/name of centre)</h2>
-</section>
-<section id="calculating-distance-cost" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="calculating-distance-cost"><span class="header-section-number">2.4</span> Calculating Distance (Cost)</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>distance_matrix <span class="ot">&lt;-</span> <span class="fu">st_distance</span>(origin_centroids, cc_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="converting-to-matrix" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="converting-to-matrix"><span class="header-section-number">2.5</span> Converting to Matrix</h2>
-<p>use this</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>od_matrix <span class="ot">&lt;-</span> distance_matrix <span class="sc">%&gt;%</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.numeric</span>() <span class="sc">%&gt;%</span>  <span class="co"># Remove units</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">matrix</span>(<span class="at">nrow =</span> <span class="fu">nrow</span>(origin_centroids), <span class="at">ncol =</span> <span class="fu">nrow</span>(cc_sf)) <span class="sc">%&gt;%</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">rownames&lt;-</span><span class="st">`</span>(origin_centroids<span class="sc">$</span>hex_id) <span class="sc">%&gt;%</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">colnames&lt;-</span><span class="st">`</span>(cc_sf<span class="sc">$</span>name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>od_matrix <span class="ot">&lt;-</span> distance_matrix <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.numeric</span>() <span class="sc">%&gt;%</span>  <span class="co"># Remove units</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">matrix</span>(<span class="at">nrow =</span> <span class="fu">nrow</span>(origin_centroids), <span class="at">ncol =</span> <span class="fu">nrow</span>(aac_sf)) <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">rownames&lt;-</span><span class="st">`</span>(origin_centroids<span class="sc">$</span>hex_id) <span class="sc">%&gt;%</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">colnames&lt;-</span><span class="st">`</span>(aac_sf<span class="sc">$</span>name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This code converts distance values from meters to kilometers and formats them to 2 decimal places. It starts by taking the existing <code>od_matrix</code> and dividing all values by 1000 to convert from meters to kilometers. The <code>as.matrix()</code> function ensures the result maintains the matrix format. Finally, the <code>round()</code> function with the parameter <code>2</code> rounds all the distance values to exactly 2 decimal places for cleaner presentation.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>od_km <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">as.matrix</span>(od_matrix<span class="sc">/</span><span class="dv">1000</span>), <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>od_km <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">as.matrix</span>(od_matrix<span class="sc">/</span><span class="dv">1000</span>), <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="modelling-and-visualising-accessibility-using-hansen-method" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="modelling-and-visualising-accessibility-using-hansen-method"><span class="header-section-number">2.6</span> Modelling and Visualising Accessibility using Hansen Method</h2>
+</section>
+<section id="grouping-into-regions" class="level3" data-number="1.3.3">
+<h3 data-number="1.3.3" class="anchored" data-anchor-id="grouping-into-regions"><span class="header-section-number">1.3.3</span> Grouping into Regions</h3>
+</section>
+</section>
+<section id="modelling-accessibility-using-kd2sfca-method" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="modelling-accessibility-using-kd2sfca-method"><span class="header-section-number">1.4</span> Modelling Accessibility using KD2SFCA Method</h2>
+<p>This calls the <code>ac()</code> function to calculate accessibility scores. The <code>geriesti_hex$aged_2025</code> provides the demand (elderly population in each hexagon), <code>aac_sf$capacity</code> provides the supply (how many people each care center can serve), and <code>od_km</code> is the distance matrix between all hexagons and care centers. The <code>d0 = 5</code> sets the maximum travel distance to 5 kilometers, <code>power = 2</code> means closer centers get exponentially more weight, and <code>family = "KD2SFCA"</code> specifies which accessibility method to use. The <code>data.frame()</code> wrapper converts the results into a data frame format.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">2025</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">2026</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">2027</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">2028</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false">2029</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                            od_km, </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">5</span>, <span class="co">#max distance people willing to travel</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, <span class="co">#put higher weigh to nearer distance</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA) <span class="ot">&lt;-</span> <span class="st">"accKD2SFCA"</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">tbl_df</span>(acc_KD2SFCA)</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>hexagon_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_KD2SFCA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2025 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(geriesti_hex<span class="sc">$</span>aged_2025,</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                            aac_sf<span class="sc">$</span>capacity,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                            od_km, </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">5</span>, <span class="co">#max distance people willing to travel</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, <span class="co">#put higher weigh to nearer distance</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA_2025) <span class="ot">&lt;-</span> <span class="st">"acc_KD2SFCA_2025"</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2025  <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(acc_KD2SFCA_2025)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2025 <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(geriesti_hex, acc_KD2SFCA_2025)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2026 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(geriesti_hex<span class="sc">$</span>aged_2026,</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                            aac_sf<span class="sc">$</span>capacity,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                            od_km, </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">5</span>, <span class="co">#max distance people willing to travel</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, <span class="co">#put higher weigh to nearer distance</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA_2026) <span class="ot">&lt;-</span> <span class="st">"acc_KD2SFCA_2026"</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2026  <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(acc_KD2SFCA_2026)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2026 <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(geriesti_hex, acc_KD2SFCA_2026)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2027 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(geriesti_hex<span class="sc">$</span>aged_2027,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                            aac_sf<span class="sc">$</span>capacity,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                            od_km, </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">5</span>, <span class="co">#max distance people willing to travel</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, <span class="co">#put higher weigh to nearer distance</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA_2027) <span class="ot">&lt;-</span> <span class="st">"acc_KD2SFCA_2027"</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2027  <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(acc_KD2SFCA_2027)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2027 <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(geriesti_hex, acc_KD2SFCA_2027)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2028 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(geriesti_hex<span class="sc">$</span>aged_2028,</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                            aac_sf<span class="sc">$</span>capacity,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                            od_km, </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">5</span>, <span class="co">#max distance people willing to travel</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, <span class="co">#put higher weigh to nearer distance</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA_2028) <span class="ot">&lt;-</span> <span class="st">"acc_KD2SFCA_2028"</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2028  <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(acc_KD2SFCA_2028)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2028 <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(geriesti_hex, acc_KD2SFCA_2028)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2029 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(geriesti_hex<span class="sc">$</span>aged_2029,</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                            aac_sf<span class="sc">$</span>capacity,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                            od_km, </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">5</span>, <span class="co">#max distance people willing to travel</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, <span class="co">#put higher weigh to nearer distance</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA_2029) <span class="ot">&lt;-</span> <span class="st">"acc_KD2SFCA_2029"</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2029  <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(acc_KD2SFCA_2029)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2029 <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(geriesti_hex, acc_KD2SFCA_2029)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2025</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(acc_KD2SFCA_2025, <span class="st">"data/rds/analysis/aac/acc_KD2SFCA_2025.rds"</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(hex_KD2SFCA_2025, <span class="st">"data/rds/analysis/aac/hex_KD2SFCA_2025.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2026</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(acc_KD2SFCA_2026, <span class="st">"data/rds/analysis/aac/acc_KD2SFCA_2026.rds"</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(hex_KD2SFCA_2026, <span class="st">"data/rds/analysis/aac/hex_KD2SFCA_2026.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2027</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(acc_KD2SFCA_2027, <span class="st">"data/rds/analysis/aac/acc_KD2SFCA_2027.rds"</span>)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(hex_KD2SFCA_2027, <span class="st">"data/rds/analysis/aac/hex_KD2SFCA_2027.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2028</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(acc_KD2SFCA_2028, <span class="st">"data/rds/analysis/aac/acc_KD2SFCA_2028.rds"</span>)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(hex_KD2SFCA_2028, <span class="st">"data/rds/analysis/aac/hex_KD2SFCA_2028.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2029</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(acc_KD2SFCA_2029, <span class="st">"data/rds/analysis/aac/acc_KD2SFCA_2029.rds"</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(hex_KD2SFCA_2029, <span class="st">"data/rds/analysis/aac/hex_KD2SFCA_2029.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Quantiles</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(hex_KD2SFCA_2025<span class="sc">$</span>acc_KD2SFCA_2025, </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">probs =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.1</span>), </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="modelling-accessibility-using-kd2sfca-method-manhanttan-distance" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="modelling-accessibility-using-kd2sfca-method-manhanttan-distance"><span class="header-section-number">1.5</span> Modelling Accessibility using KD2SFCA Method (Manhanttan Distance)</h2>
+<p>This calls the <code>ac()</code> function to calculate accessibility scores. The <code>geriesti_hex$aged_2025</code> provides the demand (elderly population in each hexagon), <code>aac_sf$capacity</code> provides the supply (how many people each care center can serve), and <code>od_km</code> is the distance matrix between all hexagons and care centers. The <code>d0 = 5</code> sets the maximum travel distance to 5 kilometers, <code>power = 2</code> means closer centers get exponentially more weight, and <code>family = "KD2SFCA"</code> specifies which accessibility method to use. The <code>data.frame()</code> wrapper converts the results into a data frame format.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">2025</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">2026</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">2027</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" role="tab" aria-controls="tabset-2-4" aria-selected="false">2028</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-5" role="tab" aria-controls="tabset-2-5" aria-selected="false">2029</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2025_m <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(geriesti_hex<span class="sc">$</span>aged_2025,</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                            aac_sf<span class="sc">$</span>capacity,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                            aac_distmatrix_manhatten, </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">5</span>, <span class="co">#max distance people willing to travel</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, <span class="co">#put higher weigh to nearer distance</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA_2025_m) <span class="ot">&lt;-</span> <span class="st">"acc_KD2SFCA_2025_m"</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2025_m  <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(acc_KD2SFCA_2025_m)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2025_m <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(geriesti_hex, acc_KD2SFCA_2025_m)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2025 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(geriesti_hex<span class="sc">$</span>aged_2025,</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                            aac_sf<span class="sc">$</span>capacity,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>                            od_km, </span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">5</span>, <span class="co">#max distance people willing to travel</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, <span class="co">#put higher weigh to nearer distance</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA_2025) <span class="ot">&lt;-</span> <span class="st">"acc_KD2SFCA_2025"</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2025  <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(acc_KD2SFCA_2025)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2025 <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(geriesti_hex, acc_KD2SFCA_2025)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2026 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(geriesti_hex<span class="sc">$</span>aged_2026,</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>                            aac_sf<span class="sc">$</span>capacity,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                            od_km, </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">5</span>, <span class="co">#max distance people willing to travel</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, <span class="co">#put higher weigh to nearer distance</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA_2026) <span class="ot">&lt;-</span> <span class="st">"acc_KD2SFCA_2026"</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2026  <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(acc_KD2SFCA_2026)</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2026 <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(geriesti_hex, acc_KD2SFCA_2026)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2027 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(geriesti_hex<span class="sc">$</span>aged_2027,</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>                            aac_sf<span class="sc">$</span>capacity,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                            od_km, </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">5</span>, <span class="co">#max distance people willing to travel</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, <span class="co">#put higher weigh to nearer distance</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA_2027) <span class="ot">&lt;-</span> <span class="st">"acc_KD2SFCA_2027"</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2027  <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(acc_KD2SFCA_2027)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2027 <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(geriesti_hex, acc_KD2SFCA_2027)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-4-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2028 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(geriesti_hex<span class="sc">$</span>aged_2028,</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>                            aac_sf<span class="sc">$</span>capacity,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>                            od_km, </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">5</span>, <span class="co">#max distance people willing to travel</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, <span class="co">#put higher weigh to nearer distance</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA_2028) <span class="ot">&lt;-</span> <span class="st">"acc_KD2SFCA_2028"</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2028  <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(acc_KD2SFCA_2028)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2028 <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(geriesti_hex, acc_KD2SFCA_2028)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-5-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2029 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(geriesti_hex<span class="sc">$</span>aged_2029,</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>                            aac_sf<span class="sc">$</span>capacity,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>                            od_km, </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">5</span>, <span class="co">#max distance people willing to travel</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">power =</span> <span class="dv">2</span>, <span class="co">#put higher weigh to nearer distance</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">family =</span> <span class="st">"KD2SFCA"</span>))</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(acc_KD2SFCA_2029) <span class="ot">&lt;-</span> <span class="st">"acc_KD2SFCA_2029"</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA_2029  <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(acc_KD2SFCA_2029)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2029 <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(geriesti_hex, acc_KD2SFCA_2029)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2025</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(acc_KD2SFCA_2025, <span class="st">"data/rds/analysis/aac/acc_KD2SFCA_2025.rds"</span>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(hex_KD2SFCA_2025, <span class="st">"data/rds/analysis/aac/hex_KD2SFCA_2025.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2026</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(acc_KD2SFCA_2026, <span class="st">"data/rds/analysis/aac/acc_KD2SFCA_2026.rds"</span>)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(hex_KD2SFCA_2026, <span class="st">"data/rds/analysis/aac/hex_KD2SFCA_2026.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2027</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(acc_KD2SFCA_2027, <span class="st">"data/rds/analysis/aac/acc_KD2SFCA_2027.rds"</span>)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(hex_KD2SFCA_2027, <span class="st">"data/rds/analysis/aac/hex_KD2SFCA_2027.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2028</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(acc_KD2SFCA_2028, <span class="st">"data/rds/analysis/aac/acc_KD2SFCA_2028.rds"</span>)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(hex_KD2SFCA_2028, <span class="st">"data/rds/analysis/aac/hex_KD2SFCA_2028.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2029</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(acc_KD2SFCA_2029, <span class="st">"data/rds/analysis/aac/acc_KD2SFCA_2029.rds"</span>)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(hex_KD2SFCA_2029, <span class="st">"data/rds/analysis/aac/hex_KD2SFCA_2029.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visualising-accessibility-using-2sfca-method" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="visualising-accessibility-using-2sfca-method"><span class="header-section-number">1.6</span> Visualising Accessibility using 2SFCA Method</h2>
+<section id="extract-map-extend" class="level3" data-number="1.6.1">
+<h3 data-number="1.6.1" class="anchored" data-anchor-id="extract-map-extend"><span class="header-section-number">1.6.1</span> Extract Map Extend</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>map_ex <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(geriesti_hex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="adding-into-region" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="adding-into-region"><span class="header-section-number">1.7</span> Adding into Region</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 1: Using left_join (recommended) with case insensitivity</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2025 <span class="ot">&lt;-</span> hex_KD2SFCA_2025 <span class="sc">%&gt;%</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sz_upper =</span> <span class="fu">toupper</span>(sz)) <span class="sc">%&gt;%</span>  <span class="co"># Create uppercase version of sz</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    mpsz <span class="sc">%&gt;%</span> </span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span>  <span class="co"># Remove geometry to avoid conflicts</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(SUBZONE_N, REGION_N) <span class="sc">%&gt;%</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">SUBZONE_N_upper =</span> <span class="fu">toupper</span>(SUBZONE_N)),  <span class="co"># Create uppercase version of SUBZONE_N</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"sz_upper"</span> <span class="ot">=</span> <span class="st">"SUBZONE_N_upper"</span>)</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>sz_upper)  <span class="co"># Remove the temporary column</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="section-10" class="level3" data-number="1.7.1">
+<h3 data-number="1.7.1" class="anchored" data-anchor-id="section-10"><span class="header-section-number">1.7.1</span> 2025</h3>
+<p>manhatten distance</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co">#change to ro </span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hex_KD2SFCA_2025_m,</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> map_ex) <span class="sc">+</span> </span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"acc_KD2SFCA_2025_m"</span>,</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(aac_sf) <span class="sc">+</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to Active Ageing Centre in 2025"</span>,</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="fl">0.5</span>,</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">6</span>),</span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>euclidean</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hex_KD2SFCA_2025,</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> map_ex) <span class="sc">+</span> </span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"acc_KD2SFCA_2025"</span>,</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(aac_sf) <span class="sc">+</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to Active Ageing Centre in 2025"</span>,</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="fl">0.5</span>,</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">6</span>),</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="section-11" class="level3" data-number="1.7.2">
+<h3 data-number="1.7.2" class="anchored" data-anchor-id="section-11"><span class="header-section-number">1.7.2</span> 2026</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hex_KD2SFCA_2026,</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> map_ex) <span class="sc">+</span> </span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"acc_KD2SFCA_2026"</span>,</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(aac_sf) <span class="sc">+</span></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to Active Ageing Centre in 2026"</span>,</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="fl">0.5</span>,</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">6</span>),</span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="section-12" class="level3" data-number="1.7.3">
+<h3 data-number="1.7.3" class="anchored" data-anchor-id="section-12"><span class="header-section-number">1.7.3</span> 2027</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hex_KD2SFCA_2027,</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> map_ex) <span class="sc">+</span> </span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"acc_KD2SFCA_2027"</span>,</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(aac_sf) <span class="sc">+</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to Active Ageing Centre in 2027"</span>,</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="fl">0.5</span>,</span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">6</span>),</span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="section-13" class="level3" data-number="1.7.4">
+<h3 data-number="1.7.4" class="anchored" data-anchor-id="section-13"><span class="header-section-number">1.7.4</span> 2028</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hex_KD2SFCA_2028,</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> map_ex) <span class="sc">+</span> </span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"acc_KD2SFCA_2028"</span>,</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(aac_sf) <span class="sc">+</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to Active Ageing Centre in 2028"</span>,</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="fl">0.5</span>,</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">6</span>),</span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="section-14" class="level3" data-number="1.7.5">
+<h3 data-number="1.7.5" class="anchored" data-anchor-id="section-14"><span class="header-section-number">1.7.5</span> 2029</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(hex_KD2SFCA_2029,</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">bbox =</span> map_ex) <span class="sc">+</span> </span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"acc_KD2SFCA_2029"</span>,</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">10</span>,</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>,</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"black"</span>,</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(aac_sf) <span class="sc">+</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Accessibility to Active Ageing Centre in 2029"</span>,</span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="fl">0.5</span>,</span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">3.0</span>,</span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.format =</span> <span class="fu">list</span>(<span class="at">digits =</span> <span class="dv">6</span>),</span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),</span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Statistical Graphic Visualisation</p>
+</section>
+</section>
+<section id="section-15" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="section-15"><span class="header-section-number">1.8</span> 2025</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2025 <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hex_KD2SFCA_2025, mpsz, </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">join =</span> st_intersects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hex_KD2SFCA_2025, </span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">log</span>(acc_KD2SFCA_2025), </span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="section-16" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="section-16"><span class="header-section-number">1.9</span> 2026</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2026 <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hex_KD2SFCA_2026, mpsz, </span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">join =</span> st_intersects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hex_KD2SFCA_2026, </span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">log</span>(acc_KD2SFCA_2026), </span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="section-17" class="level2" data-number="1.10">
+<h2 data-number="1.10" class="anchored" data-anchor-id="section-17"><span class="header-section-number">1.10</span> 2027</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2027 <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hex_KD2SFCA_2027, mpsz, </span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">join =</span> st_intersects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hex_KD2SFCA_2027, </span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">log</span>(acc_KD2SFCA_2027), </span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="section-18" class="level2" data-number="1.11">
+<h2 data-number="1.11" class="anchored" data-anchor-id="section-18"><span class="header-section-number">1.11</span> 2028</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2028 <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hex_KD2SFCA_2028, mpsz, </span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">join =</span> st_intersects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hex_KD2SFCA_2028, </span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">log</span>(acc_KD2SFCA_2028), </span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="section-19" class="level2" data-number="1.12">
+<h2 data-number="1.12" class="anchored" data-anchor-id="section-19"><span class="header-section-number">1.12</span> 2029</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>hex_KD2SFCA_2029 <span class="ot">&lt;-</span> <span class="fu">st_join</span>(hex_KD2SFCA_2029, mpsz, </span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">join =</span> st_intersects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>hex_KD2SFCA_2029, </span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">log</span>(acc_KD2SFCA_2029), </span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span> REGION_N)) <span class="sc">+</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat=</span><span class="st">"summary"</span>, </span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">fun.y=</span><span class="st">"mean"</span>, </span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span><span class="st">"red"</span>, </span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sensemaking" class="level2" data-number="1.13">
+<h2 data-number="1.13" class="anchored" data-anchor-id="sensemaking"><span class="header-section-number">1.13</span> Sensemaking</h2>
+<p>Enquiries:</p>
+<ol type="1">
+<li>2SFCA + KD2SFCA (REVISED) - compartive and take base year such as 2025 only.
+<ul>
+<li><p>know the difference between them</p></li>
+<li><p>2sfca: doesnt doesnt take into accounta distance fraction smoothly</p></li>
+<li></li>
+</ul></li>
+<li>why od_km is in Nan B?</li>
+<li>how to categorise in regions</li>
+<li>populate both manhatten and eucldean distance? if yes, max dist change?</li>
+</ol>
+<p>request: 1. final report 2. poster samples</p>
 
 
 </section>
