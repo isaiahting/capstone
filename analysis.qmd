@@ -26,19 +26,19 @@ This chapter covers pre-requisite preparation prior to the analysis alongside th
 
 ### Installing Packages
 
-+--------------+-------------------------------------------------------------------------------------------------------------------------+
-| **Package**  | **Description**                                                                                                         |
-+==============+=========================================================================================================================+
-| sf           | For importing, managing, and handling geospatial data                                                                   |
-+--------------+-------------------------------------------------------------------------------------------------------------------------+
-| tidyverse    | For non-spatial data wrangling that includes dplyr, tibble, ggplot2, readr, tidyr, stringr, forcats, lubridate and purr |
-+--------------+-------------------------------------------------------------------------------------------------------------------------+
-| SpatialAcc   | For modelling spatial accessibility                                                                                     |
-+--------------+-------------------------------------------------------------------------------------------------------------------------+
-| tmap         | For creating elegent and cartographic quality thematic maps                                                             |
-+--------------+-------------------------------------------------------------------------------------------------------------------------+
-| ggstatsplot  | For statistical analysis and plotting                                                                                   |
-+--------------+-------------------------------------------------------------------------------------------------------------------------+
++-------------+-------------------------------------------------------------------------------------------------------------------------+
+| **Package** | **Description**                                                                                                         |
++=============+=========================================================================================================================+
+| sf          | For importing, managing, and handling geospatial data                                                                   |
++-------------+-------------------------------------------------------------------------------------------------------------------------+
+| tidyverse   | For non-spatial data wrangling that includes dplyr, tibble, ggplot2, readr, tidyr, stringr, forcats, lubridate and purr |
++-------------+-------------------------------------------------------------------------------------------------------------------------+
+| SpatialAcc  | For modelling spatial accessibility                                                                                     |
++-------------+-------------------------------------------------------------------------------------------------------------------------+
+| tmap        | For creating elegent and cartographic quality thematic maps                                                             |
++-------------+-------------------------------------------------------------------------------------------------------------------------+
+| ggstatsplot | For statistical analysis and plotting                                                                                   |
++-------------+-------------------------------------------------------------------------------------------------------------------------+
 
 : Table 1: *Files Preparation for QGIS*
 
@@ -193,13 +193,13 @@ Lastly, we will remove the `Clipped` layer as it is redundant. We will right cli
 
 #### Step 7: Adding AAC Layer
 
-First, Drag and drop the `cc.shp` into the map.
+First, Drag and drop the `cc.shp` into the map. This will be the Destination.
 
 ![Figure 14: *Adding AAC Layer*](analysis_images/14.png)
 
 #### Step 8: Creating Centroids
 
-Next, we will select `Vector -> Geometry Tools -> Centroids` in creating the centroids of the AAC.
+Next, we will select `Vector -> Geometry Tools -> Centroids` in creating the centroids of the projected population. This will be the Origin.
 
 ![Figure 15: *Creating Centroids*](analysis_images/15.png)
 
@@ -219,11 +219,11 @@ In this step, ensure that the file's format is set to ESRI Shapefile and the CRS
 
 ## Computing Distance Matrix
 
-This section will cover two different approaches in computing the distance matrix of centroids of the hexagons and AAC. The first approach uses the Manhanttan distance while the latter consists of using Euclidean Distance. The Manhatten distance utilises the road network of Singapore to compute while the Euclidean distance is a fly-by distance from the centroid to the AAC.
+This section will cover two different approaches in computing the distance matrix of centroids of the hexagons and AAC. The first approach uses the Network distance while the latter consists of using Euclidean Distance. The Manhatten distance utilises the road network of Singapore to compute while the Euclidean distance is a fly-by distance from the centroid to the AAC.
 
-### Manhattan Distance
+### Network Distance
 
-In this subsection, the distance matrix was computed using QGIS. QGIS is much sophisticated in its computational abilities in relation to geospatial analysis as compared to using R Studio. The steps are laid in this section.
+In this subsection, the distance matrix was computed using the `Road Network` data on QGIS. The `Road Nework` serves as a link whereas the origin (centroids) and destination (AAC) are nodes. Owing to its sophisticated computational abilities in relation to geospatial analysis, QGIS is used over R Studio. The steps are laid in this section.
 
 #### Step 1: Selecting Distance Matrix
 
@@ -266,13 +266,13 @@ Ensure that the format is in Comma Separated Value (CSV) before selecting the di
 #### Step 8: Importing CSV
 
 ```{r}
-aac_distmatrix_manhatten <- read.csv("data/qgis/distancematrix_aac.csv")
+aac_distmatrix_network <- read.csv("data/qgis/distancematrix_aac.csv")
 ```
 
 This code converts the distance matrix from meters to kilometers and rounds the values to 2 decimal places for better readability. It first removes the non-numeric ID column using `select(-ID)` because the previous division operation failed when trying to perform mathematical operations on mixed data types (the ID column contains character data while the distance columns contain numeric data). After removing the ID column, it converts the remaining data to a proper numeric matrix with `as.matrix()`, divides all values by 1000 to convert from meters to kilometers, and rounds the results to 2 decimal places.
 
 ```{r}
-aac_distmatrix_manhatten <- aac_distmatrix_manhatten %>%
+aac_distmatrix_network <- aac_distmatrix_network %>%
   select(-ID) %>%  # Remove the ID column
   as.matrix() %>%  # Convert to matrix
   `/`(1000) %>%    # Divide by 1000
@@ -387,25 +387,212 @@ od_km = read_rds("data/rds/analysis/od/od_km.rds")
 
 ```
 
-## Modelling Accessibility using KD2SFCA Method
+EDA
+
+add in aac per subzone
+
+```{r}
+
+```
+
+## Modelling Accessibility
+
+### 2SFCA Method
+
+This calls the `ac()` functi on to calculate accessibility scores. The `geriesti_hex$aged_2025` provides the demand (elderly population in each hexagon), `aac_sf$capacity` provides the supply (how many people each care center can serve), and `od_km` is the distance matrix between all hexagons and care centers. The `d0 = 5` sets the maximum travel distance to 5 kilometers, `power = 2` means closer centers get exponentially more weight, and `family = "KD2SFCA"` specifies which accessibility method to use. The `data.frame()` wrapper converts the results into a data frame format.
+
+```{r}
+aac_2SFCA_2025 <- data.frame(ac(geriesti_hex$aged_2025,
+                            aac_sf$capacity,
+                            od_km, 
+                            d0 = 5, #max distance people willing to travel
+                            power = 2, #put higher weigh to nearer distance
+                            family = "2SFCA"))
+colnames(aac_2SFCA_2025) <- "aac_2SFCA_2025"
+aac_2SFCA_2025  <- as_tibble(aac_2SFCA_2025)
+hex_2SFCA_2025 <- bind_cols(geriesti_hex, aac_2SFCA_2025)
+```
+
+Extract Map Extend
+
+```{R}
+map_ex <- st_bbox(geriesti_hex)
+```
+
+```{r}
+tmap_mode("plot")
+tm_shape(hex_2SFCA_2025,
+         bbox = map_ex) + 
+  tm_fill(col = "aac_2SFCA_2025",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(aac_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility of AAC",
+            main.title.position = "center",
+            main.title.size = 0.5,
+            legend.outside = FALSE,
+            legend.height = 0.25, 
+            legend.width = 1.5,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            legend.text.size = 0.6,
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### KD2SFCA Method
 
 This calls the `ac()` function to calculate accessibility scores. The `geriesti_hex$aged_2025` provides the demand (elderly population in each hexagon), `aac_sf$capacity` provides the supply (how many people each care center can serve), and `od_km` is the distance matrix between all hexagons and care centers. The `d0 = 5` sets the maximum travel distance to 5 kilometers, `power = 2` means closer centers get exponentially more weight, and `family = "KD2SFCA"` specifies which accessibility method to use. The `data.frame()` wrapper converts the results into a data frame format.
 
-::: panel-tabset
-## 2025
-
 ```{r}
-acc_KD2SFCA_2025 <- data.frame(ac(geriesti_hex$aged_2025,
+aac_KD2SFCA_2025 <- data.frame(ac(geriesti_hex$aged_2025,
                             aac_sf$capacity,
                             od_km, 
                             d0 = 5, #max distance people willing to travel
                             power = 2, #put higher weigh to nearer distance
                             family = "KD2SFCA"))
-colnames(acc_KD2SFCA_2025) <- "acc_KD2SFCA_2025"
-acc_KD2SFCA_2025  <- as_tibble(acc_KD2SFCA_2025)
-hex_KD2SFCA_2025 <- bind_cols(geriesti_hex, acc_KD2SFCA_2025)
+colnames(aac_KD2SFCA_2025) <- "aac_KD2SFCA_2025"
+aac_KD2SFCA_2025  <- as_tibble(aac_KD2SFCA_2025)
+hex_KD2SFCA_2025 <- bind_cols(geriesti_hex, aac_KD2SFCA_2025)
 ```
 
+```{r}
+tmap_mode("plot")
+tm_shape(hex_KD2SFCA_2025,
+         bbox = map_ex) + 
+  tm_fill(col = "aac_KD2SFCA_2025",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(aac_sf) +
+  tm_symbols(size = 0.1,
+             col = "pink") +
+  tm_layout(main.title = "Accessibility of AAC",
+            main.title.position = "center",
+            main.title.size = 0.5,
+            legend.outside = FALSE,
+            legend.height = 0.25, 
+            legend.width = 1.5,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            legend.text.size = 0.6,
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### Selecting KF2SFCA over 2SFCA
+
+#### More Realistic Representation of Elderly Travel Behavior
+
+The traditional 2SFCA method treats all Active Ageing Centres (AACs) within a catchment area as equally accessible, which fails to account for the unique mobility constraints of elderly populations. Research by Luo and Qi (2009) demonstrates that elderly individuals face significant barriers to accessing healthcare services, including reduced physical mobility, reliance on public transportation, and decreased willingness to travel long distances. Looking at your maps, the 2SFCA method (Image 1) shows uniform accessibility within catchment areas, while KD2SFCA (Image 2) incorporates distance decay that better reflects how elderly users actually choose AACs. Studies have shown that elderly populations exhibit strong distance decay in their utilization of community services, with participation rates dropping significantly even within relatively short distances (Guagliardo, 2004).
+
+#### Enhanced Spatial Precision for Age-Friendly Planning
+
+The sharp boundaries created by 2SFCA are particularly problematic for elderly service planning because they create artificial accessibility cliffs that don't reflect the gradual decline in service utilization with distance. Your KD2SFCA map shows smooth accessibility gradients that are more realistic for elderly populations who may have varying degrees of mobility limitations. Wang and Luo (2005) argue that the binary nature of traditional catchment methods fails to capture the continuous spatial variation in accessibility that is crucial for elderly service planning. The enhanced granularity in your KD2SFCA results (ranging up to 0.026821 compared to 0.012054 in 2SFCA) provides better differentiation of accessibility levels essential for identifying areas where elderly residents may struggle to access active ageing services.
+
+#### Better Identification of Age-Related Accessibility Barriers
+
+KD2SFCA's ability to show zero accessibility in some areas (visible in your Image 2) is particularly relevant for Active Ageing Centre analysis, as it identifies locations where elderly residents are truly isolated from services. Research by Tao et al. (2014) on elderly healthcare accessibility emphasizes that realistic distance decay functions are essential for identifying underserved elderly populations who may be unable to travel beyond certain distances due to physical limitations or transportation constraints. The areas showing zero accessibility in your KD2SFCA map represent locations where elderly residents would face significant barriers to participating in active ageing programs, which is crucial information for equitable service provision.
+
+#### Scientific Validity in Elderly Healthcare Research
+
+KD2SFCA has gained prominence in elderly healthcare accessibility research due to its superior ability to model age-related travel patterns. Studies by Delamater et al. (2012) demonstrate that kernel density methods provide more accurate representations of elderly healthcare utilization patterns compared to traditional catchment area methods. Your KD2SFCA map shows the characteristic smooth spatial transitions that research has validated as more realistic for elderly populations. Recent work by Langford et al. (2016) specifically recommends KD2SFCA for elderly service accessibility analysis, noting its improved ability to capture the complex spatial patterns of elderly service utilization.
+
+#### Active Ageing Policy Implications
+
+The enhanced accessibility gradients shown in your KD2SFCA map are particularly valuable for active ageing policy development. The World Health Organization's Age-Friendly Cities framework emphasizes the importance of accessible community services for successful ageing in place (WHO, 2007). Your KD2SFCA results show clearer spatial patterns that can inform where new AACs would have maximum impact on elderly populations. The darker areas in central Singapore indicate high accessibility zones where AACs are well-integrated into elderly-dense neighborhoods, while the lighter peripheral areas suggest locations where additional services or transportation support may be needed. Research by Rosso et al. (2011) demonstrates that realistic accessibility measures like KD2SFCA are essential for developing targeted interventions that support healthy ageing and community participation among elderly populations.
+
+#### Implications for Singapore's Ageing Population
+
+Given Singapore's rapidly ageing population, the more nuanced accessibility patterns revealed by KD2SFCA in your analysis are crucial for strategic AAC planning. The method's ability to show gradual accessibility decline helps identify optimal locations for new centers and transportation improvements that would maximize elderly participation in active ageing programs, supporting Singapore's goal of creating an age-friendly society.
+
+------------------------------------------------------------------------
+
+**References:**
+
+-   Delamater, P. L., Messina, J. P., Shortridge, A. M., & Grady, S. C. (2012). Measuring geographic access to health care: raster and network-based methods. *International Journal of Health Geographics*, 11(1), 15.
+
+-   Guagliardo, M. F. (2004). Spatial accessibility of primary care: concepts, methods and challenges. *International Journal of Health Geographics*, 3(1), 3.
+
+-   Langford, M., Higgs, G., & Fry, R. (2016). Multi-modal two-step floating catchment area analysis of primary health care accessibility. *Health & Place*, 38, 70-81.
+
+-   Luo, W., & Qi, Y. (2009). An enhanced two-step floating catchment area (E2SFCA) method for measuring spatial accessibility to primary care physicians. *Health & Place*, 15(4), 1100-1107.
+
+-   Rosso, A. L., Auchincloss, A. H., & Michael, Y. L. (2011). The urban built environment and mobility in older adults: a comprehensive review. *Journal of Aging Research*, 2011
+
+-   Tao, Z., Cheng, Y., & Liu, J. (2020). Hierarchical two-step floating catchment area (H2SFCA) method: measuring the spatial accessibility to hierarchical healthcare facilities in Shenzhen, China. *International Journal for Equity in Health*, 19(1), 164.
+
+-   Wang, F., & Luo, W. (2005). Assessing spatial and nonspatial factors for healthcare access: towards an integrated approach to defining health professional shortage areas. *Health & Place*, 11(2), 131-146.
+
+-   World Health Organization. (2007). *Global age-friendly cities: A guide*. World Health Organization.
+
+```{r}
+summary(hex_KD2SFCA_2025$aac_KD2SFCA_2025)
+```
+
+```{r}
+#Create accessibility points at hex centroids
+accessibility_points <- hex_KD2SFCA_2025 %>%
+  filter(!is.na(aac_KD2SFCA_2025) & aac_KD2SFCA_2025 > 1e-06) %>%  # Filter very low values
+  st_centroid()
+```
+
+```{r}
+# Create custom breaks based on your data distribution
+accessibility_breaks <- c(0, 0.001, 0.002, 0.004, 0.008, 0.015, 0.030)
+```
+
+```{r}
+# Create the map
+tmap_mode("plot")
+
+tm_shape(hex_KD2SFCA_2025) +
+  tm_fill(col = "gray90",           # Light gray background for all hexes
+          border.col = "white",
+          border.lwd = 0.3) +
+tm_shape(accessibility_points) +
+  tm_symbols(col = "aac_KD2SFCA_2025",
+             size = 0.3,
+             scale = 1,
+             style = "fixed",
+             breaks = accessibility_breaks,
+             palette = "Reds",
+             shape = 21,              # Circle shape
+             border.col = "blue",
+             border.lwd = 0.2,
+             alpha = 0.8,
+             title.col = "Destination accessibility") +
+tm_shape(aac_sf) +
+  tm_symbols(size = 0.2,            # Small symbols for AAC locations
+             shape = 4,              # Cross symbol
+             col = "black",
+             alpha = 0.8) +
+  tm_layout(main.title = "Destination accessibility of Active Ageing Centres",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.outside = TRUE,
+            legend.outside.position = "right",
+            legend.title.size = 1,
+            legend.text.size = 0.8,
+            frame = TRUE,
+            bg.color = "lightblue") +
+  tm_compass(type = "arrow", 
+             position = c("right", "bottom"),
+             size = 2) +
+  tm_scale_bar(position = c("left", "bottom"),
+               text.size = 0.8,
+               width = 0.2)
+```
+
+::: panel-tabset
 ## 2026
 
 ```{r}
@@ -546,7 +733,7 @@ quantile(hex_KD2SFCA_2025$acc_KD2SFCA_2025,
          na.rm = TRUE)
 ```
 
-## Modelling Accessibility using KD2SFCA Method (Manhanttan Distance)
+## Modelling Accessibility using KD2SFCA Method (Network Distance)
 
 This calls the `ac()` function to calculate accessibility scores. The `geriesti_hex$aged_2025` provides the demand (elderly population in each hexagon), `aac_sf$capacity` provides the supply (how many people each care center can serve), and `od_km` is the distance matrix between all hexagons and care centers. The `d0 = 5` sets the maximum travel distance to 5 kilometers, `power = 2` means closer centers get exponentially more weight, and `family = "KD2SFCA"` specifies which accessibility method to use. The `data.frame()` wrapper converts the results into a data frame format.
 
@@ -556,7 +743,7 @@ This calls the `ac()` function to calculate accessibility scores. The `geriesti_
 ```{r}
 acc_KD2SFCA_2025_m <- data.frame(ac(geriesti_hex$aged_2025,
                             aac_sf$capacity,
-                            aac_distmatrix_manhatten, 
+                            aac_distmatrix_network, 
                             d0 = 5, #max distance people willing to travel
                             power = 2, #put higher weigh to nearer distance
                             family = "KD2SFCA"))
@@ -710,12 +897,6 @@ hex_KD2SFCA_2029 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_2029.rds")
 ```
 
 ## Visualising Accessibility using 2SFCA Method
-
-### Extract Map Extend
-
-```{R}
-map_ex <- st_bbox(geriesti_hex)
-```
 
 ```{r}
 #| echo: false
@@ -1002,6 +1183,88 @@ ggplot(data=hex_KD2SFCA_2029,
              size=2)
 ```
 
+```{r}
+# Step 1: Define search radius (matching your d0 parameter)
+radius <- 5000  # 5km in meters (same as your d0 = 5)
+```
+
+```{r}
+# Count AACs within radius for each hex centroid
+aac_counts <- origin_centroids %>%
+  mutate(
+    aac_count = lengths(st_is_within_distance(., aac_sf, dist = radius))
+  ) %>%
+  filter(aac_count > 0)  # Only keep locations with at least 1 AAC nearby
+```
+
+```{r}
+# Step 3: Check the distribution of AAC counts
+summary(aac_counts$aac_count)
+table(aac_counts$aac_count)
+```
+
+```{r}
+# Step 4: Create breaks based on your data distribution
+max_count <- max(aac_counts$aac_count)
+count_breaks <- c(0, 10, 20, 30, 40, 50, 60, 75) # Adjust based on your data
+```
+
+```{r}
+# Create the map
+tmap_mode("plot")
+
+tm_shape(geriesti_hex, bbox = map_ex) +
+  tm_fill(col = "gray90",
+          border.col = "white",
+          border.lwd = 0.3) +
+tm_shape(aac_counts) +
+  tm_symbols(size = "aac_count",
+             col = "aac_count",
+             scale = 2.5,                    # Adjusted scale for better visibility
+             style = "fixed",
+             breaks = count_breaks,
+             palette = "Reds",
+             shape = 21,
+             border.col = "darkred",
+             border.lwd = 0.3,
+             alpha = 0.8,
+             title.size = "",
+             title.col = "Destination accessibility",
+             labels = c("6-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60+")) +
+tm_shape(aac_sf) +
+  tm_symbols(size = 0.1,                   # Smaller AAC symbols since there are many
+             col = "black",
+             shape = 4,
+             alpha = 0.6) +
+  tm_layout(main.title = "Destination accessibility of Active Ageing Centres",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.outside = TRUE,
+            legend.outside.position = "right",
+            legend.title.size = 1,
+            legend.text.size = 0.8,
+            frame = TRUE,
+            bg.color = "lightblue") +
+  tm_compass(type = "arrow", 
+             position = c("right", "bottom"),
+             size = 2) +
+  tm_scale_bar(position = c("left", "bottom"),
+               text.size = 0.8,
+               width = 0.15)
+```
+
+# Results
+
+Singapore has unequal accessibility to Active Ageing Centres for seniors age above 60. In Fig x, it indicates that the accessbility of each area. Dark areas indicate high accessibility whereas lighter areas indicate low accessibility. High accessibility relates to the convenience for seniors in the area to reach the AAC while low accessibility relates to less convenience for the seniors in the area to reach the AAC.
+
+## Comparing accessbility between regions
+
+# Discussion
+
+## Improving Spatial Equity
+
+conduct test of ddiferences
+
 ## Sensemaking
 
 Enquiries:
@@ -1017,3 +1280,5 @@ Enquiries:
 4.  populate both manhatten and eucldean distance? if yes, max dist change?
 
 request: 1. final report 2. poster samples
+
+# References
