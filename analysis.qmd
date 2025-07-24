@@ -45,7 +45,7 @@ This chapter covers pre-requisite preparation prior to the analysis alongside th
 The below code chunk installs and loads the abovementioned packages for this analysis.
 
 ```{r}
-pacman::p_load(sf, tidyverse, SpatialAcc, reshape2, tmap, ggstatsplot, moments)
+pacman::p_load(sf, tidyverse, SpatialAcc, reshape2, tmap, ggplot2, moments)
 ```
 
 ### Importing Data
@@ -107,15 +107,12 @@ geriesti_hex = read_rds("data/rds/mpsz/geriesti_hex_2025.rds") %>%
   select(-c('SUBZONE_N.x', 'SUBZONE_N.y', 'subzone_clean', 'SUBZONE_N', 'sz_upper'))
 ```
 
-
 Following, we use `st_write()` function from the package `sf` to save `geriesti_hex` to a file. it writes into "data/qgis" directory, creating a layer named "geriesti_hex", and saving it in the ESRI Shapefile format for QGIS later on.
 
 ```{r}
 #| eval: false
 st_write(geriesti_hex, dsn = "data/qgis", layer = "geriesti_hex", driver = "ESRI Shapefile")
 ```
-
-
 
 #### Active Ageing Centre (AAC) Spatial Dataset
 
@@ -135,8 +132,6 @@ Thereafter, we will save `cc_sf` to a file for QGIS analysis.
 #| eval: false
 st_write(aac_sf, dsn = "data/qgis", layer = "aac", driver = "ESRI Shapefile")
 ```
-
-
 
 ### Data Preparation using QGIS
 
@@ -396,6 +391,8 @@ od_euclidean = read_rds("data/rds/analysis/od/od_euclidean.rds")
 
 ## Modelling Accessibility
 
+In this section, several components will be covered. Firstly, we will assess the appropriateness and the performance of the accessibility model between Two-Step Floating Catchment Area (2SFCA) and Kernel Density Two-Step Floating Catchment Area (KD2SFCA). Thereafter, a comparison will be done between using Eucidean Distance and Network Distance in computing the accessibility scores. Following which, accessibility scores of 2025 will be explored further. Lastly, trend analysis will be executed in reviewing the accessibility scores from 2025 to 2029.
+
 ### Comparing Accessibility Models
 
 #### 2SFCA Method
@@ -430,17 +427,21 @@ aac_2SFCA_2025 <- data.frame(ac(geriesti_hex$aged_2025,
 colnames(aac_2SFCA_2025) <- "aac_2SFCA_2025"
 ```
 
-In the code below, we set the search radius to be 1000 similar to the maximum distance where seniors is wiling to travel. This search radius will
+In the code below, we set the search radius to be 1000 (representing 1km) similar to the maximum distance where seniors is wiling to travel.
 
 ```{r}
 search_radius <- 1000
 ```
+
+Then, we will create a new data frame that counts the number of AAC withihn 1km of each origin point. It uses the `st_is_within_distance()` function to identify which AAC from the `aac_sf` dataset fall within the `search_radius` distance from each point in `origin_centroids`, then applies the `lengths()` function to count how many AACs are found for each origin point. The results are stored in a new column called `aac_count_1km` within the `aac_count_data` data frame.
 
 ```{r}
 aac_count_data <- data.frame(
   aac_count_1km = lengths(st_is_within_distance(origin_centroids, aac_sf, dist = search_radius))
 )
 ```
+
+This code chunk combines multiple datasets to create a comprehensive accessibility analysis dataset. First, it uses `bind_cols()` to horizontally merge the accessibility scores in `aac_2SFCA_2025` with the AAC count data created in the previous step, adding the facility counts to the accessibility dataset. The merged result is then converted to a tibble format using `as_tibble()` for more efficient data handling. Finally, it combines the original hexagonal grid data (`geriesti_hex`) with the accessibility and count information (`aac_2SFCA_2025`) using another `bind_cols()` operation, creating the final dataset `hex_2SFCA_2025` that contains both the spatial geometry and all calculated accessibility metrics for analysis and visualisation.
 
 ```{r}
 # Step 3: Combine accessibility scores, AAC counts, and original hex data
@@ -455,11 +456,21 @@ hex_2SFCA_2025 <- bind_cols(geriesti_hex, aac_2SFCA_2025)
 write_rds(hex_2SFCA_2025, "data/rds/analysis/aac/hex_2SFCA_2025.rds")
 ```
 
-Extract Map Extend
+```{r}
+#| echo: false
+#| eval: false
+hex_2SFCA_2025 = read_rds("data/rds/analysis/aac/hex_2SFCA_2025.rds")
+```
+
+#### Extract Map Extend
+
+This code extracts the bounding box coordinates of `geriesti_hex` and stores them in an object called `map_ex`. The `st_bbox()` function calculates the minimum and maximum longitude and latitude values that encompass the entire spatial extent of the hexagonal grid, creating a rectangular boundary that defines the geographic limits of the study area for use in mapping and visualisation functions.
 
 ```{R}
 map_ex <- st_bbox(geriesti_hex)
 ```
+
+Using `tmap()`, the visualisation of the accessibility scores in quantiles across Singapore is generated below.
 
 ```{r}
 tmap_mode("plot")
@@ -493,10 +504,9 @@ tm_shape(mpsz,
   tm_grid(lwd = 0.1, alpha = 0.5)
 ```
 
-
 #### KD2SFCA Method
 
-Following the 2SFCA method, we will compute the accessibility using a refined accessibility model; the Kernel Density Two-Step Floating Catchment Area. This model differentiates from the former by adding distance decay weights. This is imperative as it gives more weight to seniors living closer to AAC.
+Following the 2SFCA method, we will compute the accessibility using a refined accessibility model; the Kernel Density Two-Step Floating Catchment Area to compare against the 2SFCA model. This model differentiates from the former by adding distance decay weights. This is imperative as it gives more weight to seniors living closer to AAC and realistically, seniors will likely to travel to the AAC closest to their residence.
 
 Firstly, it calculates Weighted Supply-to-Demand Ratio using the below formula:
 
@@ -525,19 +535,13 @@ colnames(aac_KD2SFCA_2025) <- "aac_KD2SFCA_2025"
 
 ```
 
-In the code below, we set the search radius to be 1000 similar to the maximum distance where seniors is wiling to travel. 
+The code chunk below is a compilation of the similar codes ran for the 2SFCA model except creating new column, `aac_KD2SFCA_2025` and data frame `hex_KD2SFCA_2025`.
 
 ```{r}
 search_radius <- 1000
-```
-
-```{r}
 aac_count_data <- data.frame(
   aac_count_1km = lengths(st_is_within_distance(origin_centroids, aac_sf, dist = search_radius))
 )
-```
-
-```{r}
 # Step 3: Combine accessibility scores, AAC counts, and original hex data
 aac_KD2SFCA_2025 <- bind_cols(aac_KD2SFCA_2025, aac_count_data)
 aac_KD2SFCA_2025 <- as_tibble(aac_KD2SFCA_2025)
@@ -549,6 +553,14 @@ hex_KD2SFCA_2025 <- bind_cols(geriesti_hex, aac_KD2SFCA_2025)
 #| eval: false
 write_rds(hex_KD2SFCA_2025, "data/rds/analysis/aac/hex_KD2SFCA_2025.rds")
 ```
+
+```{r}
+#| echo: false
+#| eval: false
+hex_KD2SFCA_2025 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_2025.rds")
+```
+
+Similarly, we will plot the accessibility scores using the KD2SFCA model.
 
 ```{r}
 tmap_mode("plot")
@@ -584,6 +596,19 @@ tm_shape(aac_sf) +
 
 #### Comparison of 2SFCA & KD2SFCA
 
+##### Distribution Analysis of AAC Accessibility Scores: 2SFCA vs KD2SFCA Methods
+
+Both histograms reveal highly right-skewed distributions of accessibility scores to Active Ageing Centres, indicating that the majority of hexagonal grid cells across Singapore have low accessibility to these facilities. However, these two models produce notably different distributional characteristics.
+
+##### 
+**2SFCA Method Distribution**
+
+The 2SFCA histogram demonstrates an extremely concentrated distribution with approximately 7,500 observations clustered in the lowest accessibility bin (near 0.00). The distribution exhibits a sharp exponential decay, with frequency dropping precipitously as accessibility scores increase. Very few observations extend beyond 0.015 indicating that under the traditional 2SFCA method, high accessibility to Active Ageing Centres is rare across Singapore.
+
+**KD2SFCA Method Distribution**
+
+The KD2SFCA histogram shows a similar right-skewed pattern but with a more extended tail and broader range of accessibility values. While the modal frequency remains concentrated near zero (approximately 8,000 observations), the distribution extends further rightward, reaching accessibility scores up to 0.035-0.040. This method identifies a greater number of moderate accessibility areas compared to the traditional 2SFCA approach, suggesting that the kernel density enhancement captures additional accessibility nuances.
+
 ```{r}
 # Histogram for accessibility scores
 ggplot(hex_2SFCA_2025, aes(x = aac_2SFCA_2025)) +
@@ -591,6 +616,7 @@ ggplot(hex_2SFCA_2025, aes(x = aac_2SFCA_2025)) +
   labs(title = "Distribution of AAC Accessibility Scores (2SFCA)",
        x = "Accessibility Score",
        y = "Frequency") +
+  ylim(0, 8000)
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 
@@ -599,10 +625,13 @@ ggplot(hex_KD2SFCA_2025, aes(x = aac_KD2SFCA_2025)) +
   labs(title = "Distribution of AAC Accessibility Scores (KD2SFCA)",
        x = "Accessibility Score",
        y = "Frequency") +
+  ylim(0, 8000)
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 ```
-In analysing the percentile of both 2SFCA and KD2SFCA models, noticebly the KD2SFCA model is able to portray higher extreme values (0.038), as seen in Max as compared to the 2SFCA model (0.035). This can sugges that the distance decay function allows KD2SFCA to better differentiate areas with exceptionally good accessibility where multiple AACs are located very closely. Additionally, KD2SFCA shows more variability (SD = 0.0049) whereas 2SFCA model has a SD of 0.0048.
+
+In analysing the percentile of both 2SFCA and KD2SFCA models, noticeably the KD2SFCA model is able to portray higher extreme values (`0.038`), as seen in Max as compared to the 2SFCA model (`0.035`). This can suggest that the distance decay function allows KD2SFCA to better differentiate areas with exceptionally good accessibility where multiple AACs are located very closely. Additionally, KD2SFCA shows more variability (`SD = 0.0049`) whereas 2SFCA model has a SD of `0.0048`.
+
 ```{r}
 # 2. DISTRIBUTION ANALYSIS 
 cat("=== 2SFCA ACCESSIBILITY SCORES DISTRIBUTION ===\n")
@@ -627,6 +656,7 @@ cat("Kurtosis:", moments::kurtosis(hex_2SFCA_2025$aac_count_1km, na.rm = TRUE), 
 cat("\n=== AAC COUNT FREQUENCY TABLE ===\n")
 print(table(hex_2SFCA_2025$aac_count_1km))
 ```
+
 ```{r}
 # KIV IF LOOKING INTO PERCENTILE
 # 5. PERCENTILE ANALYSIS - BOTH METHODS
@@ -649,8 +679,28 @@ aac_count_percentiles <- quantile(hex_2SFCA_2025$aac_count_1km,
 print(aac_count_percentiles)
 ```
 
+#### Boxplot
+
+Both boxplots reveal extremely right-skewed distributions of accessibility scores to Active Ageing Centres, but demonstrate important methodological differences between the two approaches.
+
+#### Central Tendency and Spread
+
+Both methods show nearly identical central tendencies, with medians (thick black lines) positioned extremely close to zero, indicating that half of all locations across Singapore have virtually no accessibility to Active Ageing Centres. The interquartile ranges (IQR) represented by the green and blue boxes are similarly compressed near zero for both methods, confirming that 75% of locations have minimal accessibility regardless of the calculation approach.
+
+####Outlier 
+
+The most significant difference lies in outlier identification and maximum values. The **2SFCA method** (blue) identifies numerous discrete outliers as individual points extending up to approximately 0.035, suggesting that high-accessibility areas are treated as exceptional cases distinct from the main distribution. In contrast, the **KD2SFCA method** (green) shows a single, dense cluster of outliers that extends as a thick black line up to nearly 0.040, indicating a more continuous range of high accessibility values.
+
+####  Methodological Implications
+
+The KD2SFCA's dense outlier cluster suggests that the kernel density enhancement creates a **more gradual transition** from low to high accessibility areas, rather than the sharp categorical distinction evident in the traditional 2SFCA approach. This indicates that KD2SFCA captures **intermediate accessibility levels** more effectively, providing a more nuanced representation of spatial accessibility patterns.
+
+#### Data Distribution Characteristics
+
+Both methods confirm the **extreme concentration of low accessibility** across Singapore, with the vast majority of hexagonal grid cells experiencing minimal access to Active Ageing Centres. However, the KD2SFCA method's continuous outlier pattern suggests it may be **more sensitive to distance decay effects** and spatial relationships, potentially providing more realistic accessibility gradients in urban environments.
+
 ```{r}
-# 3. ADDITIONAL VISUALIZATIONS - BOX PLOTS COMPARISON
+
 # Box plots for accessibility scores
 ggplot(hex_2SFCA_2025, aes(y = aac_2SFCA_2025)) +
   geom_boxplot(fill = "steelblue", alpha = 0.7) +
@@ -674,6 +724,7 @@ ggplot(hex_2SFCA_2025, aes(y = aac_count_1km)) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 ```
+
 ```{r}
 # 4. CORRELATION ANALYSIS 
 # Scatter plots with correlation
@@ -702,7 +753,7 @@ ggplot(hex_KD2SFCA_2025,
 
 ##### Realistic Representation of Seniors Commute Behaviour
 
-The traditional 2SFCA method treats all Active Ageing Centres (AACs) within a catchment area as equally accessible, which fails to account for the unique mobility constraints of elderly populations. However, seniors face significant barriers to accessing healthcare services, including reduced physical mobility, reliance on public transportation, and reluctance to travel long distances (Luo & Qi, 2009). From the plot, the 2SFCA method shows uniform accessibility within catchment areas, while KD2SFCA incorporates distance decay that better reflects how senior users actually choose AACs that is closer to them. 
+The traditional 2SFCA method treats all Active Ageing Centres (AACs) within a catchment area as equally accessible, which fails to account for the unique mobility constraints of elderly populations. However, seniors face significant barriers to accessing healthcare services, including reduced physical mobility, reliance on public transportation, and reluctance to travel long distances (Luo & Qi, 2009). From the plot, the 2SFCA method shows uniform accessibility within catchment areas, while KD2SFCA incorporates distance decay that better reflects how senior users actually choose AACs that is closer to them.
 
 ##### Enhanced Spatial Precision for Age-Friendly Planning
 
@@ -712,7 +763,6 @@ The sharp boundaries created by 2SFCA are particularly problematic for elderly s
 
 KD2SFCA's ability to show zero accessibility in some areas (visible in your Image 2) is particularly relevant for Active Ageing Centre analysis, as it identifies locations where elderly residents are truly isolated from services. Research by Tao et al. (2014) on elderly healthcare accessibility emphasizes that realistic distance decay functions are essential for identifying underserved elderly populations who may be unable to travel beyond certain distances due to physical limitations or transportation constraints. The areas showing zero accessibility in your KD2SFCA map represent locations where elderly residents would face significant barriers to participating in active ageing programs, which is crucial information for equitable service provision.
 
-
 ##### Implications for Singapore's Ageing Population
 
 Given Singapore's rapidly ageing population, the more nuanced accessibility patterns revealed by KD2SFCA in your analysis are crucial for strategic AAC planning. The method's ability to show gradual accessibility decline helps identify optimal locations for new centers and transportation improvements that would maximize elderly participation in active ageing programs, supporting Singapore's goal of creating an age-friendly society.
@@ -721,20 +771,17 @@ Given Singapore's rapidly ageing population, the more nuanced accessibility patt
 
 ##### *References*
 
-
 -   Guagliardo, M. F. (2004). Spatial accessibility of primary care: concepts, methods and challenges. *International Journal of Health Geographics*, 3(1), 3.
 
 -   Langford, M., Higgs, G., & Fry, R. (2016). Multi-modal two-step floating catchment area analysis of primary health care accessibility. *Health & Place*, 38, 70-81.
 
 -   Luo, W., & Qi, Y. (2009). An enhanced two-step floating catchment area (E2SFCA) method for measuring spatial accessibility to primary care physicians. *Health & Place*, 15(4), 1100-1107.
 
-
 -   Tao, Z., Cheng, Y., & Liu, J. (2020). Hierarchical two-step floating catchment area (H2SFCA) method: measuring the spatial accessibility to hierarchical healthcare facilities in Shenzhen, China. *International Journal for Equity in Health*, 19(1), 164.
 
 -   Wang, F., & Luo, W. (2005). Assessing spatial and nonspatial factors for healthcare access: towards an integrated approach to defining health professional shortage areas. *Health & Place*, 11(2), 131-146.
 
 -   World Health Organization. (2007). *Global age-friendly cities: A guide*. World Health Organization.
-
 
 ## Comparing Euclidean & Network Distance
 
@@ -766,6 +813,12 @@ hex_KD2SFCA_network <- bind_cols(geriesti_hex, aac_KD2SFCA_network)
 write_rds(hex_KD2SFCA_network, "data/rds/analysis/aac/hex_KD2SFCA_network.rds")
 ```
 
+```{r}
+#| echo: false
+#| eval: false
+hex_KD2SFCA_network = read_rds("data/rds/analysis/aac/hex_KD2SFCA_network.rds")
+```
+
 ### Differences
 
 ```{r}
@@ -788,21 +841,47 @@ cat("\nPaired T-test Results:\n")
 print(paired_test)
 ```
 
-### Selecting KD2SFCA
-The summary statistics reveal that both road network and Euclidean distance methods produce virtually identical KD2SFCA accessibility scores across all measured parameters, with both methods showing the same minimum value of 0, median of 0.0023469, mean of 0.0038467, and maximum of 0.0381189, along with nearly identical standard deviations of approximately 0.00497. This perfect alignment in descriptive statistics indicates that in Singapore's dense urban context, the difference between actual road distances and straight-line distances is negligible for accessibility calculations, likely due to the city-state's efficient grid-like road network and compact geography.
-The paired t-test confirms this statistical equivalence with a p-value of 0.2162, which is well above the conventional significance threshold of 0.05, meaning we cannot reject the null hypothesis that there is no difference between the two methods. The mean difference of 6.22 × 10⁻¹⁰ is so infinitesimally small that it represents essentially zero difference, while the 95% confidence interval spanning from negative to positive values and including zero further confirms that any observed difference is merely due to random computational variation rather than meaningful methodological differences.
-Given these findings, you should use KD2SFCA over traditional 2SFCA because KD2SFCA incorporates distance decay functions that realistically model how elderly populations access Active Ageing Centres, where closer facilities are strongly preferred over distant ones even within the same catchment area. Unlike 2SFCA's binary approach that treats all facilities within 5km as equally accessible, KD2SFCA recognizes that elderly individuals face mobility constraints and are less likely to travel to facilities at the edge of their catchment area, making it a more behaviorally accurate and policy-relevant measure. Additionally, since both distance methods (network vs Euclidean) produce identical results with KD2SFCA, you can confidently use the computationally simpler Euclidean approach without sacrificing accuracy, making KD2SFCA both methodologically superior and practically efficient for elderly accessibility analysis in Singapore's urban environment.
+### Selecting Network Distance
 
+The summary statistics reveal that both road network and Euclidean distance methods produce virtually identical KD2SFCA accessibility scores across all measured parameters, with both methods showing the same minimum value of 0, median of 0.0023469, mean of 0.0038467, and maximum of 0.0381189, along with nearly identical standard deviations of approximately 0.00497. This perfect alignment in descriptive statistics indicates that in Singapore's dense urban context, the difference between actual road distances and straight-line distances is negligible for accessibility calculations, likely due to the city-state's efficient grid-like road network and compact geography. The paired t-test confirms this statistical equivalence with a p-value of 0.2162, which is well above the conventional significance threshold of 0.05, meaning we cannot reject the null hypothesis that there is no difference between the two methods. The mean difference of 6.22 × 10⁻¹⁰ is so infinitesimally small that it represents essentially zero difference, while the 95% confidence interval spanning from negative to positive values and including zero further confirms that any observed difference is merely due to random computational variation rather than meaningful methodological differences. Given these findings, you should use KD2SFCA over traditional 2SFCA because KD2SFCA incorporates distance decay functions that realistically model how elderly populations access Active Ageing Centres, where closer facilities are strongly preferred over distant ones even within the same catchment area. Unlike 2SFCA's binary approach that treats all facilities within 5km as equally accessible, KD2SFCA recognizes that elderly individuals face mobility constraints and are less likely to travel to facilities at the edge of their catchment area, making it a more behaviorally accurate and policy-relevant measure. Additionally, since both distance methods (network vs Euclidean) produce identical results with KD2SFCA, you can confidently use the computationally simpler Euclidean approach without sacrificing accuracy, making KD2SFCA both methodologically superior and practically efficient for elderly accessibility analysis in Singapore's urban environment.
 
 ## MAIN MODEL: Results
+
 filter and show SZ with below avg accessibility
 
-Based on the summary statistics, the average accessibility score is 0.0038467. 
+Based on the summary statistics, the average accessibility score is 0.0038467.
+
 ```{r}
 hex_KD2SFCA_2025 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_network.rds")
 ```
 
+### Histogram of Accessibility Scores
+
+```{r}
+
+# Calculate the mean
+mean_value <- mean(hex_KD2SFCA_network$aac_KD2SFCA_network, na.rm = TRUE)
+
+# Create histogram with bell curve and average line
+ggplot(hex_KD2SFCA_network, aes(x = aac_KD2SFCA_network)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 30, fill = "lightblue", alpha = 0.7) +
+  stat_function(fun = dnorm, 
+                args = list(mean = mean(hex_KD2SFCA_network$aac_KD2SFCA_network, na.rm = TRUE),
+                           sd = sd(hex_KD2SFCA_network$aac_KD2SFCA_network, na.rm = TRUE)),
+                color = "red", size = 0.2) +
+  geom_vline(xintercept = mean_value, color = "blue", linetype = "dashed", size = 1) +
+  annotate("text", x = mean_value, y = Inf, label = paste("Mean =", round(mean_value, 4)), 
+           vjust = 1.5, hjust = -0.1, color = "blue") +
+  labs(title = "Distribution of aac_KD2SFCA_network",
+       x = "aac_KD2SFCA_network",
+       y = "Density") +
+  theme_minimal()
+```
+
+### Accessibility in Regions
+
 The below R code chunk visualizes the distribution of observations across Singapore's regions by first removing spatial geometry from the dataset, then grouping and counting observations by region while calculating percentages. The code creates a summary table showing both raw counts and percentages for each region, sorted in descending order. It then generates a pie chart using ggplot2, transforming a stacked bar chart into circular format with coord_polar(), and adds comprehensive labels showing region names, observation counts, and percentages on each slice. The final output includes both a printed summary table and a formatted pie chart with a centered title and right-positioned legend.
+
 ```{r}
 # Calculate counts and percentages
 region_counts <- hex_KD2SFCA_network %>%
@@ -826,31 +905,9 @@ ggplot(region_counts, aes(x = "", y = observations, fill = REGION_N)) +
   theme(legend.position = "right",
         plot.title = element_text(hjust = 0.5))
 ```
-### Data Visualisation
 
-#### Histogram of Accessibility Scores
-```{r}
+#### Mean Accessibility in Regions
 
-# Calculate the mean
-mean_value <- mean(hex_KD2SFCA_network$aac_KD2SFCA_network, na.rm = TRUE)
-
-# Create histogram with bell curve and average line
-ggplot(hex_KD2SFCA_network, aes(x = aac_KD2SFCA_network)) +
-  geom_histogram(aes(y = after_stat(density)), bins = 30, fill = "lightblue", alpha = 0.7) +
-  stat_function(fun = dnorm, 
-                args = list(mean = mean(hex_KD2SFCA_network$aac_KD2SFCA_network, na.rm = TRUE),
-                           sd = sd(hex_KD2SFCA_network$aac_KD2SFCA_network, na.rm = TRUE)),
-                color = "red", size = 0.2) +
-  geom_vline(xintercept = mean_value, color = "blue", linetype = "dashed", size = 1) +
-  annotate("text", x = mean_value, y = Inf, label = paste("Mean =", round(mean_value, 4)), 
-           vjust = 1.5, hjust = -0.1, color = "blue") +
-  labs(title = "Distribution of aac_KD2SFCA_network",
-       x = "aac_KD2SFCA_network",
-       y = "Density") +
-  theme_minimal()
-```
-
-#### Regions 
 ```{r}
 # Summary statistics by region
 region_summary <- hex_KD2SFCA_network %>%
@@ -886,6 +943,7 @@ ggplot(hex_KD2SFCA_network, aes(x = REGION_N, y = aac_KD2SFCA_network)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
 #### Bar Chart
 
 The bar chart reveals significant regional disparities, with the Central Region achieving the highest mean accessibility score of 0.0055, which is well above the national average of 0.0038467. The West Region also performs slightly above the national benchmark at 0.0041, while the North, North-East, and East Regions all fall below average with scores of 0.0029, 0.0029, and 0.0011 respectively. The East Region shows particularly concerning results, with accessibility levels less than one-third of the national average.
@@ -904,21 +962,24 @@ ggplot(region_summary, aes(x = reorder(REGION_N, mean_accessibility), y = mean_a
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
 #### Explanation
 
 The uneven distribution of observations across regions introduces potential bias into the analysis and national statistics. The Central Region dominates the dataset with 11,549 observations representing 37% of the total sample, and this region's combination of high accessibility scores and large sample size heavily influences the national average, potentially inflating it above what a truly representative average might show. Meanwhile, peripheral regions like the North Region are underrepresented with only 3,607 observations (12% of total), meaning their poor accessibility scores carry less statistical weight in national calculations. This sampling imbalance creates greater statistical reliability for Central Region estimates while making smaller regional samples more susceptible to outliers or measurement errors. From a policy perspective, these skewed sample sizes might lead to initiatives that appear nationally successful but actually mask significant regional inequities, particularly in the undersampled northern and eastern areas where residents may face genuine accessibility challenges.
 
 ### Creating new dataframe for Accessibility Scores Below National Average
+
+The code chunk below creates a new sf `belowavg` by filtering the accessibility score less than the average, 0.0038467 from `aac_KD2SFCA_network` and also returning the column `aged_2025` where the population is more than zero. The latter step is done so we can scope into residential areas only.
 ```{r}
 belowavg <- hex_KD2SFCA_network %>%
   filter(aac_KD2SFCA_network < 0.0038467) %>%
   filter(aged_2025 > 0)
 ```
 
-
 ### Plotting Accessibility Scores Below National Average
 
-In the plot below, we noticed that the darker reds represents slightly below the national average of `0.0038` while the lighter colours
+In the plot below, we noticed that the darker reds represents slightly below the national average of `0.0038` while the lighter colours represent extremely poor accessibility.
+
 ```{r}
 tmap_mode("plot")
 tm_shape(mpsz,
@@ -952,9 +1013,8 @@ tm_shape(mpsz,
 ```
 
 ### AAC Accessibility
-This map reveals significant spatial disparities in Active Ageing Centre accessibility across Singapore, with clear evidence of a central-peripheral divide in service provision. The central areas of Singapore demonstrate exceptional AAC accessibility, with some locations having access to 13-14 facilities within a 1km radius, as indicated by the dark red zones clustered in the heart of the island. These central areas benefit from dense facility clustering, where elderly residents can choose from multiple nearby AACs, suggesting successful urban planning that concentrates services in high-density areas.
-The spatial distribution shows several secondary clusters of moderate to good accessibility (orange zones with 5-8 AACs) scattered across different regions of Singapore, indicating that while central areas dominate in terms of service density, there are pockets of well-served neighborhoods throughout the island. However, the map also reveals concerning accessibility gaps, particularly in peripheral areas where light yellow zones indicate that residents have access to only 1-2 AACs within walking distance. These underserved areas represent potential equity concerns, as elderly residents in these locations face limited choices and may need to travel greater distances to access active ageing services.
-The concentration of black crosses in the central and well-served areas confirms that AAC facilities are strategically located in high-accessibility zones, but this clustering approach may inadvertently create service deserts in outlying areas. From a policy perspective, this pattern suggests that while Singapore has achieved high service density in core areas, there may be opportunities to improve geographic equity by establishing additional facilities or mobile services in the peripheral light yellow zones. The clear visualization of accessibility gradients from the center outward provides valuable insights for future AAC planning, highlighting the need to balance efficient service clustering with equitable geographic distribution to ensure all elderly residents have reasonable access to active ageing opportunities regardless of their residential location.
+
+This map reveals significant spatial disparities in Active Ageing Centre accessibility across Singapore, with clear evidence of a central-peripheral divide in service provision. The central areas of Singapore demonstrate exceptional AAC accessibility, with some locations having access to 13-14 facilities within a 1km radius, as indicated by the dark red zones clustered in the heart of the island. These central areas benefit from dense facility clustering, where elderly residents can choose from multiple nearby AACs, suggesting successful urban planning that concentrates services in high-density areas. The spatial distribution shows several secondary clusters of moderate to good accessibility (orange zones with 5-8 AACs) scattered across different regions of Singapore, indicating that while central areas dominate in terms of service density, there are pockets of well-served neighborhoods throughout the island. However, the map also reveals concerning accessibility gaps, particularly in peripheral areas where light yellow zones indicate that residents have access to only 1-2 AACs within walking distance. These underserved areas represent potential equity concerns, as elderly residents in these locations face limited choices and may need to travel greater distances to access active ageing services. The concentration of black crosses in the central and well-served areas confirms that AAC facilities are strategically located in high-accessibility zones, but this clustering approach may inadvertently create service deserts in outlying areas. From a policy perspective, this pattern suggests that while Singapore has achieved high service density in core areas, there may be opportunities to improve geographic equity by establishing additional facilities or mobile services in the peripheral light yellow zones. The clear visualization of accessibility gradients from the center outward provides valuable insights for future AAC planning, highlighting the need to balance efficient service clustering with equitable geographic distribution to ensure all elderly residents have reasonable access to active ageing opportunities regardless of their residential location.
 
 ```{r}
 # Create centroids for bubble placement
@@ -990,13 +1050,12 @@ tm_shape(aac_sf) +
 
 ```
 
-
 ### Over the Year 2025 - 2029
 
 #### Year 2026
 
-
 FINAL MODEL
+
 ```{r}
 aac_KD2SFCA_2026 <- data.frame(ac(geriesti_hex$aged_2026,
                                      aac_sf$capacity,
@@ -1017,8 +1076,15 @@ hex_KD2SFCA_2026 <- bind_cols(geriesti_hex, aac_KD2SFCA_2026)
 write_rds(hex_KD2SFCA_2026, "data/rds/analysis/aac/hex_KD2SFCA_2026.rds")
 ```
 
+```{r}
+#| echo: false
+#| eval: false
+hex_KD2SFCA_2026 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_2026.rds")
+```
+
 
 #### Year 2027
+
 ```{r}
 aac_KD2SFCA_2027 <- data.frame(ac(geriesti_hex$aged_2027,
                                      aac_sf$capacity,
@@ -1039,7 +1105,14 @@ hex_KD2SFCA_2027 <- bind_cols(geriesti_hex, aac_KD2SFCA_2027)
 write_rds(hex_KD2SFCA_2027, "data/rds/analysis/aac/hex_KD2SFCA_2027.rds")
 ```
 
+```{r}
+#| echo: false
+#| eval: false
+hex_KD2SFCA_2027 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_2027.rds")
+```
+
 #### Year 2028
+
 ```{r}
 aac_KD2SFCA_2028 <- data.frame(ac(geriesti_hex$aged_2028,
                                      aac_sf$capacity,
@@ -1060,7 +1133,14 @@ hex_KD2SFCA_2028 <- bind_cols(geriesti_hex, aac_KD2SFCA_2028)
 write_rds(hex_KD2SFCA_2028, "data/rds/analysis/aac/hex_KD2SFCA_2028.rds")
 ```
 
+```{r}
+#| echo: false
+#| eval: false
+hex_KD2SFCA_2028 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_2028.rds")
+```
+
 #### Year 2029
+
 ```{r}
 aac_KD2SFCA_2029 <- data.frame(ac(geriesti_hex$aged_2029,
                                      aac_sf$capacity,
@@ -1081,7 +1161,14 @@ hex_KD2SFCA_2029 <- bind_cols(geriesti_hex, aac_KD2SFCA_2029)
 write_rds(hex_KD2SFCA_2029, "data/rds/analysis/aac/hex_KD2SFCA_2029.rds")
 ```
 
+```{r}
+#| echo: false
+#| eval: false
+hex_KD2SFCA_2029 = read_rds("data/rds/analysis/aac/hex_KD2SFCA_2029.rds")
+```
+
 ### Accessibility Trend Over 5 Years
+
 ```{r}
 hex_KD2SFCA_2025 <- hex_KD2SFCA_2025 %>%
   rename(aac_KD2SFCA_2025 = aac_KD2SFCA_network)
@@ -1137,6 +1224,7 @@ combined_data <- hex_KD2SFCA_2025 %>%
                values_to = "accessibility") %>%
   mutate(year = as.numeric(str_extract(year, "\\d{4}")))
 ```
+
 ```{r}
 # Plot trends by region
 ggplot(combined_data, aes(x = year, y = accessibility, color = REGION_N)) +
@@ -1152,18 +1240,292 @@ ggplot(combined_data, aes(x = year, y = accessibility, color = REGION_N)) +
 ```
 
 
+clip by regions
+```{r}
+#| echo: false
+tmap_mode("plot")
+tm_shape(mpsz,
+         bbox = map_ex) +
+  tm_fill(col = "gray90",         
+          border.col = "white",
+          border.lwd = 0.5) +
+  tm_text("SUBZONE_N", size = 0.4, col = "black") +
+  tm_shape(hex_KD2SFCA_2025,
+           bbox = map_ex) + 
+  tm_fill(col = "aac_KD2SFCA_2025",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+  tm_shape(aac_sf) +
+  tm_symbols(size = 0.1,
+             col = "pink") +
+  tm_layout(main.title = "Accessibility of AAC: 2025",
+            main.title.position = "center",
+            main.title.size = 0.5,
+            legend.outside = FALSE,
+            legend.height = 0.25, 
+            legend.width = 1.5,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            legend.text.size = 0.6,
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
 
-Statistical Graphic Visualisation
+```{r}
+#| echo: false
+tmap_mode("plot")
+tm_shape(mpsz,
+         bbox = map_ex) +
+  tm_fill(col = "gray90",         
+          border.col = "white",
+          border.lwd = 0.5) +
+  tm_text("SUBZONE_N", size = 0.4, col = "black") +
+  tm_shape(hex_KD2SFCA_2026,
+           bbox = map_ex) + 
+  tm_fill(col = "aac_KD2SFCA_2026",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+  tm_shape(aac_sf) +
+  tm_symbols(size = 0.1,
+             col = "pink") +
+  tm_layout(main.title = "Accessibility of AAC: 2026",
+            main.title.position = "center",
+            main.title.size = 0.5,
+            legend.outside = FALSE,
+            legend.height = 0.25, 
+            legend.width = 1.5,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            legend.text.size = 0.6,
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+```{r}
+#| echo: false
+tmap_mode("plot")
+tm_shape(mpsz,
+         bbox = map_ex) +
+  tm_fill(col = "gray90",         
+          border.col = "white",
+          border.lwd = 0.5) +
+  tm_text("SUBZONE_N", size = 0.4, col = "black") +
+  tm_shape(hex_KD2SFCA_2027,
+           bbox = map_ex) + 
+  tm_fill(col = "aac_KD2SFCA_2027",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+  tm_shape(aac_sf) +
+  tm_symbols(size = 0.1,
+             col = "pink") +
+  tm_layout(main.title = "Accessibility of AAC: 2027",
+            main.title.position = "center",
+            main.title.size = 0.5,
+            legend.outside = FALSE,
+            legend.height = 0.25, 
+            legend.width = 1.5,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            legend.text.size = 0.6,
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+```{r}
+#| echo: false
+tmap_mode("view")
+tm_shape(mpsz,
+         bbox = map_ex) +
+  tm_fill(col = "gray90",         
+          border.col = "white",
+          border.lwd = 0.5) +
+  tm_text("SUBZONE_N", size = 0.4, col = "black") +
+  tm_shape(hex_KD2SFCA_2028,
+           bbox = map_ex) + 
+  tm_fill(col = "aac_KD2SFCA_2028",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+  tm_shape(aac_sf) +
+  tm_symbols(size = 0.1,
+             col = "pink") +
+  tm_layout(main.title = "Accessibility of AAC: 2028",
+            main.title.position = "center",
+            main.title.size = 0.5,
+            legend.outside = FALSE,
+            legend.height = 0.25, 
+            legend.width = 1.5,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            legend.text.size = 0.6,
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+```{r}
+#| echo: false
+tmap_options(check.and.fix = TRUE)
+tmap_mode("view")
+tm_shape(mpsz,
+         bbox = map_ex) +
+  tm_fill(col = "gray90",         
+          border.col = "white",
+          border.lwd = 0.5) +
+  tm_text("SUBZONE_N", size = 0.4, col = "black") +  
+  tm_shape(hex_KD2SFCA_2029,
+           bbox = map_ex) + 
+  tm_fill(col = "aac_KD2SFCA_2029",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+  tm_shape(aac_sf) +
+  tm_symbols(size = 0.1,
+             col = "pink") +
+  tm_layout(main.title = "Accessibility of AAC: 2029",
+            main.title.position = "center",
+            main.title.size = 0.5,
+            legend.outside = FALSE,
+            legend.height = 0.25, 
+            legend.width = 1.5,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            legend.text.size = 0.6,
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
 
 
+
+# change to tm_animation, dont label the sz
+```{r}
+# Simpler version with cleaner layer names
+tmap_options(check.and.fix = TRUE)
+tmap_mode("plot")
+
+# Base layers
+base_map <- tm_shape(mpsz, bbox = map_ex) +
+  tm_fill(col = "gray90", border.col = "white", border.lwd = 0.3, alpha = 0.3) +
+  tm_shape(aac_sf) +
+  tm_symbols(size = 0.05, col = "pink", alpha = 0.8)
+
+# Add accessibility layers for each year
+accessibility_layers <- 
+  tm_shape(hex_KD2SFCA_2025, bbox = map_ex) + 
+  tm_fill(col = "aac_KD2SFCA_2025", n = 10, style = "quantile", 
+          alpha = 0.7, title = "2025", group = "2025") +
+  
+  tm_shape(hex_KD2SFCA_2026, bbox = map_ex) + 
+  tm_fill(col = "aac_KD2SFCA_2026", n = 10, style = "quantile", 
+          alpha = 0.7, title = "2026", group = "2026") +
+  
+  tm_shape(hex_KD2SFCA_2027, bbox = map_ex) + 
+  tm_fill(col = "aac_KD2SFCA_2027", n = 10, style = "quantile", 
+          alpha = 0.7, title = "2027", group = "2027") +
+  
+  tm_shape(hex_KD2SFCA_2028, bbox = map_ex) + 
+  tm_fill(col = "aac_KD2SFCA_2028", n = 10, style = "quantile", 
+          alpha = 0.7, title = "2028", group = "2028") +
+  
+  tm_shape(hex_KD2SFCA_2029, bbox = map_ex) + 
+  tm_fill(col = "aac_KD2SFCA_2029", n = 10, style = "quantile", 
+          alpha = 0.7, title = "2029", group = "2029")
+
+# Combine and display
+final_map <- base_map + accessibility_layers +
+  tm_layout(main.title = "Accessibility Trends (2025-2029)",
+            main.title.size = 1.2) +
+  tm_view(view.legend.position = c("right", "top"))
+
+final_map
+```
+
+### Analysis of Spatial Accessibility to Active Ageing Centres in Singapore (2025-2029)
+
+This analysis reveals systematic temporal and spatial variations in accessibility to Active Ageing Centres (AAC) across Singapore's planning areas between 2025 and 2029. Using the Kernel Density Two-Step Floating Catchment Area (KD2SFCA) method to calculate the accessibility scores, it demonstrate a consistent downward trajectory from 2025 to 2029, with maximum accessibility values declining from 0.038119 in 2025 to 0.037128 in 2029, representing a 2.6% reduction in peak accessibility.
+
+The spatial distribution of accessibility exhibits persistent geographic stratification throughout the observation period. Central Regions consistently demonstrate the highest accessibility scores, indicated by the dark brown coloration on the quantile classification scale. This core accessibility zone encompasses the Central Business District and adjacent residential areas, reflecting the concentration of active ageing infrastructure in Singapore's urban core. However, as mentioned earlier, the Central Region contains the most number of observation at 37%. Hence, the national average accessibility scores may be inflated due to the large observations in the Central Region.
+
+The West Region, particularly Jurong West and Jurong East, maintain elevated accessibility levels across all years, suggesting robust provision of active ageing services in these mature new towns. Conversely, peripheral planning areas demonstrate consistently lower accessibility scores, particularly in the northern and northeastern territories. These areas, represented by lighter color classifications, indicate structural limitations in access to active ageing centres that persist throughout the projection period. The eastern planning areas of Bedok and Tampines show moderate to high accessibility, reflecting the presence of regional active ageing facilities serving these populations. The temporal analysis reveals that while absolute accessibility scores decline across all geographic areas, the relative spatial hierarchy remains stable. This suggests that the observed accessibility reduction affects all areas proportionally rather than creating new patterns of spatial inequality. The consistent color gradients across the five-year period indicate that existing accessibility disparities to active ageing services are maintained rather than ameliorated. The decline in accessibility scores across all planning areas indicates that Singapore's rapidly aging population is outpacing the expansion of active ageing centre capacity. This trend has significant implications for successful aging in place, as residents in already underserved peripheral areas face compounding challenges in accessing community-based aging support services. The persistence of spatial accessibility patterns suggests that current active ageing infrastructure planning may inadequately address geographic disparities in service provision for the elderly population. These findings indicate that Singapore's active ageing centre accessibility exhibits both temporal deterioration and spatial stratification, with implications for equitable aging support across the island's diverse planning areas. The maintenance of geographic accessibility hierarchies throughout the study period suggests that structural factors governing active ageing centre distribution require systematic intervention to address persistent spatial inequalities in aging infrastructure provision.
+
+```{r}
+# Simplified version with just essential trend analysis
+hex_accessibility_trends <- hex_KD2SFCA_2025 %>%
+  select(hex_id, sz, REGION_N, geometry, aac_KD2SFCA_2025) %>%
+  
+  # Join all years
+  left_join(hex_KD2SFCA_2026 %>% st_drop_geometry() %>% 
+            select(hex_id, aac_KD2SFCA_2026), by = "hex_id") %>%
+  left_join(hex_KD2SFCA_2027 %>% st_drop_geometry() %>% 
+            select(hex_id, aac_KD2SFCA_2027), by = "hex_id") %>%
+  left_join(hex_KD2SFCA_2028 %>% st_drop_geometry() %>% 
+            select(hex_id, aac_KD2SFCA_2028), by = "hex_id") %>%
+  left_join(hex_KD2SFCA_2029 %>% st_drop_geometry() %>% 
+            select(hex_id, aac_KD2SFCA_2029), by = "hex_id") %>%
+  
+  # Key trend metrics only
+  mutate(
+    change_2025_2026 = aac_KD2SFCA_2026 - aac_KD2SFCA_2025,
+    change_2026_2027 = aac_KD2SFCA_2027 - aac_KD2SFCA_2026,
+    change_2027_2028 = aac_KD2SFCA_2028 - aac_KD2SFCA_2027,
+    change_2028_2029 = aac_KD2SFCA_2029 - aac_KD2SFCA_2028,
+    
+    total_change_5yr = aac_KD2SFCA_2029 - aac_KD2SFCA_2025,
+    avg_annual_change = total_change_5yr / 4,
+    
+    trend_direction = case_when(
+      total_change_5yr > 0.001 ~ "Increasing",
+      total_change_5yr < -0.001 ~ "Decreasing", 
+      TRUE ~ "Stable"
+    )
+  )
+```
+
+```{r}
+# First, let's check for duplicates and clean the data
+check_duplicates <- function(data, year) {
+  dupes <- data %>% 
+    st_drop_geometry() %>%
+    group_by(hex_id) %>% 
+    summarise(count = n()) %>% 
+    filter(count > 1)
+  
+  if(nrow(dupes) > 0) {
+    cat("Year", year, "has", nrow(dupes), "duplicate hex_ids\n")
+  }
+  return(dupes)
+}
+
+# Check each dataset for duplicates
+check_duplicates(hex_KD2SFCA_2025, 2025)
+check_duplicates(hex_KD2SFCA_2026, 2026)
+check_duplicates(hex_KD2SFCA_2027, 2027)
+check_duplicates(hex_KD2SFCA_2028, 2028)
+check_duplicates(hex_KD2SFCA_2029, 2029)
+```
 
 # Results
 
 Singapore has unequal accessibility to Active Ageing Centres for seniors age above 60. In Fig x, it indicates that the accessbility of each area. Dark areas indicate high accessibility whereas lighter areas indicate low accessibility. High accessibility relates to the convenience for seniors in the area to reach the AAC while low accessibility relates to less convenience for the seniors in the area to reach the AAC.
 
-
-IF BELOW AVERAGE, 
-
+IF BELOW AVERAGE,
 
 ## Comparing accessbility between regions
 
@@ -1172,24 +1534,14 @@ IF BELOW AVERAGE,
 Notably, Ministry of Health & Ministry of National Development are rolling a new initiative where AACs will conduct activities in nearby communal spaces or semi-permanent facilities, such AAC services is expected to bring close to more than 20,000 seniors (MOH, 2025).
 
 ## Improving Spatial Equity
- 
+
 conduct test of ddiferences
 
 ## Sensemaking
 
-Enquiries:
 
-1.  2SFCA + KD2SFCA (REVISED) - compartive and take base year such as 2025 only.
-    -   know the difference between them
 
-    -   2sfca: doesnt doesnt take into accounta distance fraction smoothly
 
-    -   
-2.  why od_km is in Nan B?
-3.  how to categorise in regions
-4.  populate both manhatten and eucldean distance? if yes, max dist change?
-
-request: 1. final report 2. poster samples
 
 # References
 
